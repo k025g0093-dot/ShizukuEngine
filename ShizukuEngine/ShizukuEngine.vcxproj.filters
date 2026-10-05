@@ -34,50 +34,53 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\CommandList">
       <UniqueIdentifier>{2de9bcc9-4c79-4a3d-84ba-bbaa3da7ad45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\AllInclude.h">
+      <UniqueIdentifier>{6c999a98-02d5-41f0-be4b-4bb3e097b534}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine.cpp">
-      <Filter>ソース ファイル\ShizukuEngine</Filter>
+    <ClCompile Include="ShizukuEngine\DX12Context.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\CommandList</Filter>
     </ClCompile>
-    <ClCompile Include="ConvertString.cpp">
+    <ClCompile Include="ShizukuEngine\ConvertString.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
     </ClCompile>
-    <ClCompile Include="LogSistem.cpp">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
-    </ClCompile>
-    <ClCompile Include="DXGI.cpp">
+    <ClCompile Include="ShizukuEngine\DXGI.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\D3D12Device</Filter>
     </ClCompile>
-    <ClCompile Include="DX12Context.cpp">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\CommandList</Filter>
+    <ClCompile Include="ShizukuEngine\LogSistem.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp">
+      <Filter>ソース ファイル\ShizukuEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ShizukuEngine.h">
-      <Filter>ソース ファイル\ShizukuEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="ConvertString.h">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
-    </ClInclude>
-    <ClInclude Include="AllInclude.h">
-      <Filter>ソース ファイル\ShizukuEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="LogSistem.h">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DXGI.h">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\D3D12Device</Filter>
+    <ClInclude Include="ShizukuEngine\AllD3D12Include.h">
+      <Filter>ソース ファイル\ShizukuEngine\AllInclude.h</Filter>
     </ClInclude>
-    <ClInclude Include="DX12Context.h">
+    <ClInclude Include="ShizukuEngine\AllInclude.h">
+      <Filter>ソース ファイル\ShizukuEngine\AllInclude.h</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\DX12Context.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\CommandList</Filter>
     </ClInclude>
-    <ClInclude Include="AllD3D12Include.h">
+    <ClInclude Include="ShizukuEngine\ConvertString.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\DXGI.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\D3D12Device</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\LogSistem.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\ShizukuEngine.h">
       <Filter>ソース ファイル\ShizukuEngine</Filter>
     </ClInclude>
   </ItemGroup>

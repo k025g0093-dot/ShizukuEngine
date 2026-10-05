@@ -88,22 +88,22 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConvertString.cpp" />
-    <ClCompile Include="DX12Context.cpp" />
-    <ClCompile Include="DXGI.cpp" />
-    <ClCompile Include="LogSistem.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ShizukuEngine.cpp" />
+    <ClCompile Include="ShizukuEngine\ConvertString.cpp" />
+    <ClCompile Include="ShizukuEngine\DX12Context.cpp" />
+    <ClCompile Include="ShizukuEngine\DXGI.cpp" />
+    <ClCompile Include="ShizukuEngine\LogSistem.cpp" />
+    <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AllD3D12Include.h" />
-    <ClInclude Include="AllInclude.h" />
-    <ClInclude Include="ConvertString.h" />
-    <ClInclude Include="DX12Context.h" />
-    <ClInclude Include="DXGI.h" />
-    <ClInclude Include="LogSistem.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ShizukuEngine.h" />
+    <ClInclude Include="ShizukuEngine\AllD3D12Include.h" />
+    <ClInclude Include="ShizukuEngine\AllInclude.h" />
+    <ClInclude Include="ShizukuEngine\ConvertString.h" />
+    <ClInclude Include="ShizukuEngine\DX12Context.h" />
+    <ClInclude Include="ShizukuEngine\DXGI.h" />
+    <ClInclude Include="ShizukuEngine\LogSistem.h" />
+    <ClInclude Include="ShizukuEngine\ShizukuEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig" />

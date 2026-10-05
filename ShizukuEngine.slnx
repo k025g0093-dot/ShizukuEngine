@@ -2,5 +2,5 @@
   <Configurations>
     <Platform Name="x64" />
   </Configurations>
-  <Project Path="ShizukuEngine/ShizukuEngine.vcxproj" />
+  <Project Path="ShizukuEngine/ShizukuEngine.vcxproj" Id="ddcfaae1-0396-47fa-900a-c969bb5dfb08" />
 </Solution>
