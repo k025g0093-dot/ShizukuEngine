@@ -24,11 +24,11 @@ private://ヘルパー関数など内部関数がメイン
 
 	//ヘルパー関数
 
-
+	DXGI dxgi{};
 
 private://各種変数などの初期化
 
 	static ShizukuEngine* instance;
-
+	HWND hwnd = nullptr;
 };
 

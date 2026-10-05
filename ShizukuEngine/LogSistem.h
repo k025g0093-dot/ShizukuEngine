@@ -6,6 +6,7 @@
 #include <format>
 #include <strsafe.h>
 #include <minidumpapiset.h>
+#pragma comment(lib, "Dbghelp.lib")
 extern std::ofstream logStream;
 
 void Log(std::ostream& os, const std::string& message);

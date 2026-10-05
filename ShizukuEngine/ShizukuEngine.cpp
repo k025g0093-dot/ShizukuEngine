@@ -40,7 +40,7 @@ void ShizukuEngine::InitWindow(
 
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
-	HWND hwnd = CreateWindow
+	hwnd = CreateWindow
 	(
 		ws.lpszClassName,
 		WinName.c_str(),
@@ -77,6 +77,8 @@ void ShizukuEngine::GetInstance(int Height, int width, wstring WinName) {
 
 
 void ShizukuEngine::Initialize() {
+
+	dxgi.InitDXGIFactory(hwnd);
 
 }
 

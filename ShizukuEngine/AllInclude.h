@@ -7,3 +7,5 @@
 
 #include "LogSistem.h"
 #include "ConvertString.h"
+
+#include "DXGI.h"

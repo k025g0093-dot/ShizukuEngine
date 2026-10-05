@@ -28,6 +28,9 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\LogSistem">
       <UniqueIdentifier>{016c3a48-b51e-4213-9e65-e54827b19b9d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\D3D12Device">
+      <UniqueIdentifier>{00c7f68d-b601-4d1e-80d2-0fab82873504}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -41,6 +44,9 @@
     </ClCompile>
     <ClCompile Include="LogSistem.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
+    </ClCompile>
+    <ClCompile Include="DXGI.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\D3D12Device</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -56,10 +62,21 @@
     <ClInclude Include="LogSistem.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DXGI.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\D3D12Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig">
       <Filter>.editoroconfigの設定ファイルがある</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ShizukuEngine.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

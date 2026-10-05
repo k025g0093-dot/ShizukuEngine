@@ -89,6 +89,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConvertString.cpp" />
+    <ClCompile Include="DXGI.cpp" />
     <ClCompile Include="LogSistem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShizukuEngine.cpp" />
@@ -96,11 +97,16 @@
   <ItemGroup>
     <ClInclude Include="AllInclude.h" />
     <ClInclude Include="ConvertString.h" />
+    <ClInclude Include="DXGI.h" />
     <ClInclude Include="LogSistem.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ShizukuEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ShizukuEngine.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
