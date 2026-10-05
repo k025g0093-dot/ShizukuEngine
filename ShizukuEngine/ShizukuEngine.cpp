@@ -78,7 +78,7 @@ void ShizukuEngine::GetInstance(int Height, int width, wstring WinName) {
 
 void ShizukuEngine::Initialize() {
 
-	dxgi.InitDXGIFactory(hwnd);
+	dxgi.InitDXGIFactory(hwnd, &device);
 
 }
 

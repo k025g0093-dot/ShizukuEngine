@@ -28,6 +28,8 @@ private://ヘルパー関数など内部関数がメイン
 
 private://各種変数などの初期化
 
+	ComPtr<ID3D12Device> device;
+
 	static ShizukuEngine* instance;
 	HWND hwnd = nullptr;
 };

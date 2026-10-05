@@ -8,4 +8,6 @@
 #include "LogSistem.h"
 #include "ConvertString.h"
 
+#include "AllD3D12Include.h"
+
 #include "DXGI.h"

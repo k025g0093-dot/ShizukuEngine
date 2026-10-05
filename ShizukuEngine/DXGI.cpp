@@ -1,7 +1,7 @@
 #include "DXGI.h"
 
 
-void DXGI::InitDXGIFactory(HWND hwnd)
+void DXGI::InitDXGIFactory(HWND hwnd, ComPtr<ID3D12Device>*device)
 {
 
 	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
@@ -29,7 +29,7 @@ void DXGI::InitDXGIFactory(HWND hwnd)
 	const char* featureLevelString[] = { "12.2","12.1","12.0" };
 	
 	for (size_t i = 0; i < _countof(featureLevels); i++) {
-		hr = D3D12CreateDevice(useAdapter, featureLevels[i], IID_PPV_ARGS(device.GetAddressOf()));
+		hr = D3D12CreateDevice(useAdapter, featureLevels[i], IID_PPV_ARGS(device->GetAddressOf()));
 		
 		if(SUCCEEDED(hr)){
 		

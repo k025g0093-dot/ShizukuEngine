@@ -89,14 +89,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConvertString.cpp" />
+    <ClCompile Include="DX12Context.cpp" />
     <ClCompile Include="DXGI.cpp" />
     <ClCompile Include="LogSistem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShizukuEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AllD3D12Include.h" />
     <ClInclude Include="AllInclude.h" />
     <ClInclude Include="ConvertString.h" />
+    <ClInclude Include="DX12Context.h" />
     <ClInclude Include="DXGI.h" />
     <ClInclude Include="LogSistem.h" />
     <ClInclude Include="resource.h" />
