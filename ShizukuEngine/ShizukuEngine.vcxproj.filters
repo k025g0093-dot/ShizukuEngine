@@ -19,6 +19,15 @@
     <Filter Include=".editoroconfigの設定ファイルがある">
       <UniqueIdentifier>{de554a79-fd57-4f91-af40-a032667a2ff8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能">
+      <UniqueIdentifier>{86d7482e-33b7-44e2-b20a-9807e048f76a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\ConvertString">
+      <UniqueIdentifier>{ba61ec1b-1ccc-40c4-b276-94b448c87374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\LogSistem">
+      <UniqueIdentifier>{016c3a48-b51e-4213-9e65-e54827b19b9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,10 +36,25 @@
     <ClCompile Include="ShizukuEngine.cpp">
       <Filter>ソース ファイル\ShizukuEngine</Filter>
     </ClCompile>
+    <ClCompile Include="ConvertString.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
+    </ClCompile>
+    <ClCompile Include="LogSistem.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShizukuEngine.h">
       <Filter>ソース ファイル\ShizukuEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvertString.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
+    </ClInclude>
+    <ClInclude Include="AllInclude.h">
+      <Filter>ソース ファイル\ShizukuEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="LogSistem.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

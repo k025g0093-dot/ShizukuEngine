@@ -88,10 +88,15 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConvertString.cpp" />
+    <ClCompile Include="LogSistem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShizukuEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AllInclude.h" />
+    <ClInclude Include="ConvertString.h" />
+    <ClInclude Include="LogSistem.h" />
     <ClInclude Include="ShizukuEngine.h" />
   </ItemGroup>
   <ItemGroup>
