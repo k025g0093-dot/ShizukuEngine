@@ -8,14 +8,14 @@ using Microsoft::WRL::ComPtr;
 struct VertexData;
 struct Material;
 
-class TraiangleModel :public Model //基底クラスModelを参照
+class TriangleModel :public Model //基底クラスModelを参照
 {
-
-	void Initialaize(ComPtr<ID3D12Device>* device);
+public:
+	void Initialization(ComPtr<ID3D12Device>* device);
 
     void UpdateVertices(
         const Vector3& positions,
-        const Vector2& texcoord,
+        const Vector2& texCord,
         const Vector3& normal,
         int index) override;
 
@@ -26,7 +26,8 @@ class TraiangleModel :public Model //基底クラスModelを参照
         UINT startInstanceLocation)override;
 
 
-private:
+
+private://メンバ変数
     ComPtr<ID3D12Resource>   mPVertexResource;
     D3D12_VERTEX_BUFFER_VIEW mVertexBufferView{};
     ComPtr<ID3D12Resource>   mPMaterialResource;

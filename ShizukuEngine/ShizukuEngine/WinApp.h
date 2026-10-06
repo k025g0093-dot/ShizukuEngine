@@ -15,7 +15,7 @@ public:
 	const HWND GetHwnd() const { return hwnd; }
 	const HWND SetHwnd() {};
 
-private:
+private://メンバ変数
 	HWND hwnd = nullptr;
 
 };

@@ -2,16 +2,21 @@
 #include "VertexResource.h"
 #include "LogSistem.h"
 
+//インスタンスの初期化
 LightManager* LightManager::s_instance = nullptr;
 
+//インスタンス取得関数
 LightManager* LightManager::GetInstance() {
     if (!s_instance) s_instance = new LightManager();
     return s_instance;
 }
 
+
+//ライトの初期化を行います
 void LightManager::Initialize(ID3D12Device* device, ID3D12DescriptorHeap* srvHeap) {
     m_device = device;
 
+    //ディレクショナルライトの初期化
     LightData defaultLight{};
     defaultLight.color = { 1.0f, 1.0f, 1.0f, 1.0f };
     defaultLight.type = 0;
@@ -65,6 +70,7 @@ void LightManager::Upload() {
     }
 }
 
+//ライトの追加を行う関数
 int LightManager::AddLight() {
     for (int i = 1; i < MAX_LIGHTS; i++) {
         if (!m_lightActive[i]) {

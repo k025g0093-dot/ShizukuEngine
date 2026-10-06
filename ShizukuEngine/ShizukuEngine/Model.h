@@ -7,7 +7,7 @@
 
 struct VertexData {
 	Vector4 position;
-	Vector2 texcord;
+	Vector2 texCord;
 	Vector3 normal;
 	Vector3 tangent;
 };
@@ -18,6 +18,23 @@ struct Material {
     int32_t enableNormalMap;
     Vector2 padding;
     Matrix4x4 uvTransform;
+};
+
+struct DrawRequest {
+    std::vector<Vector3>vertices;
+    Vector4 color = { 1,1,1,1 };
+    Vector3 rot = { 0,0,0 };
+    Vector3 scale = { 1,1,1 };
+    Vector3 pos = { 0,0,0 };//３Dのオブジェクトなどで使用
+    Vector2 posV2 = { 0,0 };//2Dのテクスチャなどで使用
+    float width = 0.0f;
+    float height = 0.0f;
+    int textureIndex = 0;
+    bool isMesh = false;//3Dオブジェクト化どうかの確認
+    bool isSprit = false;//スプライトかそうでないかの確認
+    bool is2D = false;
+    int lightId = -1;//ライトを付与する際のID
+
 };
 
 struct LightData;
@@ -56,7 +73,7 @@ public:
     // 純粋仮想関数
     virtual void UpdateVertices(
         const Vector3& points,
-        const Vector2& texcoord,
+        const Vector2& texCord,
         const Vector3& normal,
         int index) = 0;
 

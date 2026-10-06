@@ -35,9 +35,11 @@ public:
     bool IsLightActive(int index){return m_lightActive[index];}
 
 
-private:
+private://プライベート関数
     LightManager() = default;
     void Upload();
+
+private://メンバ変数
 
     static LightManager* s_instance;
 
@@ -48,6 +50,6 @@ private:
 
     LightData m_lights[MAX_LIGHTS] = {};
     bool m_lightActive[MAX_LIGHTS] = { true };
-    int m_activeLightCount = 0;   // ← m_lightDataの代わりにこれを追加
+    int m_activeLightCount = 0;
     int m_selectedLightIndex = -1;
 };

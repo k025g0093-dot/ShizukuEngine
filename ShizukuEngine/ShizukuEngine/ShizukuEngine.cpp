@@ -17,16 +17,19 @@ ShizukuEngine::ShizukuEngine(int Height, int width, wstring WinName){
 	Initialize(Height,width);
 }
 
-
+//初期化関数
 void ShizukuEngine::Initialize(int Height, int width) {
 
 	dX12Context.InitDXGIFactory(winApp.GetHwnd(), &device);
 	dX12Context.CreateCommandObjects(device, winApp.GetHwnd(), Height,width);
 }
 
-void ShizukuEngine::Run() {}
 
+void ShizukuEngine::Update() {}
+
+//開放処理
 ShizukuEngine::~ShizukuEngine() {}
+
 
 void ShizukuEngine::PreDraw() 
 {
@@ -35,5 +38,31 @@ void ShizukuEngine::PreDraw()
 
 void ShizukuEngine::PostDraw() 
 {
+	//ここで未来のレンダーリクエスト関数を使用
+	//順番の前後には注意そこを間違えると描画されなくなる
+
 	dX12Context.PostDraw();
 }
+
+void ShizukuEngine::DrawTriangle
+(
+	const Vector3& pos,
+	const Vector3& rot, 
+	const Vector3& scale,
+	const Vector4 color,
+	int textureInd
+) {
+	if (!mTriangleModel) {
+		mTriangleModel = std::make_unique<TriangleModel>();
+		mTriangleModel->Initialization(&device);
+	}
+	DrawRequest req;
+	req.pos = pos;//位置を渡す
+	req.rot = rot;//回転度を渡す
+	req.scale = scale;//スケールを渡す
+	req.color = color;//色を渡す
+	req.textureIndex = textureInd;//テクスチャのインデックスを渡す
+	req.isMesh = false;//メッシュかの確認
+	mDrawRequests.push_back(req);//リクエストを送信
+}
+
