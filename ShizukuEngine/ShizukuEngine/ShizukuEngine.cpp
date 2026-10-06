@@ -2,26 +2,26 @@
 
 using namespace std;
 //インスタンス初期化
-ShizukuEngine* ShizukuEngine::instance = nullptr;
+ShizukuEngine* ShizukuEngine::mInstance = nullptr;
 
 void ShizukuEngine::GetInstance(int Height, int width, wstring WinName) {
-	if (instance == nullptr) {
+	if (mInstance == nullptr) {
 		//インスタンスがない場合はnewをする
-		instance = new ShizukuEngine(Height, width, WinName);
+		mInstance = new ShizukuEngine(Height, width, WinName);
 	}
 }
 
 ShizukuEngine::ShizukuEngine(int Height, int width, wstring WinName){
 
-	winApp.InitWindow(Height, width, WinName);
+	mWinApp.InitWindow(Height, width, WinName);
 	Initialize(Height,width);
 }
 
 //初期化関数
 void ShizukuEngine::Initialize(int Height, int width) {
 
-	dX12Context.InitDXGIFactory(winApp.GetHwnd(), &device);
-	dX12Context.CreateCommandObjects(device, winApp.GetHwnd(), Height,width);
+	mDX12Context.InitDXGIFactory(mWinApp.GetHwnd(), &mDevice);
+	mDX12Context.CreateCommandObjects(mDevice, mWinApp.GetHwnd(), Height,width);
 }
 
 
@@ -33,7 +33,7 @@ ShizukuEngine::~ShizukuEngine() {}
 
 void ShizukuEngine::PreDraw() 
 {
-	dX12Context.PreDraw();
+	mDX12Context.PreDraw();
 }
 
 void ShizukuEngine::PostDraw() 
@@ -41,7 +41,7 @@ void ShizukuEngine::PostDraw()
 	//ここで未来のレンダーリクエスト関数を使用
 	//順番の前後には注意そこを間違えると描画されなくなる
 
-	dX12Context.PostDraw();
+	mDX12Context.PostDraw();
 }
 
 void ShizukuEngine::DrawTriangle
@@ -54,7 +54,7 @@ void ShizukuEngine::DrawTriangle
 ) {
 	if (!mTriangleModel) {
 		mTriangleModel = std::make_unique<TriangleModel>();
-		mTriangleModel->Initialization(&device);
+		mTriangleModel->Initialization(&mDevice);
 	}
 	DrawRequest req;
 	req.pos = pos;//位置を渡す

@@ -47,14 +47,16 @@ private://ヘルパー関数など内部関数がメイン
 
 	//ヘルパー関数
 
-	DX12Context dX12Context{};
-	WinApp winApp{};
+
 
 
 private://各種変数などの初期化
 
-	ComPtr<ID3D12Device> device;
-	static ShizukuEngine* instance;
+	DX12Context mDX12Context{};
+	WinApp mWinApp{};
+
+	ComPtr<ID3D12Device> mDevice;
+	static ShizukuEngine* mInstance;
 
 	//描画物のリソース
 	std::vector<DrawRequest> mDrawRequests;

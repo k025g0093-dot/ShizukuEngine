@@ -8,7 +8,7 @@ void RenderRequests::initRender(ComPtr<ID3D12Device>* device) {
 }
 
 
-void RenderRequests::RenderAllRequests()
+void RenderRequests::RenderAllRequests(DX12Context dx12Context)
 {
 
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -30,12 +30,12 @@ void RenderRequests::RenderAllRequests()
 
 	//描画関数の呼び出し
 	if (!request3D.empty()) {//から出ない場合は実行をする
-		Render3DTarget(request3D);
+		Render3DTarget(request3D, dx12Context);
 	}
 
 	//描画関数の呼び出し
 	if (!request2D.empty()) {//から出ない場合は実行をする
-		Render2DTarget(request2D);
+		Render2DTarget(request2D, dx12Context);
 	}
 
 	//たまったリストをクリアする
@@ -50,7 +50,8 @@ void RenderRequests::RenderAllRequests()
 //----------------------------------------
 
 void RenderRequests::Render3DTarget(
-	const std::vector<DrawRequest>& requests3D
+	const std::vector<DrawRequest>& requests3D,
+	DX12Context dx12Context
 ) {
 
 	//レンダーリクエストがない場合は下の処理をスキップ
@@ -69,7 +70,8 @@ void RenderRequests::Render3DTarget(
 //2Dオブジェクトを対象とした描画リクエスト送信関数
 //----------------------------------------
 void RenderRequests::Render2DTarget(
-	const std::vector<DrawRequest>& requests2D
+	const std::vector<DrawRequest>& requests2D,
+	DX12Context dx12Context
 ) {
 
 }
