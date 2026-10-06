@@ -92,26 +92,35 @@
     <ClCompile Include="ShizukuEngine\ConvertString.cpp" />
     <ClCompile Include="ShizukuEngine\DX12Context.cpp" />
     <ClCompile Include="ShizukuEngine\DXC.cpp" />
+    <ClCompile Include="ShizukuEngine\LightManager.cpp" />
     <ClCompile Include="ShizukuEngine\LogSistem.cpp" />
+    <ClCompile Include="ShizukuEngine\Model.cpp" />
     <ClCompile Include="ShizukuEngine\PSO.cpp" />
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp" />
+    <ClCompile Include="ShizukuEngine\TriangleModel.cpp" />
     <ClCompile Include="ShizukuEngine\Vector.cpp" />
+    <ClCompile Include="ShizukuEngine\VertexResource.cpp" />
     <ClCompile Include="ShizukuEngine\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShizukuEngine\AllD3D12Include.h" />
     <ClInclude Include="ShizukuEngine\AllInclude.h" />
+    <ClInclude Include="ShizukuEngine\AllVector.h" />
     <ClInclude Include="ShizukuEngine\ConvertString.h" />
     <ClInclude Include="ShizukuEngine\DX12Context.h" />
     <ClInclude Include="ShizukuEngine\DXC.h" />
+    <ClInclude Include="ShizukuEngine\LightManager.h" />
     <ClInclude Include="ShizukuEngine\LogSistem.h" />
+    <ClInclude Include="ShizukuEngine\Model.h" />
     <ClInclude Include="ShizukuEngine\PSO.h" />
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h" />
+    <ClInclude Include="ShizukuEngine\TriangleModel.h" />
     <ClInclude Include="ShizukuEngine\Vector.h" />
     <ClInclude Include="ShizukuEngine\Vector2.h" />
     <ClInclude Include="ShizukuEngine\Vector3.h" />
     <ClInclude Include="ShizukuEngine\Vector4.h" />
+    <ClInclude Include="ShizukuEngine\VertexResource.h" />
     <ClInclude Include="ShizukuEngine\WinApp.h" />
   </ItemGroup>
   <ItemGroup>

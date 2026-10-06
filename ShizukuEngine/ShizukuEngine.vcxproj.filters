@@ -49,6 +49,18 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\パイプラインステート">
       <UniqueIdentifier>{2da193a9-7caf-4e84-9280-e51ef68155f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など">
+      <UniqueIdentifier>{a314b33d-3fd7-4941-a789-16cc13e839f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など\図形関係">
+      <UniqueIdentifier>{b7365007-dcf0-4f2d-8b5f-f7f1e7034328}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\VertexResource">
+      <UniqueIdentifier>{97ca2dbe-2820-42a3-8d03-8b7171c57207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\ライティングに関するもの">
+      <UniqueIdentifier>{3599781f-1e0a-4047-8ed0-1a6beb9a0f1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -77,6 +89,18 @@
     </ClCompile>
     <ClCompile Include="ShizukuEngine\PSO.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\TriangleModel.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\図形関係</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\Model.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\VertexResource.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\VertexResource</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\LightManager.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\ライティングに関するもの</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +145,21 @@
     </ClInclude>
     <ClInclude Include="ShizukuEngine\PSO.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\TriangleModel.h">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\図形関係</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Model.h">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\AllVector.h">
+      <Filter>ソース ファイル\ShizukuEngine\AllInclude.h</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\VertexResource.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\VertexResource</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\LightManager.h">
+      <Filter>ソース ファイル\ShizukuEngine\ライティングに関するもの</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
