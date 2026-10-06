@@ -1,4 +1,4 @@
-#include"ShizukuEngine.h"
+#include"ShizukuEngine/ShizukuEngine.h"
 #include <Windows.h>
 
 const int32_t kClineWidth = 1280;
@@ -16,6 +16,12 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		}
 		else {
 
+			engine->Run();
+
+
+			engine->PreDraw();
+
+			engine->PostDraw();
 
 
 		}

@@ -28,67 +28,171 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\LogSistem">
       <UniqueIdentifier>{016c3a48-b51e-4213-9e65-e54827b19b9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\D3D12Device">
-      <UniqueIdentifier>{00c7f68d-b601-4d1e-80d2-0fab82873504}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\CommandList">
       <UniqueIdentifier>{2de9bcc9-4c79-4a3d-84ba-bbaa3da7ad45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\AllInclude.h">
+      <UniqueIdentifier>{6c999a98-02d5-41f0-be4b-4bb3e097b534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\WinApp">
+      <UniqueIdentifier>{c5e7f2d6-53e8-4db1-a667-19450cefd46e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\数学ライブラリ">
+      <UniqueIdentifier>{b5238ee5-8fa2-474d-9be5-c225762ca311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hlsl">
+      <UniqueIdentifier>{4d481e69-adce-4d9d-8179-d973f639a26d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\DXC">
+      <UniqueIdentifier>{704c6046-aad3-4dcd-80cb-0ae77bb5285d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\パイプラインステート">
+      <UniqueIdentifier>{2da193a9-7caf-4e84-9280-e51ef68155f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など">
+      <UniqueIdentifier>{a314b33d-3fd7-4941-a789-16cc13e839f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など\図形関係">
+      <UniqueIdentifier>{b7365007-dcf0-4f2d-8b5f-f7f1e7034328}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\VertexResource">
+      <UniqueIdentifier>{97ca2dbe-2820-42a3-8d03-8b7171c57207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\ライティングに関するもの">
+      <UniqueIdentifier>{3599781f-1e0a-4047-8ed0-1a6beb9a0f1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine.cpp">
-      <Filter>ソース ファイル\ShizukuEngine</Filter>
+    <ClCompile Include="ShizukuEngine\DX12Context.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\CommandList</Filter>
     </ClCompile>
-    <ClCompile Include="ConvertString.cpp">
+    <ClCompile Include="ShizukuEngine\ConvertString.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
     </ClCompile>
-    <ClCompile Include="LogSistem.cpp">
+    <ClCompile Include="ShizukuEngine\LogSistem.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
     </ClCompile>
-    <ClCompile Include="DXGI.cpp">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\D3D12Device</Filter>
+    <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp">
+      <Filter>ソース ファイル\ShizukuEngine</Filter>
     </ClCompile>
-    <ClCompile Include="DX12Context.cpp">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\CommandList</Filter>
+    <ClCompile Include="ShizukuEngine\WinApp.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\WinApp</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\Vector.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\DXC.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\DXC</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\PSO.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\TriangleModel.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\図形関係</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\Model.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\VertexResource.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\VertexResource</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\LightManager.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\ライティングに関するもの</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ShizukuEngine.h">
-      <Filter>ソース ファイル\ShizukuEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="ConvertString.h">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
-    </ClInclude>
-    <ClInclude Include="AllInclude.h">
-      <Filter>ソース ファイル\ShizukuEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="LogSistem.h">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DXGI.h">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\D3D12Device</Filter>
+    <ClInclude Include="ShizukuEngine\AllD3D12Include.h">
+      <Filter>ソース ファイル\ShizukuEngine\AllInclude.h</Filter>
     </ClInclude>
-    <ClInclude Include="DX12Context.h">
+    <ClInclude Include="ShizukuEngine\AllInclude.h">
+      <Filter>ソース ファイル\ShizukuEngine\AllInclude.h</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\DX12Context.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\CommandList</Filter>
     </ClInclude>
-    <ClInclude Include="AllD3D12Include.h">
+    <ClInclude Include="ShizukuEngine\ConvertString.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\LogSistem.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\ShizukuEngine.h">
       <Filter>ソース ファイル\ShizukuEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\WinApp.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\WinApp</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Vector.h">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Vector2.h">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Vector3.h">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Vector4.h">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\DXC.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\DXC</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\PSO.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\TriangleModel.h">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\図形関係</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Model.h">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\AllVector.h">
+      <Filter>ソース ファイル\ShizukuEngine\AllInclude.h</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\VertexResource.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\VertexResource</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\LightManager.h">
+      <Filter>ソース ファイル\ShizukuEngine\ライティングに関するもの</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig">
       <Filter>.editoroconfigの設定ファイルがある</Filter>
     </None>
+    <None Include="ShizukuEngine\shaders\Light.hlsli">
+      <Filter>hlsl</Filter>
+    </None>
+    <None Include="ShizukuEngine\shaders\Object3d.hlsli">
+      <Filter>hlsl</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ShizukuEngine.rc">
       <Filter>リソース ファイル</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="ShizukuEngine\shaders\Line.PS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\Line.VS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\Object3d.PS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\Object3d.VS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\shadow.VS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
