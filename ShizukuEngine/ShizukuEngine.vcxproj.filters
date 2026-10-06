@@ -28,14 +28,14 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\LogSistem">
       <UniqueIdentifier>{016c3a48-b51e-4213-9e65-e54827b19b9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\D3D12Device">
-      <UniqueIdentifier>{00c7f68d-b601-4d1e-80d2-0fab82873504}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\CommandList">
       <UniqueIdentifier>{2de9bcc9-4c79-4a3d-84ba-bbaa3da7ad45}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\ShizukuEngine\AllInclude.h">
       <UniqueIdentifier>{6c999a98-02d5-41f0-be4b-4bb3e097b534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\WinApp">
+      <UniqueIdentifier>{c5e7f2d6-53e8-4db1-a667-19450cefd46e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,14 +48,14 @@
     <ClCompile Include="ShizukuEngine\ConvertString.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\DXGI.cpp">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\D3D12Device</Filter>
-    </ClCompile>
     <ClCompile Include="ShizukuEngine\LogSistem.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
     </ClCompile>
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp">
       <Filter>ソース ファイル\ShizukuEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\WinApp.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\WinApp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,14 +74,14 @@
     <ClInclude Include="ShizukuEngine\ConvertString.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\DXGI.h">
-      <Filter>ソース ファイル\ShizukuEngine\各種機能\D3D12Device</Filter>
-    </ClInclude>
     <ClInclude Include="ShizukuEngine\LogSistem.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
     </ClInclude>
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h">
       <Filter>ソース ファイル\ShizukuEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\WinApp.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\WinApp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

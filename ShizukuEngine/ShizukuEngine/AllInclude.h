@@ -10,4 +10,6 @@
 
 #include "AllD3D12Include.h"
 
+#include "WinApp.h"
 #include "DXGI.h"
+#include "DX12Context.h"
