@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{F01122ED-F983-9F01-D1FA-82D0E95CB9EE}</ProjectGuid>
+    <ProjectGuid>{DDCFAAE1-0396-47FA-900A-C969BB5DFB08}</ProjectGuid>
     <RootNamespace>ShizukuEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
