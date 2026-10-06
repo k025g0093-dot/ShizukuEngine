@@ -37,6 +37,18 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\WinApp">
       <UniqueIdentifier>{c5e7f2d6-53e8-4db1-a667-19450cefd46e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\数学ライブラリ">
+      <UniqueIdentifier>{b5238ee5-8fa2-474d-9be5-c225762ca311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hlsl">
+      <UniqueIdentifier>{4d481e69-adce-4d9d-8179-d973f639a26d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\DXC">
+      <UniqueIdentifier>{704c6046-aad3-4dcd-80cb-0ae77bb5285d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\パイプラインステート">
+      <UniqueIdentifier>{2da193a9-7caf-4e84-9280-e51ef68155f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -56,6 +68,15 @@
     </ClCompile>
     <ClCompile Include="ShizukuEngine\WinApp.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\WinApp</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\Vector.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\DXC.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\DXC</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\PSO.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,15 +104,56 @@
     <ClInclude Include="ShizukuEngine\WinApp.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\WinApp</Filter>
     </ClInclude>
+    <ClInclude Include="ShizukuEngine\Vector.h">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Vector2.h">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Vector3.h">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Vector4.h">
+      <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\DXC.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\DXC</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\PSO.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig">
       <Filter>.editoroconfigの設定ファイルがある</Filter>
+    </None>
+    <None Include="ShizukuEngine\shaders\Light.hlsli">
+      <Filter>hlsl</Filter>
+    </None>
+    <None Include="ShizukuEngine\shaders\Object3d.hlsli">
+      <Filter>hlsl</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ShizukuEngine.rc">
       <Filter>リソース ファイル</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="ShizukuEngine\shaders\Line.PS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\Line.VS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\Object3d.PS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\Object3d.VS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\shadow.VS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -91,8 +91,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShizukuEngine\ConvertString.cpp" />
     <ClCompile Include="ShizukuEngine\DX12Context.cpp" />
+    <ClCompile Include="ShizukuEngine\DXC.cpp" />
     <ClCompile Include="ShizukuEngine\LogSistem.cpp" />
+    <ClCompile Include="ShizukuEngine\PSO.cpp" />
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp" />
+    <ClCompile Include="ShizukuEngine\Vector.cpp" />
     <ClCompile Include="ShizukuEngine\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -101,15 +104,44 @@
     <ClInclude Include="ShizukuEngine\AllInclude.h" />
     <ClInclude Include="ShizukuEngine\ConvertString.h" />
     <ClInclude Include="ShizukuEngine\DX12Context.h" />
+    <ClInclude Include="ShizukuEngine\DXC.h" />
     <ClInclude Include="ShizukuEngine\LogSistem.h" />
+    <ClInclude Include="ShizukuEngine\PSO.h" />
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h" />
+    <ClInclude Include="ShizukuEngine\Vector.h" />
+    <ClInclude Include="ShizukuEngine\Vector2.h" />
+    <ClInclude Include="ShizukuEngine\Vector3.h" />
+    <ClInclude Include="ShizukuEngine\Vector4.h" />
     <ClInclude Include="ShizukuEngine\WinApp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig" />
+    <None Include="ShizukuEngine\shaders\Light.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="ShizukuEngine\shaders\Object3d.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ShizukuEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="ShizukuEngine\shaders\Line.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\Line.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\Object3d.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\Object3d.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="ShizukuEngine\shaders\shadow.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
