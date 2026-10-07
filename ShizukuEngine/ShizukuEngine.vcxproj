@@ -89,6 +89,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ShizukuEngine\Camera.cpp" />
     <ClCompile Include="ShizukuEngine\ConvertString.cpp" />
     <ClCompile Include="ShizukuEngine\DX12Context.cpp" />
     <ClCompile Include="ShizukuEngine\DXC.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShizukuEngine\AllD3D12Include.h" />
     <ClInclude Include="ShizukuEngine\AllVector.h" />
+    <ClInclude Include="ShizukuEngine\Camera.h" />
     <ClInclude Include="ShizukuEngine\ConvertString.h" />
     <ClInclude Include="ShizukuEngine\DX12Context.h" />
     <ClInclude Include="ShizukuEngine\DXC.h" />

@@ -58,11 +58,14 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\VertexResource">
       <UniqueIdentifier>{97ca2dbe-2820-42a3-8d03-8b7171c57207}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\ShizukuEngine\ライティングに関するもの">
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\ライティングに関するもの">
       <UniqueIdentifier>{3599781f-1e0a-4047-8ed0-1a6beb9a0f1d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\ShizukuEngine\RenderRequests">
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\RenderRequests">
       <UniqueIdentifier>{3e8e5a87-d5c6-46da-acd0-a7edfc9c0ee0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\Camera">
+      <UniqueIdentifier>{4ed9d0f3-2b2d-4351-b330-bbc295e7f0a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -103,10 +106,13 @@
       <Filter>ソース ファイル\ShizukuEngine\各種機能\VertexResource</Filter>
     </ClCompile>
     <ClCompile Include="ShizukuEngine\LightManager.cpp">
-      <Filter>ソース ファイル\ShizukuEngine\ライティングに関するもの</Filter>
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\ライティングに関するもの</Filter>
     </ClCompile>
     <ClCompile Include="ShizukuEngine\RenderRequests.cpp">
-      <Filter>ソース ファイル\ShizukuEngine\RenderRequests</Filter>
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\RenderRequests</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\Camera.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,10 +168,13 @@
       <Filter>ソース ファイル\ShizukuEngine\各種機能\VertexResource</Filter>
     </ClInclude>
     <ClInclude Include="ShizukuEngine\LightManager.h">
-      <Filter>ソース ファイル\ShizukuEngine\ライティングに関するもの</Filter>
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\ライティングに関するもの</Filter>
     </ClInclude>
     <ClInclude Include="ShizukuEngine\RenderRequests.h">
-      <Filter>ソース ファイル\ShizukuEngine\RenderRequests</Filter>
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\RenderRequests</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Camera.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

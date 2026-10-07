@@ -64,6 +64,7 @@ void RenderRequests::Render3DTarget(
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
 	commandList->SetPipelineState(pipelineState.Get());
 
+
 }
 
 //----------------------------------------

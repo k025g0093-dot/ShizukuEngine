@@ -2,7 +2,7 @@
 #include "Model.h"
 #include "DX12Context.h"
 #include "PSO.h"
-
+#include "Camera.h"
 
 //ドローリクエストの構造体
 struct DrawRequest;
@@ -32,5 +32,7 @@ private:
 	std::vector<DrawRequest> mDrawRequests;//レンダーリクエスト用の変数
 	ComPtr<ID3D12RootSignature>  rootSignature;//ルートシグネチャ
 	ComPtr<ID3D12PipelineState>  pipelineState;//パイプラインステート
+
+	Matrix4x4 mViewProjectionMatrix;
 
 };
