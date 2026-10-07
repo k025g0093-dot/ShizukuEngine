@@ -6,33 +6,33 @@
 using Microsoft::WRL::ComPtr;
 
 struct LightData {
-    Vector3 dirOrPos;
-    float type;
-    Vector4 color;
-    float intensity;
+    Vector3 dirOrPos;//向きを表すポジション
+    float type;//ライトのタイプ
+    Vector4 color;//ライトの色
+    float intensity;//数
 };
 
 class LightManager {
 public:
     static LightManager* GetInstance();
 
-    static const int MAX_LIGHTS = 10;
-    static const int LIGHT_SRV_SLOT = 108;
+    static const int maxLight = 10;
+    static const int lightSrvSlot = 108;
 
     void Initialize(ID3D12Device* device, ID3D12DescriptorHeap* srvHeap);
 
     void SetLight(int index, const LightData& light);
-    const LightData& GetLight(int index) const { return m_lights[index]; }
-    int GetActiveLightCount() const { return m_activeLightCount; }
+    const LightData& GetLight(int index) const { return mLights[index]; }
+    int GetActiveLightCount() const { return mActiveLightCount; }
 
     void Bind(ID3D12GraphicsCommandList* cmdList, int id);
 
-    void SetSelectedLight(int index) { m_selectedLightIndex = index; }
-    int GetSelectedLight() const { return m_selectedLightIndex; }
+    void SetSelectedLight(int index) { mSelectedLightIndex = index; }
+    int GetSelectedLight() const { return mSelectedLightIndex; }
 
     int AddLight();
     void RemoveLight(int index);
-    bool IsLightActive(int index){return m_lightActive[index];}
+    bool IsLightActive(int index){return mLightActive[index];}
 
 
 private://プライベート関数
@@ -41,15 +41,15 @@ private://プライベート関数
 
 private://メンバ変数
 
-    static LightManager* s_instance;
+    static LightManager* mInstance;
 
-    ID3D12Device* m_device = nullptr;
+    ID3D12Device* mDevice = nullptr;
 
-    ComPtr<ID3D12Resource> m_lightBuffer;
-    D3D12_GPU_DESCRIPTOR_HANDLE m_lightSrvGpuHandle{};
+    ComPtr<ID3D12Resource> mLightBuffer;
+    D3D12_GPU_DESCRIPTOR_HANDLE mLightSrvGpuHandle{};
 
-    LightData m_lights[MAX_LIGHTS] = {};
-    bool m_lightActive[MAX_LIGHTS] = { true };
-    int m_activeLightCount = 0;
-    int m_selectedLightIndex = -1;
+    LightData mLights[maxLight] = {};
+    bool mLightActive[maxLight] = { true };
+    int mActiveLightCount = 0;
+    int mSelectedLightIndex = -1;
 };
