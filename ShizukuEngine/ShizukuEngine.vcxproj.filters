@@ -181,10 +181,10 @@
     <None Include=".editoroconfig">
       <Filter>.editoroconfigの設定ファイルがある</Filter>
     </None>
-    <None Include="ShizukuEngine\shaders\Light.hlsli">
+    <None Include="shaders\Light.hlsli">
       <Filter>hlsl</Filter>
     </None>
-    <None Include="ShizukuEngine\shaders\Object3d.hlsli">
+    <None Include="shaders\Object3d.hlsli">
       <Filter>hlsl</Filter>
     </None>
   </ItemGroup>
@@ -194,19 +194,19 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="ShizukuEngine\shaders\Line.PS.hlsl">
+    <FxCompile Include="shaders\Line.PS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="ShizukuEngine\shaders\Line.VS.hlsl">
+    <FxCompile Include="shaders\Line.VS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="ShizukuEngine\shaders\Object3d.PS.hlsl">
+    <FxCompile Include="shaders\Object3d.PS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="ShizukuEngine\shaders\Object3d.VS.hlsl">
+    <FxCompile Include="shaders\Object3d.VS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="ShizukuEngine\shaders\shadow.VS.hlsl">
+    <FxCompile Include="shaders\shadow.VS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
   </ItemGroup>

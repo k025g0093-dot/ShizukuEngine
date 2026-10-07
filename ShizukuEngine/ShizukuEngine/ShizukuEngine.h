@@ -3,7 +3,7 @@
 #include "WinApp.h"
 #include "DXGI.h"
 #include "DX12Context.h"
-
+#include "RenderRequests.h"
 //各種図形の関数が入ったヘッダ
 
 #include"TriangleModel.h"
@@ -54,13 +54,10 @@ private://各種変数などの初期化
 
 	DX12Context mDX12Context{};
 	WinApp mWinApp{};
+	RenderRequests mRenderRequests{};
 
 	ComPtr<ID3D12Device> mDevice;
 	static ShizukuEngine* mInstance;
-
-	//描画物のリソース
-	std::vector<DrawRequest> mDrawRequests;
-
 
 	std::unique_ptr<TriangleModel> mTriangleModel;
 };

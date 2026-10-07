@@ -22,6 +22,7 @@ void ShizukuEngine::Initialize(int Height, int width) {
 
 	mDX12Context.InitDXGIFactory(mWinApp.GetHwnd(), &mDevice);
 	mDX12Context.CreateCommandObjects(mDevice, mWinApp.GetHwnd(), Height,width);
+	mRenderRequests.initRender(&mDevice);
 }
 
 
@@ -38,6 +39,9 @@ void ShizukuEngine::PreDraw()
 
 void ShizukuEngine::PostDraw() 
 {
+
+	mRenderRequests.RenderAllRequests(mDX12Context.GetCommandList());
+
 	//ここで未来のレンダーリクエスト関数を使用
 	//順番の前後には注意そこを間違えると描画されなくなる
 
@@ -63,6 +67,6 @@ void ShizukuEngine::DrawTriangle
 	req.color = color;//色を渡す
 	req.textureIndex = textureInd;//テクスチャのインデックスを渡す
 	req.isMesh = false;//メッシュかの確認
-	mDrawRequests.push_back(req);//リクエストを送信
+	mRenderRequests.DrawRequestsSubmission(req);
 }
 
