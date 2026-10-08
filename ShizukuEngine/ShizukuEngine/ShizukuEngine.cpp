@@ -23,10 +23,19 @@ void ShizukuEngine::Initialize(int Height, int width) {
 	// ログ用フォルダの作成とログ初期化
 	std::filesystem::create_directory("logs");
 	InitializeLog();
+#ifdef _DEBUG
+	mDebugLayer.EnableDebugLayer();
+#endif
 
-	mDX12Context.InitDXGIFactory(mWinApp.GetHwnd(), &mDevice);
-	mDX12Context.CreateCommandObjects(mDevice, mWinApp.GetHwnd(), Height,width);
-	mRenderRequests.initRender(mDevice.Get());
+	mDX12Context.InitDXGIFactory(mWinApp.GetHwnd());
+	mDX12Context.CreateCommandObjects(mWinApp.GetHwnd(), Height, width);
+	mRenderRequests.InitRender(mDX12Context.GetDevice());
+
+#ifdef _DEBUG
+	mDebugLayer.SetupInfoQueue(mDX12Context.GetDevice());
+#endif
+
+
 }
 
 
@@ -62,7 +71,7 @@ void ShizukuEngine::DrawTriangle
 ) {
 	if (!mTriangleModel) {
 		mTriangleModel = std::make_unique<TriangleModel>();
-		mTriangleModel->Initialization(&mDevice);
+		mTriangleModel->Initialization(mDX12Context.GetDevice());
 	}
 	DrawRequest req;
 	req.pos = pos;//位置を渡す

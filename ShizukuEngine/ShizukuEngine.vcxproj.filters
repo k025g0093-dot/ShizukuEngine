@@ -67,6 +67,9 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\Camera">
       <UniqueIdentifier>{4ed9d0f3-2b2d-4351-b330-bbc295e7f0a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\デバックレイヤー">
+      <UniqueIdentifier>{8e134a24-3978-4329-9b33-2d92aa95f82e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -113,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="ShizukuEngine\Camera.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\DebugLayer.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\デバックレイヤー</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="ShizukuEngine\Camera.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\DebugLayer.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\デバックレイヤー</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

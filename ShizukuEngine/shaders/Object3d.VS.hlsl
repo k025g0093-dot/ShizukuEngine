@@ -7,7 +7,7 @@ struct DrawInfo
       uint baseInstance;
 };
 
-ConstantBuffer<DrawInfo> gDrawInfo : register(b2);
+ConstantBuffer<DrawInfo> gDrawInfo : register(b1);
 
 struct VertexShaderInput
 {

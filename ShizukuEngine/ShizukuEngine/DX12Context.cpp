@@ -1,7 +1,8 @@
 #include "DX12Context.h"
 
 
-void DX12Context::InitDXGIFactory(HWND hwnd, ComPtr<ID3D12Device>* device)
+void DX12Context::InitDXGIFactory(HWND hwnd
+)
 {
 
 
@@ -30,7 +31,7 @@ void DX12Context::InitDXGIFactory(HWND hwnd, ComPtr<ID3D12Device>* device)
 	const char* featureLevelString[] = { "12.2","12.1","12.0" };
 
 	for (size_t i = 0; i < _countof(featureLevels); i++) {
-		hr = D3D12CreateDevice(useAdapter.Get(), featureLevels[i], IID_PPV_ARGS(device->GetAddressOf()));
+		hr = D3D12CreateDevice(useAdapter.Get(), featureLevels[i], IID_PPV_ARGS(&mDevice));
 
 		if (SUCCEEDED(hr)) {
 
@@ -40,7 +41,7 @@ void DX12Context::InitDXGIFactory(HWND hwnd, ComPtr<ID3D12Device>* device)
 
 	}
 
-	assert(device != nullptr);
+	assert(mDevice != nullptr);
 	Log(logStream, "Complete DirectX 12 Device Creation.\n");
 
 
@@ -48,11 +49,9 @@ void DX12Context::InitDXGIFactory(HWND hwnd, ComPtr<ID3D12Device>* device)
 
 
 void DX12Context::CreateCommandObjects(
-	ComPtr<ID3D12Device> device,
 	HWND hwnd,
 	int32_t height, int32_t width) {
 
-	mDevice = device;
 
 	hr = mDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
 

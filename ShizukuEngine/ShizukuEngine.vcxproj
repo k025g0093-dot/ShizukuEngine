@@ -91,6 +91,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShizukuEngine\Camera.cpp" />
     <ClCompile Include="ShizukuEngine\ConvertString.cpp" />
+    <ClCompile Include="ShizukuEngine\DebugLayer.cpp" />
     <ClCompile Include="ShizukuEngine\DX12Context.cpp" />
     <ClCompile Include="ShizukuEngine\DXC.cpp" />
     <ClCompile Include="ShizukuEngine\LightManager.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="ShizukuEngine\AllVector.h" />
     <ClInclude Include="ShizukuEngine\Camera.h" />
     <ClInclude Include="ShizukuEngine\ConvertString.h" />
+    <ClInclude Include="ShizukuEngine\DebugLayer.h" />
     <ClInclude Include="ShizukuEngine\DX12Context.h" />
     <ClInclude Include="ShizukuEngine\DXC.h" />
     <ClInclude Include="ShizukuEngine\LightManager.h" />

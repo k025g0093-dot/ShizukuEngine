@@ -31,15 +31,15 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	descriptorRange[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER rootParameter[7] = {};
+	D3D12_ROOT_PARAMETER rootParameter[8] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[0].Descriptor.ShaderRegister = 0;
+	rootParameter[0].Descriptor.ShaderRegister = 0; // b0 material
 
-	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
 	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameter[1].Descriptor.ShaderRegister = 2;//register(t2)を使用するため
-	rootParameter[2].Descriptor.RegisterSpace = 0;
+	rootParameter[1].Descriptor.ShaderRegister = 2; // register(t2)
+	rootParameter[1].Descriptor.RegisterSpace = 0;
 
 	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -48,33 +48,38 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 
 	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[3].DescriptorTable.pDescriptorRanges = &descriptorRange[2];// t3 lights
+	rootParameter[3].DescriptorTable.pDescriptorRanges = &descriptorRange[2]; // t3 lights
 	rootParameter[3].DescriptorTable.NumDescriptorRanges = 1;
 
 	rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[4].DescriptorTable.pDescriptorRanges = &descriptorRange[1];// t1 normal texture
+	rootParameter[4].DescriptorTable.pDescriptorRanges = &descriptorRange[1]; // t1 normal texture
 	rootParameter[4].DescriptorTable.NumDescriptorRanges = 1;
 
-	rootParameter[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameter[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[5].Descriptor.ShaderRegister = 2;//b
+	rootParameter[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+	rootParameter[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootParameter[5].Constants.ShaderRegister = 1; // b1
 	rootParameter[5].Constants.RegisterSpace = 0;
 	rootParameter[5].Constants.Num32BitValues = 1;
 
-
-	rootParameter[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+	// [6] CBV b2 - Camera (pixel)
+	rootParameter[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[6].Constants.ShaderRegister = 3; // b3
-	rootParameter[6].Constants.RegisterSpace = 0;
-	rootParameter[6].Constants.Num32BitValues = 1; // uintひとつだけ送る
+	rootParameter[6].Descriptor.ShaderRegister = 2;
+
+	// [7] 32bit constant b3 - ActiveLightCount (pixel)
+	rootParameter[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+	rootParameter[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[7].Constants.ShaderRegister = 3; // b3
+	rootParameter[7].Constants.RegisterSpace = 0;
+	rootParameter[7].Constants.Num32BitValues = 1; // uintひとつだけ送る
 
 	descriptionRootSignature.pParameters = rootParameter;
 	descriptionRootSignature.NumParameters = _countof(rootParameter);
 
 
 	//Samplerの設定
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
+	D3D12_STATIC_SAMPLER_DESC staticSamplers[2] = {};
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
 	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲を繰り返す
 	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -83,6 +88,16 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX;//最大LOD
 	staticSamplers[0].ShaderRegister = 0;//register(s0)に対応
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//ピクセルシェーダーで使用
+
+	staticSamplers[1].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;//バイリニアフィルタ
+	staticSamplers[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;//0~1の範囲を繰り返す
+	staticSamplers[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[1].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;//比較しない
+	staticSamplers[1].MaxLOD = D3D12_FLOAT32_MAX;//最大LOD
+	staticSamplers[1].ShaderRegister = 1;//register(s1)に対応
+	staticSamplers[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//ピクセルシェーダーで使用
+
 
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
@@ -236,9 +251,9 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 
 	// レンダーターゲットの設定
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
-	// プリミティブトポロジーの設定（三角形として描画）
+	// プリミティブトポロジーの設定
 	graphicsPipelineStateDesc.PrimitiveTopologyType =
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 

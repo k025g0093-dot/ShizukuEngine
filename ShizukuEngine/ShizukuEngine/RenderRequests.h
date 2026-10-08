@@ -24,7 +24,7 @@ struct DrawRequest {
 class RenderRequests {
 public:
 
-	void initRender(ID3D12Device* device);
+	void InitRender(ComPtr<ID3D12Device> device);
 
 	//描画レンダーリクエスト
 	void RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList);

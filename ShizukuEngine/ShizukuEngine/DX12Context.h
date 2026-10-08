@@ -16,12 +16,10 @@ class DX12Context
 public:
 
 	void InitDXGIFactory(
-		HWND hwnd,
-		ComPtr<ID3D12Device>* device
+		HWND hwnd
 	);
 
 	void CreateCommandObjects(
-		ComPtr<ID3D12Device> device,
 		HWND hwnd,
 		int32_t height,int32_t width);
 
@@ -32,6 +30,9 @@ public:
 
 	//コマンドリストのゲッター
 	ID3D12GraphicsCommandList *GetCommandList(){ return commandList.Get(); }
+	//デバイスのゲッター
+	ComPtr<ID3D12Device> GetDevice() { return mDevice; }
+
 
 private://プライベート関数
 

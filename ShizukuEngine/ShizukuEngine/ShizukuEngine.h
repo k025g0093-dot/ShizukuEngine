@@ -6,6 +6,7 @@
 #include "RenderRequests.h"
 
 #include "LogSistem.h"
+#include "DebugLayer.h"
 
 //各種図形の関数が入ったヘッダ
 #include"TriangleModel.h"
@@ -57,8 +58,8 @@ private://各種変数などの初期化
 	DX12Context mDX12Context{};
 	WinApp mWinApp{};
 	RenderRequests mRenderRequests{};
+	DebugLayer mDebugLayer{};
 
-	ComPtr<ID3D12Device> mDevice;
 	static ShizukuEngine* mInstance;
 
 	std::unique_ptr<TriangleModel> mTriangleModel;

@@ -11,7 +11,7 @@ struct Material;
 class TriangleModel :public Model //基底クラスModelを参照
 {
 public:
-	void Initialization(ComPtr<ID3D12Device>* device);
+	void Initialization(ComPtr<ID3D12Device> device);
 
     void UpdateVertices(
         const Vector3& positions,

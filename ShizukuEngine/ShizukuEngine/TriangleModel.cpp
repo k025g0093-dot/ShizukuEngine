@@ -1,7 +1,7 @@
 #include "TriangleModel.h"
 
 //三角形描画に当たり必要な初期化
-void TriangleModel::Initialization(ComPtr<ID3D12Device>* device)
+void TriangleModel::Initialization(ComPtr<ID3D12Device> device)
 {
 
 	//一つの三角形を描画するので頂点数は3
@@ -9,7 +9,7 @@ void TriangleModel::Initialization(ComPtr<ID3D12Device>* device)
 	const UINT bufferSize = sizeof(VertexData) * maxVertices;
 	mVertexCount = maxVertices;
 
-	mPVertexResource = CreateBufferResource(device->Get(), bufferSize);
+	mPVertexResource = CreateBufferResource(device.Get(), bufferSize);
 	mPVertexResource->Map(0, nullptr, reinterpret_cast<void**>(&mPVertexDatta));
 
 	mVertexBufferView.BufferLocation = mPVertexResource->GetGPUVirtualAddress();
@@ -17,14 +17,14 @@ void TriangleModel::Initialization(ComPtr<ID3D12Device>* device)
 	mVertexBufferView.SizeInBytes = bufferSize;
 
 	// マテリアルのセットアップ（Mapしたまま保持してDrawのたびに色を書き換えられるようにする）
-	mPMaterialResource = CreateBufferResource(device->Get(), Align256(sizeof(Material)));
+	mPMaterialResource = CreateBufferResource(device.Get(), Align256(sizeof(Material)));
 	mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color = { 1.0f,1.0f,1.0f,1.0f };
 	materialData->enableLighting = false;//ライティングを受けないように設定
 	materialData->uvTransform = MakeIdentity4x4();
 
 	// ライトのセットアップ
-	mPLightResource = CreateBufferResource(device->Get(), Align256(sizeof(LightData)));
+	mPLightResource = CreateBufferResource(device.Get(), Align256(sizeof(LightData)));
 	LightData* lightData = nullptr;
 	mPLightResource->Map(0, nullptr, reinterpret_cast<void**>(&lightData));
 	lightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };

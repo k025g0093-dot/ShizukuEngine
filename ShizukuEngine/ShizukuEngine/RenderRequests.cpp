@@ -1,12 +1,12 @@
 #include "RenderRequests.h"
 
-void RenderRequests::initRender(ID3D12Device *device) {
+void RenderRequests::InitRender(ComPtr<ID3D12Device> device) {
 
 	HRESULT hr;
 	//ルートシグネチャを作成
-	rootSignature = CreateRootSignature(device, hr);
+	rootSignature = CreateRootSignature(device.Get(), hr);
 	//PSOの作成
-	pipelineState = CreatePipelineStateDesc(device, rootSignature, hr);
+	pipelineState = CreatePipelineStateDesc(device.Get(), rootSignature, hr);
 
 }
 
