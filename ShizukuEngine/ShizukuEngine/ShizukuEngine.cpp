@@ -74,6 +74,7 @@ void ShizukuEngine::DrawTriangle
 		mTriangleModel->Initialization(mDX12Context.GetDevice());
 	}
 	DrawRequest req;
+	req.model = mTriangleModel.get();
 	req.pos = pos;//位置を渡す
 	req.rot = rot;//回転度を渡す
 	req.scale = scale;//スケールを渡す
