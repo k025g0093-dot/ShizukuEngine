@@ -24,7 +24,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 			engine->PreDraw();
 
-			engine->DrawTriangle({ 1,1,1 }, rot, { 0,0,0 }, { 1,1,1,1 }, 0);
+			engine->DrawTriangle({ 1,1,1 }, rot, { 1,1,1 }, { 1,1,1,1 }, 0);
 
 			engine->PostDraw();
 
