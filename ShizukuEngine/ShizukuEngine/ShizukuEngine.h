@@ -4,8 +4,10 @@
 #include "DXGI.h"
 #include "DX12Context.h"
 #include "RenderRequests.h"
-//各種図形の関数が入ったヘッダ
 
+#include "LogSistem.h"
+
+//各種図形の関数が入ったヘッダ
 #include"TriangleModel.h"
 
 //ComPtr地獄だっきゃくのために必要

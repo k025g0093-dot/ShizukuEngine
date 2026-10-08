@@ -1,9 +1,12 @@
 #include "RenderRequests.h"
 
-void RenderRequests::initRender(ComPtr<ID3D12Device>* device) {
+void RenderRequests::initRender(ID3D12Device *device) {
 
 	HRESULT hr;
-	pipelineState = CreatePipelineStateDesc(device->Get(), rootSignature, hr);
+	//ルートシグネチャを作成
+	rootSignature = CreateRootSignature(device, hr);
+	//PSOの作成
+	pipelineState = CreatePipelineStateDesc(device, rootSignature, hr);
 
 }
 
@@ -15,7 +18,7 @@ void RenderRequests::DrawRequestsSubmission(DrawRequest drawRequest) {
 void RenderRequests::RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList)
 {
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // 3Dリクエストと2Dリクエストを分離
+	// 3Dリクエストと2Dリクエストを分離
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 	std::vector<DrawRequest> request3D;
 	std::vector<DrawRequest> request2D;
@@ -81,7 +84,7 @@ void RenderRequests::Render3DTarget(
 
 	int start = 0;
 	//ソートの範囲内で描画のリクエストを作成していく
-	while (start<(int)sortedRequests.size())
+	while (start < (int)sortedRequests.size())
 	{
 		//ソートの一番最初の値を入れるheadに入れる
 		const DrawRequest& head = sortedRequests[start];

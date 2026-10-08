@@ -20,9 +20,13 @@ ShizukuEngine::ShizukuEngine(int Height, int width, wstring WinName){
 //初期化関数
 void ShizukuEngine::Initialize(int Height, int width) {
 
+	// ログ用フォルダの作成とログ初期化
+	std::filesystem::create_directory("logs");
+	InitializeLog();
+
 	mDX12Context.InitDXGIFactory(mWinApp.GetHwnd(), &mDevice);
 	mDX12Context.CreateCommandObjects(mDevice, mWinApp.GetHwnd(), Height,width);
-	mRenderRequests.initRender(&mDevice);
+	mRenderRequests.initRender(mDevice.Get());
 }
 
 

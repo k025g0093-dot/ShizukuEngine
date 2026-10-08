@@ -13,18 +13,20 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	// t0: texture, t1: normal texture, t3: lights
+	// t2: InstanceData は RootSRV で直接アドレスを渡すので不要
 	D3D12_DESCRIPTOR_RANGE descriptorRange[3] = {};
-	descriptorRange[0].BaseShaderRegister = 0;
+	descriptorRange[0].BaseShaderRegister = 0;// t0 texture
 	descriptorRange[0].NumDescriptors = 1;
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	descriptorRange[1].BaseShaderRegister = 1;
+	descriptorRange[1].BaseShaderRegister = 1;// t1 normal texture
 	descriptorRange[1].NumDescriptors = 1;
 	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	descriptorRange[2].BaseShaderRegister = 3;
+	descriptorRange[2].BaseShaderRegister = 3;//light
 	descriptorRange[2].NumDescriptors = 1;
 	descriptorRange[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
@@ -36,26 +38,30 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 
 	rootParameter[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameter[1].Descriptor.ShaderRegister = 1;
+	rootParameter[1].Descriptor.ShaderRegister = 2;//register(t2)を使用するため
+	rootParameter[2].Descriptor.RegisterSpace = 0;
 
 	rootParameter[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[2].DescriptorTable.pDescriptorRanges = &descriptorRange[0];
+	rootParameter[2].DescriptorTable.pDescriptorRanges = &descriptorRange[0]; // t0 texture
 	rootParameter[2].DescriptorTable.NumDescriptorRanges = 1;
 
 	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[3].DescriptorTable.pDescriptorRanges = &descriptorRange[2];
+	rootParameter[3].DescriptorTable.pDescriptorRanges = &descriptorRange[2];// t3 lights
 	rootParameter[3].DescriptorTable.NumDescriptorRanges = 1;
 
 	rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[4].DescriptorTable.pDescriptorRanges = &descriptorRange[1];
+	rootParameter[4].DescriptorTable.pDescriptorRanges = &descriptorRange[1];// t1 normal texture
 	rootParameter[4].DescriptorTable.NumDescriptorRanges = 1;
 
 	rootParameter[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[5].Descriptor.ShaderRegister = 2;
+	rootParameter[5].Descriptor.ShaderRegister = 2;//b
+	rootParameter[5].Constants.RegisterSpace = 0;
+	rootParameter[5].Constants.Num32BitValues = 1;
+
 
 	rootParameter[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 	rootParameter[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
