@@ -4,9 +4,21 @@
 class Camera {
 public:
     Camera() {
-        transform.scale     = { 1.0f, 1.0f,  1.0f };
-        transform.rotate    = { 0.0f, 0.0f,  0.0f };
+        transform.scale = { 1.0f, 1.0f,  1.0f };
+        transform.rotate = { 0.0f, 0.0f,  0.0f };
         transform.translate = { 0.0f, 0.0f, -10.0f };
+        mNearPlane = 0.1f;
+        mFarPlane = 10000.0f;
+    }
+
+    Matrix4x4 GetViewMatrix() {
+        Matrix4x4 cameraMatrix = MakeAffineMatrix(
+            transform.scale, transform.rotate, transform.translate);
+        return Inverse(cameraMatrix);
+    }
+
+    Matrix4x4 GetProjectionMatrix(float width, float height) {
+        return MakePerspectiveFovMatrix(0.45f, width / height, mNearPlane, mFarPlane);
     }
 
     Matrix4x4 GetViewProjectionMatrix(float width, float height) {
@@ -18,5 +30,15 @@ public:
         return Multiply(viewMatrix, projMatrix);
     }
 
+    float GetNearPlane() const { return mNearPlane; }
+    float GetFarPlane() const { return mFarPlane; }
+
+    void SetNearPlane(float n) { mNearPlane = n; }
+    void SetFarPlane(float f) { mFarPlane = f; }
+
     TransformData transform;
+
+private:
+    float mNearPlane;
+    float mFarPlane;
 };

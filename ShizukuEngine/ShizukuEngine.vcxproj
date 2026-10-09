@@ -114,6 +114,7 @@
     <ClInclude Include="ShizukuEngine\DebugLayer.h" />
     <ClInclude Include="ShizukuEngine\DX12Context.h" />
     <ClInclude Include="ShizukuEngine\DXC.h" />
+    <ClInclude Include="ShizukuEngine\InstanceData.h" />
     <ClInclude Include="ShizukuEngine\LightManager.h" />
     <ClInclude Include="ShizukuEngine\LogSistem.h" />
     <ClInclude Include="ShizukuEngine\Model.h" />

@@ -185,6 +185,9 @@
     <ClInclude Include="ShizukuEngine\DebugLayer.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\デバックレイヤー</Filter>
     </ClInclude>
+    <ClInclude Include="ShizukuEngine\InstanceData.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\RenderRequests</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig">

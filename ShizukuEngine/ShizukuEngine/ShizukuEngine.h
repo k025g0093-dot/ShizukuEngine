@@ -7,6 +7,7 @@
 
 #include "LogSistem.h"
 #include "DebugLayer.h"
+#include "Camera.h"
 
 //各種図形の関数が入ったヘッダ
 #include"TriangleModel.h"
@@ -49,7 +50,7 @@ public:
 private://ヘルパー関数など内部関数がメイン
 
 	//ヘルパー関数
-
+	const Matrix4x4& GetViewProjectionMatrix() const { return mViewProjectionMatrix; }
 
 
 
@@ -59,9 +60,14 @@ private://各種変数などの初期化
 	WinApp mWinApp{};
 	RenderRequests mRenderRequests{};
 	DebugLayer mDebugLayer{};
+	Camera mCamera{};
 
 	static ShizukuEngine* mInstance;
 
+
 	std::unique_ptr<TriangleModel> mTriangleModel;
+	Matrix4x4 mViewProjectionMatrix;
+	int mHeight;
+	int mWidth;
 };
 
