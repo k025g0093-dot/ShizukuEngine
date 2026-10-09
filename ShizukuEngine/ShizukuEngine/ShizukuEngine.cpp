@@ -23,6 +23,9 @@ ShizukuEngine::ShizukuEngine(int Height, int width, wstring WinName){
 //初期化関数
 void ShizukuEngine::Initialize(int Height, int width) {
 
+	// COM は Windows 機能を使うために先に初期化しておく
+	HRESULT hrCo = CoInitializeEx(0, COINIT_MULTITHREADED);
+
 	// ログ用フォルダの作成とログ初期化
 	std::filesystem::create_directory("logs");
 	InitializeLog();
