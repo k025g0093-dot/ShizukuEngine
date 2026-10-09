@@ -6,7 +6,7 @@ const int32_t kClineHeight = 720;
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
-	ShizukuEngine* engine = new ShizukuEngine(kClineHeight, kClineWidth, L"ShizukuEngine");
+	ShizukuEngine* engine = new ShizukuEngine(kClineWidth, kClineHeight,  L"ShizukuEngine");
 
 	Vector3 pos{ 0,0,0 };
 	Vector3 rot{ 0,0,0 };

@@ -2,24 +2,15 @@
 
 void RenderRequests::InitRender(ComPtr<ID3D12Device> device) {
 
+	mDevice = device.Get();
+
 	HRESULT hr;
 	//ルートシグネチャを作成
-	rootSignature = CreateRootSignature(device.Get(), hr);
+	rootSignature = CreateRootSignature(mDevice, hr);
 	//PSOの作成
-	pipelineState = CreatePipelineStateDesc(device.Get(), rootSignature, hr);
+	pipelineState = CreatePipelineStateDesc(mDevice, rootSignature, hr);
 
-	mInstanceBuffer = CreateBufferResource(
-		device.Get(),
-		sizeof(InstanceData) * mMaxDrawCount,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_FLAG_NONE
-	);
-
-	mInstanceBuffer->Map(
-		0,
-		nullptr,
-		reinterpret_cast<void**>(&mInstanceData)
-	);
+	CreateInstanceBuffer(mMaxDrawCount);
 }
 
 void RenderRequests::DrawRequestsSubmission(DrawRequest drawRequest) {
@@ -66,6 +57,8 @@ void RenderRequests::RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> command
 //3Dオブジェクトを対象とした描画リクエスト送信関数
 //----------------------------------------
 
+#pragma region 3Dオブジェクトのリクエスト作成
+
 void RenderRequests::Render3DTarget(
 	const std::vector<DrawRequest>& requests3D,
 	ComPtr<ID3D12GraphicsCommandList> commandList
@@ -76,8 +69,6 @@ void RenderRequests::Render3DTarget(
 
 	//インスタンス描画
 	std::vector<DrawRequest> sortedRequests = requests3D;
-	//インスタンス描画をする際に使うインデックス
-	std::vector<int> instanceIndex(sortedRequests.size());
 
 	std::sort(sortedRequests.begin(), sortedRequests.end(),
 		[](const DrawRequest& a, const DrawRequest& b) {
@@ -91,20 +82,26 @@ void RenderRequests::Render3DTarget(
 		}
 	);
 
+	//描画上限を超えたリクエストを送ったときにドローカウントを上げてMapする
 
+	int maxDrawCount = mMaxDrawCount;
+	while (sortedRequests.size() > size_t( maxDrawCount)) {
+		maxDrawCount = maxDrawCount * 2;
+	}
+	if (maxDrawCount > mMaxDrawCount) {
+		CreateInstanceBuffer(maxDrawCount);
+		mMaxDrawCount = maxDrawCount;
+	}
 
 	//ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
 	//PSOの設定
 	commandList->SetPipelineState(pipelineState.Get());
 
-	int32_t currentInstanceCount = 0;
-	std::vector<int>mInstanceIndex(sortedRequests.size());
 
 	for (int i = 0; i < (int)sortedRequests.size(); i++) {
-		if (currentInstanceCount > mMaxDrawCount)break;
+		if (i >= mMaxDrawCount)break;
 
-		mInstanceIndex[i] = currentInstanceCount;
 		const DrawRequest& request = sortedRequests[i];
 
 		// 安全ガード処理（既存コード）
@@ -129,13 +126,7 @@ void RenderRequests::Render3DTarget(
 
 		mInstanceData[i].World= MakeAffineMatrix(safeScale,safeRot,safePos);
 		mInstanceData[i].WVP= Multiply(mInstanceData[i].World, mViewProjectionMatrix);
-
-
-
-		currentInstanceCount++;
 	}
-	if (currentInstanceCount == 0) return;
-
 
 	int start = 0;
 	//ソートの範囲内で描画のリクエストを作成していく
@@ -167,11 +158,10 @@ void RenderRequests::Render3DTarget(
 
 		if (head.model) {
 			//スタートのインデックスにインスタンス「スタート」のインデックスを渡す
-			UINT startIndex = (UINT)(instanceIndex[start]);
+			UINT startIndex = (UINT)(start);
 			commandList->SetGraphicsRoot32BitConstant(5, startIndex, 0);
 			head.model->Draw(
 				commandList.Get(),
-				head.textureIndex,
 				(UINT)(count),
 				startIndex
 			);
@@ -184,6 +174,9 @@ void RenderRequests::Render3DTarget(
 
 }
 
+#pragma endregion
+
+
 //----------------------------------------
 //2Dオブジェクトを対象とした描画リクエスト送信関数
 //----------------------------------------
@@ -191,5 +184,25 @@ void RenderRequests::Render2DTarget(
 	const std::vector<DrawRequest>& requests2D,
 	ComPtr<ID3D12GraphicsCommandList> commandlist
 ) {
+
+}
+
+void RenderRequests::CreateInstanceBuffer(int DrawCount) {
+	mInstanceBuffer = CreateBufferResource(
+		mDevice,
+		sizeof(InstanceData) * DrawCount,
+		D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_RESOURCE_FLAG_NONE
+	);
+	//ちゃんと作られてるかの確認
+	assert(mInstanceBuffer);
+
+	mInstanceBuffer->Map(
+		0,
+		nullptr,
+		reinterpret_cast<void**>(&mInstanceData)
+	);
+
+
 
 }

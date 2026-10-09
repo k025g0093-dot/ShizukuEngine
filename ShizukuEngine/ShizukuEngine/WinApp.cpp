@@ -18,7 +18,7 @@ LRESULT CALLBACK WindowProc(
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-void WinApp::InitWindow(int Height, int width, std::wstring WinName) {
+void WinApp::InitWindow(int width, int Height,  std::wstring WinName) {
 	//ウィンドウクラスの登録
 	WNDCLASS ws{};
 	ws.lpfnWndProc = WindowProc;

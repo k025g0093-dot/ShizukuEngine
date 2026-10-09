@@ -13,15 +13,10 @@ class TriangleModel :public Model //基底クラスModelを参照
 public:
 	void Initialization(ComPtr<ID3D12Device> device);
 
-    void UpdateVertices(
-        const Vector3& positions,
-        const Vector2& texCord,
-        const Vector3& normal,
-        int index) override;
+
 
     void Draw(
         ID3D12GraphicsCommandList* cmdList,
-        int textureIndex,
         UINT instanceCount,
         UINT startInstanceLocation)override;
 
@@ -35,7 +30,7 @@ private://メンバ変数
     ComPtr<ID3D12Resource>   mPLightResource;   // 追加
     Material* materialData = nullptr;
 
-    VertexData* m_pVertexData = nullptr;
+    VertexData* mPVertexData = nullptr;
 
     uint32_t Align256(uint32_t size) {
         return (size + 0xff) & ~0xff;

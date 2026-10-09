@@ -52,9 +52,6 @@
     <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など">
       <UniqueIdentifier>{a314b33d-3fd7-4941-a789-16cc13e839f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など\図形関係">
-      <UniqueIdentifier>{b7365007-dcf0-4f2d-8b5f-f7f1e7034328}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\VertexResource">
       <UniqueIdentifier>{97ca2dbe-2820-42a3-8d03-8b7171c57207}</UniqueIdentifier>
     </Filter>
@@ -69,6 +66,15 @@
     </Filter>
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\デバックレイヤー">
       <UniqueIdentifier>{8e134a24-3978-4329-9b33-2d92aa95f82e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D描画関係">
+      <UniqueIdentifier>{d7832a8a-af81-4a92-83a7-f64f5379d23a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D描画関係\図形関係">
+      <UniqueIdentifier>{b7365007-dcf0-4f2d-8b5f-f7f1e7034328}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係">
+      <UniqueIdentifier>{63e3c9a9-dec0-4177-8a65-1587db274cf5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -100,10 +106,7 @@
       <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
     </ClCompile>
     <ClCompile Include="ShizukuEngine\TriangleModel.cpp">
-      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\図形関係</Filter>
-    </ClCompile>
-    <ClCompile Include="ShizukuEngine\Model.cpp">
-      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など</Filter>
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D描画関係\図形関係</Filter>
     </ClCompile>
     <ClCompile Include="ShizukuEngine\VertexResource.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\VertexResource</Filter>
@@ -119,6 +122,15 @@
     </ClCompile>
     <ClCompile Include="ShizukuEngine\DebugLayer.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\デバックレイヤー</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\Model.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D描画関係</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\Sprite.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\TextureManager.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,10 +174,7 @@
       <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
     </ClInclude>
     <ClInclude Include="ShizukuEngine\TriangleModel.h">
-      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\図形関係</Filter>
-    </ClInclude>
-    <ClInclude Include="ShizukuEngine\Model.h">
-      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など</Filter>
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D描画関係\図形関係</Filter>
     </ClInclude>
     <ClInclude Include="ShizukuEngine\AllVector.h">
       <Filter>ソース ファイル\ShizukuEngine\AllInclude.h</Filter>
@@ -187,6 +196,15 @@
     </ClInclude>
     <ClInclude Include="ShizukuEngine\InstanceData.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\RenderRequests</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Model.h">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D描画関係</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Sprite.h">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\TextureManager.h">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
