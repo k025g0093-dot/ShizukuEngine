@@ -7,14 +7,17 @@ ShizukuEngine* ShizukuEngine::mInstance = nullptr;
 void ShizukuEngine::GetInstance(int Height, int width, wstring WinName) {
 	if (mInstance == nullptr) {
 		//インスタンスがない場合はnewをする
+
 		mInstance = new ShizukuEngine(Height, width, WinName);
 	}
 }
 
 ShizukuEngine::ShizukuEngine(int Height, int width, wstring WinName){
-
+	mHeight = Height;
+	mWidth = width;
 	mWinApp.InitWindow(Height, width, WinName);
 	Initialize(Height,width);
+
 }
 
 //初期化関数
@@ -28,8 +31,11 @@ void ShizukuEngine::Initialize(int Height, int width) {
 #endif
 
 	mDX12Context.InitDXGIFactory(mWinApp.GetHwnd());
-	mDX12Context.CreateCommandObjects(mWinApp.GetHwnd(), Height, width);
+	mDX12Context.CreateCommandObjects(mWinApp.GetHwnd(), mHeight, mWidth);
+
 	mRenderRequests.InitRender(mDX12Context.GetDevice());
+
+
 
 #ifdef _DEBUG
 	mDebugLayer.SetupInfoQueue(mDX12Context.GetDevice());
@@ -53,7 +59,11 @@ void ShizukuEngine::PreDraw()
 void ShizukuEngine::PostDraw() 
 {
 
-	mRenderRequests.RenderAllRequests(mDX12Context.GetCommandList());
+	Matrix4x4 view = mCamera.GetViewMatrix();
+	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mHeight, (float)mWidth);
+	mViewProjectionMatrix = Multiply(view, proj);
+
+	mRenderRequests.RenderAllRequests(mDX12Context.GetCommandList(), mViewProjectionMatrix);
 
 	//ここで未来のレンダーリクエスト関数を使用
 	//順番の前後には注意そこを間違えると描画されなくなる

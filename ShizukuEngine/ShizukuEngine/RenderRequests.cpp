@@ -8,6 +8,18 @@ void RenderRequests::InitRender(ComPtr<ID3D12Device> device) {
 	//PSOの作成
 	pipelineState = CreatePipelineStateDesc(device.Get(), rootSignature, hr);
 
+	mInstanceBuffer = CreateBufferResource(
+		device.Get(),
+		sizeof(InstanceData) * mMaxDrawCount,
+		D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_RESOURCE_FLAG_NONE
+	);
+
+	mInstanceBuffer->Map(
+		0,
+		nullptr,
+		reinterpret_cast<void**>(&mInstanceData)
+	);
 }
 
 void RenderRequests::DrawRequestsSubmission(DrawRequest drawRequest) {
@@ -15,13 +27,15 @@ void RenderRequests::DrawRequestsSubmission(DrawRequest drawRequest) {
 }
 
 
-void RenderRequests::RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList)
+void RenderRequests::RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList,Matrix4x4 viewProjectionMatrix)
 {
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 	// 3Dリクエストと2Dリクエストを分離
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 	std::vector<DrawRequest> request3D;
 	std::vector<DrawRequest> request2D;
+
+	mViewProjectionMatrix = viewProjectionMatrix;
 
 	for (auto& req : mDrawRequests) {
 		if (req.isSprit) {
@@ -77,10 +91,51 @@ void RenderRequests::Render3DTarget(
 		}
 	);
 
+
+
 	//ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
 	//PSOの設定
 	commandList->SetPipelineState(pipelineState.Get());
+
+	int32_t currentInstanceCount = 0;
+	std::vector<int>mInstanceIndex(sortedRequests.size());
+
+	for (int i = 0; i < (int)sortedRequests.size(); i++) {
+		if (currentInstanceCount > mMaxDrawCount)break;
+
+		mInstanceIndex[i] = currentInstanceCount;
+		const DrawRequest& request = sortedRequests[i];
+
+		// 安全ガード処理（既存コード）
+		Vector3 safePos = request.pos;
+		Vector3 safeRot = request.rot;
+		Vector3 safeScale = request.scale;
+
+		if (std::isnan(safePos.x) || std::isnan(safePos.y) || std::isnan(safePos.z)) {
+			safePos = { 0.0f, 0.0f, 0.0f };
+		}
+		if (std::isnan(safeRot.x) || std::isnan(safeRot.y) || std::isnan(safeRot.z)) {
+			safeRot = { 0.0f, 0.0f, 0.0f };
+		}
+		if (std::isnan(safeScale.x) || std::isnan(safeScale.y) || std::isnan(safeScale.z)) {
+			safeScale = { 1.0f, 1.0f, 1.0f };
+		}
+
+		const float minScale = 0.0001f;
+		if (std::abs(safeScale.x) < minScale) safeScale.x = (safeScale.x >= 0.0f) ? minScale : -minScale;
+		if (std::abs(safeScale.y) < minScale) safeScale.y = (safeScale.y >= 0.0f) ? minScale : -minScale;
+		if (std::abs(safeScale.z) < minScale) safeScale.z = (safeScale.z >= 0.0f) ? minScale : -minScale;
+
+		mInstanceData[i].World= MakeAffineMatrix(safeScale,safeRot,safePos);
+		mInstanceData[i].WVP= Multiply(mInstanceData[i].World, mViewProjectionMatrix);
+
+
+
+		currentInstanceCount++;
+	}
+	if (currentInstanceCount == 0) return;
+
 
 	int start = 0;
 	//ソートの範囲内で描画のリクエストを作成していく
@@ -106,6 +161,9 @@ void RenderRequests::Render3DTarget(
 
 		//トポロジーの設定
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		commandList->SetGraphicsRootShaderResourceView(
+				1, mInstanceBuffer->GetGPUVirtualAddress());
 
 		if (head.model) {
 			//スタートのインデックスにインスタンス「スタート」のインデックスを渡す

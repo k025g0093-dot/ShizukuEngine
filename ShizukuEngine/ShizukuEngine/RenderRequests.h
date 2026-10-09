@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "PSO.h"
 #include "Camera.h"
+#include "InstanceData.h"
 #include <algorithm> 
 //ドローリクエストの構造体
 struct DrawRequest {
@@ -27,7 +28,7 @@ public:
 	void InitRender(ComPtr<ID3D12Device> device);
 
 	//描画レンダーリクエスト
-	void RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList);
+	void RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList,Matrix4x4 viewProjectionMatrix);
 
 	void DrawRequestsSubmission(DrawRequest drawRequest);
 
@@ -51,6 +52,11 @@ private://メンバ変数
 	ComPtr<ID3D12RootSignature>  rootSignature;//ルートシグネチャ
 	ComPtr<ID3D12PipelineState>  pipelineState;//パイプラインステート
 	std::vector<DrawRequest> mDrawRequests;//ドローリクエストの変数
+
+	ComPtr<ID3D12Resource> mInstanceBuffer;
+
+	InstanceData* mInstanceData = nullptr;
+	InstanceData* mMappedInstanceBuffer = nullptr;
 
 	Matrix4x4 mViewProjectionMatrix;
 
