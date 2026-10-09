@@ -2,24 +2,15 @@
 
 void RenderRequests::InitRender(ComPtr<ID3D12Device> device) {
 
+	mDevice = device.Get();
+
 	HRESULT hr;
 	//ルートシグネチャを作成
-	rootSignature = CreateRootSignature(device.Get(), hr);
+	rootSignature = CreateRootSignature(mDevice, hr);
 	//PSOの作成
-	pipelineState = CreatePipelineStateDesc(device.Get(), rootSignature, hr);
+	pipelineState = CreatePipelineStateDesc(mDevice, rootSignature, hr);
 
-	mInstanceBuffer = CreateBufferResource(
-		device.Get(),
-		sizeof(InstanceData) * mMaxDrawCount,
-		D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_FLAG_NONE
-	);
-
-	mInstanceBuffer->Map(
-		0,
-		nullptr,
-		reinterpret_cast<void**>(&mInstanceData)
-	);
+	CreateInstanceBuffer(mMaxDrawCount);
 }
 
 void RenderRequests::DrawRequestsSubmission(DrawRequest drawRequest) {
@@ -66,6 +57,8 @@ void RenderRequests::RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> command
 //3Dオブジェクトを対象とした描画リクエスト送信関数
 //----------------------------------------
 
+#pragma region 3Dオブジェクトのリクエスト作成
+
 void RenderRequests::Render3DTarget(
 	const std::vector<DrawRequest>& requests3D,
 	ComPtr<ID3D12GraphicsCommandList> commandList
@@ -91,7 +84,16 @@ void RenderRequests::Render3DTarget(
 		}
 	);
 
+	//描画上限を超えたリクエストを送ったときにドローカウントを上げてMapする
 
+	int maxDrawCount = mMaxDrawCount;
+	while (sortedRequests.size() > size_t( maxDrawCount)) {
+		maxDrawCount = maxDrawCount * 2;
+	}
+	if (maxDrawCount > mMaxDrawCount) {
+		CreateInstanceBuffer(maxDrawCount);
+		mMaxDrawCount = maxDrawCount;
+	}
 
 	//ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
@@ -101,8 +103,10 @@ void RenderRequests::Render3DTarget(
 	int32_t currentInstanceCount = 0;
 	std::vector<int>mInstanceIndex(sortedRequests.size());
 
+
+
 	for (int i = 0; i < (int)sortedRequests.size(); i++) {
-		if (currentInstanceCount > mMaxDrawCount)break;
+		if (currentInstanceCount >= mMaxDrawCount)break;
 
 		mInstanceIndex[i] = currentInstanceCount;
 		const DrawRequest& request = sortedRequests[i];
@@ -184,6 +188,9 @@ void RenderRequests::Render3DTarget(
 
 }
 
+#pragma endregion
+
+
 //----------------------------------------
 //2Dオブジェクトを対象とした描画リクエスト送信関数
 //----------------------------------------
@@ -191,5 +198,23 @@ void RenderRequests::Render2DTarget(
 	const std::vector<DrawRequest>& requests2D,
 	ComPtr<ID3D12GraphicsCommandList> commandlist
 ) {
+
+}
+
+void RenderRequests::CreateInstanceBuffer(int DrawCount) {
+	mInstanceBuffer = CreateBufferResource(
+		mDevice,
+		sizeof(InstanceData) * DrawCount,
+		D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_RESOURCE_FLAG_NONE
+	);
+	mInstanceBuffer->Map(
+		0,
+		nullptr,
+		reinterpret_cast<void**>(&mInstanceData)
+	);
+
+	//ちゃんと作られてるかの確認
+	assert(mInstanceBuffer);
 
 }

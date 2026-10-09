@@ -21,7 +21,7 @@ ShizukuEngine::ShizukuEngine(int Height, int width, wstring WinName){
 }
 
 //初期化関数
-void ShizukuEngine::Initialize(int Height, int width) {
+void ShizukuEngine::Initialize( int width,int Height) {
 
 	// COM は Windows 機能を使うために先に初期化しておく
 	HRESULT hrCo = CoInitializeEx(0, COINIT_MULTITHREADED);
@@ -63,7 +63,7 @@ void ShizukuEngine::PostDraw()
 {
 
 	Matrix4x4 view = mCamera.GetViewMatrix();
-	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mHeight, (float)mWidth);
+	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mWidth, (float)mHeight);
 	mViewProjectionMatrix = Multiply(view, proj);
 
 	mRenderRequests.RenderAllRequests(mDX12Context.GetCommandList(), mViewProjectionMatrix);
