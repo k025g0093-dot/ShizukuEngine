@@ -69,8 +69,6 @@ void RenderRequests::Render3DTarget(
 
 	//インスタンス描画
 	std::vector<DrawRequest> sortedRequests = requests3D;
-	//インスタンス描画をする際に使うインデックス
-	std::vector<int> instanceIndex(sortedRequests.size());
 
 	std::sort(sortedRequests.begin(), sortedRequests.end(),
 		[](const DrawRequest& a, const DrawRequest& b) {
@@ -100,15 +98,10 @@ void RenderRequests::Render3DTarget(
 	//PSOの設定
 	commandList->SetPipelineState(pipelineState.Get());
 
-	int32_t currentInstanceCount = 0;
-	std::vector<int>mInstanceIndex(sortedRequests.size());
-
-
 
 	for (int i = 0; i < (int)sortedRequests.size(); i++) {
-		if (currentInstanceCount >= mMaxDrawCount)break;
+		if (i >= mMaxDrawCount)break;
 
-		mInstanceIndex[i] = currentInstanceCount;
 		const DrawRequest& request = sortedRequests[i];
 
 		// 安全ガード処理（既存コード）
@@ -133,13 +126,7 @@ void RenderRequests::Render3DTarget(
 
 		mInstanceData[i].World= MakeAffineMatrix(safeScale,safeRot,safePos);
 		mInstanceData[i].WVP= Multiply(mInstanceData[i].World, mViewProjectionMatrix);
-
-
-
-		currentInstanceCount++;
 	}
-	if (currentInstanceCount == 0) return;
-
 
 	int start = 0;
 	//ソートの範囲内で描画のリクエストを作成していく
@@ -171,11 +158,10 @@ void RenderRequests::Render3DTarget(
 
 		if (head.model) {
 			//スタートのインデックスにインスタンス「スタート」のインデックスを渡す
-			UINT startIndex = (UINT)(instanceIndex[start]);
+			UINT startIndex = (UINT)(start);
 			commandList->SetGraphicsRoot32BitConstant(5, startIndex, 0);
 			head.model->Draw(
 				commandList.Get(),
-				head.textureIndex,
 				(UINT)(count),
 				startIndex
 			);
@@ -208,13 +194,15 @@ void RenderRequests::CreateInstanceBuffer(int DrawCount) {
 		D3D12_HEAP_TYPE_UPLOAD,
 		D3D12_RESOURCE_FLAG_NONE
 	);
+	//ちゃんと作られてるかの確認
+	assert(mInstanceBuffer);
+
 	mInstanceBuffer->Map(
 		0,
 		nullptr,
 		reinterpret_cast<void**>(&mInstanceData)
 	);
 
-	//ちゃんと作られてるかの確認
-	assert(mInstanceBuffer);
+
 
 }

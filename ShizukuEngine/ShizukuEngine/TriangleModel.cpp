@@ -10,15 +10,15 @@ void TriangleModel::Initialization(ComPtr<ID3D12Device> device)
 	mVertexCount = maxVertices;
 
 	mPVertexResource = CreateBufferResource(device.Get(), bufferSize);
-	mPVertexResource->Map(0, nullptr, reinterpret_cast<void**>(&mPVertexDatta));
+	mPVertexResource->Map(0, nullptr, reinterpret_cast<void**>(&mPVertexData));
 
 	mVertexBufferView.BufferLocation = mPVertexResource->GetGPUVirtualAddress();
 	mVertexBufferView.StrideInBytes = sizeof(VertexData);
 	mVertexBufferView.SizeInBytes = bufferSize;
 
-	mPVertexDatta[0] = { { -0.5f, -0.5f, 0.0f,1 },{0.0f,1.0f}, { 0.0f, 0.0f, -1.0f } };
-	mPVertexDatta[1] = { { 0.0f,  0.5f, 0.0f,1 }, { 0.5f, 0.0f }, { 0.0f, 0.0f, -1.0f } };
-	mPVertexDatta[2] = { { 0.5f, -0.5f, 0.0f ,1}, { 1.0f, 1.0f }, { 0.0f, 0.0f, -1.0f } };
+	mPVertexData[0] = { { -0.5f, -0.5f, 0.0f,1 },{0.0f,1.0f}, { 0.0f, 0.0f, -1.0f } };
+	mPVertexData[1] = { { 0.0f,  0.5f, 0.0f,1 }, { 0.5f, 0.0f }, { 0.0f, 0.0f, -1.0f } };
+	mPVertexData[2] = { { 0.5f, -0.5f, 0.0f ,1}, { 1.0f, 1.0f }, { 0.0f, 0.0f, -1.0f } };
 
 	// マテリアルのセットアップ（Mapしたまま保持してDrawのたびに色を書き換えられるようにする）
 	mPMaterialResource = CreateBufferResource(device.Get(), Align256(sizeof(Material)));
@@ -38,22 +38,10 @@ void TriangleModel::Initialization(ComPtr<ID3D12Device> device)
 
 }
 
-void TriangleModel::UpdateVertices
-(
-	const Vector3& positions,
-	const Vector2& texCord,
-	const Vector3& normal,
-	int index
-) {
-	if (!mPVertexDatta || index < 0 || static_cast<uint32_t>(index) >= mVertexCount)return;
-	mPVertexDatta[index].position = { positions.x,positions.y,positions.z,1.0f };
-	mPVertexDatta[index].texCord = texCord;
-	mPVertexDatta[index].normal = { normal.x,normal.y,normal.x };
-}
+
 
 void TriangleModel::Draw(
 	ID3D12GraphicsCommandList* cmdList,
-	int textureIndex,
 	UINT instanceCount,
 	UINT startInstanceLocation)
 {

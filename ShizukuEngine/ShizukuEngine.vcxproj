@@ -52,6 +52,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/ignore:4049/ignore:4098 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -74,7 +75,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/ignore:4049/ignore4098 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4049/ignore:4098 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -100,6 +101,8 @@
     <ClCompile Include="ShizukuEngine\PSO.cpp" />
     <ClCompile Include="ShizukuEngine\RenderRequests.cpp" />
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp" />
+    <ClCompile Include="ShizukuEngine\Sprite.cpp" />
+    <ClCompile Include="ShizukuEngine\TextureManager.cpp" />
     <ClCompile Include="ShizukuEngine\TriangleModel.cpp" />
     <ClCompile Include="ShizukuEngine\Vector.cpp" />
     <ClCompile Include="ShizukuEngine\VertexResource.cpp" />
@@ -121,6 +124,8 @@
     <ClInclude Include="ShizukuEngine\PSO.h" />
     <ClInclude Include="ShizukuEngine\RenderRequests.h" />
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h" />
+    <ClInclude Include="ShizukuEngine\Sprite.h" />
+    <ClInclude Include="ShizukuEngine\TextureManager.h" />
     <ClInclude Include="ShizukuEngine\TriangleModel.h" />
     <ClInclude Include="ShizukuEngine\Vector.h" />
     <ClInclude Include="ShizukuEngine\Vector2.h" />

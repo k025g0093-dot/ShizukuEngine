@@ -60,7 +60,7 @@ private://メンバ変数
 
 	ComPtr<ID3D12Resource> mInstanceBuffer;
 
-	ID3D12Device* mDevice;
+	ID3D12Device* mDevice = nullptr;
 
 	InstanceData* mInstanceData = nullptr;
 	InstanceData* mMappedInstanceBuffer = nullptr;

@@ -5,6 +5,7 @@
 #include "VertexResource.h"
 #include "LightManager.h"
 
+
 struct VertexData {
 	Vector4 position;
 	Vector2 texCord;
@@ -31,14 +32,14 @@ protected:
 	Vector3 mRotation = { 0.0f,0.0f,0.0f };
 	Vector3 mScale = { 0.0f,0.0f,0.0f };
 
-    VertexData* mPVertexDatta = nullptr;
+    VertexData* mPVertexData = nullptr;
 	UINT mVertexCount = 0;
 	UINT mIndexCount = 0;
 
 public:
 
     // Model.h の public: セクション内に追加
-    const VertexData* GetVertexData() const { return mPVertexDatta; }
+    const VertexData* GetVertexData() const { return mPVertexData; }
     UINT GetVertexCount() const { return mVertexCount; }
 
     virtual ~Model() {}
@@ -52,19 +53,12 @@ public:
     Matrix4x4 GetWorldMatrix() const;
 
     // オプション：各モデルが独自の transform を設定する場合
-    virtual void SetWorldTransform(const Matrix4x4&, const Matrix4x4&) {}
     virtual void SetUVTransform(const Matrix4x4&) {}
 
-    // 純粋仮想関数
-    virtual void UpdateVertices(
-        const Vector3& points,
-        const Vector2& texCord,
-        const Vector3& normal,
-        int index) = 0;
+
 
     virtual void Draw(
         ID3D12GraphicsCommandList* cmdList,
-        int textureIndex,
         UINT instanceCount,
         UINT startInstanceLocation) = 0;
 
