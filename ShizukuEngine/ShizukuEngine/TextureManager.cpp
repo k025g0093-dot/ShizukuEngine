@@ -79,7 +79,7 @@ int TextureManager::LoadTexture(const std::string& filePath) {
 	CreateTextureSRV(texResource.Get(), metadata, mTextureCount);
 
 	int index = mTextureCount;
-	mTextures[index] = texResource;
+	mTextures.push_back( texResource);
 	mTextureCount++;
 	return index;
 }

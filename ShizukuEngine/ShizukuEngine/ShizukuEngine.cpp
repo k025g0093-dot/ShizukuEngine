@@ -40,7 +40,7 @@ void ShizukuEngine::Initialize( int width,int Height) {
 	);
 	//レンダーリクエストの初期化
 	mRenderRequests.CreateOrthographicMatrix(width, Height);
-	mRenderRequests.InitRender(mDX12Context.GetDevice());
+	mRenderRequests.InitRender(mDX12Context.GetDevice(),&mTextureManager);
 #ifdef _DEBUG
 	mDebugLayer.SetupInfoQueue(mDX12Context.GetDevice());
 #endif

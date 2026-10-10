@@ -1,8 +1,13 @@
 #include "RenderRequests.h"
+#include "TextureManager.h"
 
-void RenderRequests::InitRender(ComPtr<ID3D12Device> device) {
+void RenderRequests::InitRender(
+	ComPtr<ID3D12Device> device,
+	TextureManager* textureManager
+) {
 
 	mDevice = device.Get();
+	mTextureManager = textureManager;
 
 	HRESULT hr;
 	//ルートシグネチャを作成
@@ -160,6 +165,7 @@ void RenderRequests::Render3DTarget(
 			//スタートのインデックスにインスタンス「スタート」のインデックスを渡す
 			UINT startIndex = (UINT)(start);
 			commandList->SetGraphicsRoot32BitConstant(5, startIndex, 0);
+			BindTexture(commandList.Get(), head.textureIndex);
 			head.model->Draw(
 				commandList.Get(),
 				(UINT)(count),
@@ -279,6 +285,7 @@ void RenderRequests::Render2DTarget(
 			//スタートのインデックスにインスタンス「スタート」のインデックスを渡す
 			UINT startIndex = (UINT)(instanceOffset +start);
 			commandList->SetGraphicsRoot32BitConstant(5, startIndex, 0);
+			BindTexture(commandList.Get(), head.textureIndex);
 			head.model->Draw(
 				commandList.Get(),
 				(UINT)(count),
@@ -316,4 +323,12 @@ void RenderRequests::CreateOrthographicMatrix(int width,int height) {
 		static_cast<float>(width), static_cast<float>(height),
 		0.1f, 100.0f
 	);
+}
+
+void RenderRequests::BindTexture(ID3D12GraphicsCommandList* commandList, int textureIndex) {
+	// 範囲外の番号は0番（白テクスチャ予定）に置き換える
+	if (textureIndex < 0 || textureIndex >= mTextureManager->GetTextureCount()) {
+		textureIndex = 0;
+	}
+	commandList->SetGraphicsRootDescriptorTable(2, mTextureManager->GetGPUHandle(textureIndex));
 }

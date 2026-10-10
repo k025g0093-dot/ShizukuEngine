@@ -19,11 +19,16 @@ struct DrawRequest {
 	int lightId = -1;//ライトを付与する際のID
 	int renderOrder = 1;//レンダーのオーダー
 };
+//前方宣言
+class TextureManager;
 
 class RenderRequests {
 public:
 
-	void InitRender(ComPtr<ID3D12Device> device);
+	void InitRender(
+		ComPtr<ID3D12Device> device,
+		TextureManager* textureManager
+	);
 
 	//描画レンダーリクエスト
 	void RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList,Matrix4x4 viewProjectionMatrix);
@@ -51,6 +56,8 @@ private://ヘルパー関数など
 	//----------------------------------------
 	void CreateInstanceBuffer(int DrawCount);
 
+	//バッチのテクスチャをparam 2にセットする（範囲外は0番）
+	void BindTexture(ID3D12GraphicsCommandList* commandList, int textureIndex);
 
 private://メンバ変数
 
@@ -58,7 +65,9 @@ private://メンバ変数
 	ComPtr<ID3D12RootSignature>  rootSignature;//ルートシグネチャ
 	ComPtr<ID3D12PipelineState>  pipelineState3D;//3D用パイプラインステート
 	ComPtr<ID3D12PipelineState>  pipelineState2D;//2D用パイプラインステート
+	TextureManager* mTextureManager = nullptr;
 	std::vector<DrawRequest> mDrawRequests;//ドローリクエストの変数
+
 
 	ComPtr<ID3D12Resource> mInstanceBuffer;
 

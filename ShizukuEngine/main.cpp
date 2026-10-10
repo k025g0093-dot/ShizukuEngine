@@ -25,13 +25,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 			engine->Update();
 
-			rot.x+=0.01f;
 
 			engine->PreDraw();
 
 			for (int i = 0; i < 10; i++) {
 				engine->DrawTriangle({ pos.x + 0.1f * i,pos.y + 0.1f * i,pos.z + 0.1f * i }, rot, { 1,1,1 }, { 1,1,1,1 }, tex);
 			}
+
+			engine->DrawSprite({ 100.0f, 100.0f }, 0.0f, 256.0f, 256.0f, { 1,1,1,1 }, tex);
+
 			engine->PostDraw();
 
 

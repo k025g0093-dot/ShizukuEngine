@@ -129,7 +129,7 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 
 // インプットレイアウトの生成
 // 頂点データの形式をGPUに教える
-D3D12_INPUT_LAYOUT_DESC CreateLayout(PipelineType type) {
+D3D12_INPUT_LAYOUT_DESC CreateLayout() {
 
 	// 頂点データの要素定義（今回はPOSITIONのみ）
 	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[4] = {};
@@ -210,6 +210,7 @@ D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState(PipelineType type) {
 
 // パイプラインステートオブジェクト（PSO）の生成
 // 描画に必要な全設定をまとめたオブジェクトを作る
+
 ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 	ID3D12Device* device,
 	ComPtr<ID3D12RootSignature>& rootSignature,
@@ -231,24 +232,20 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 		L"shaders/Object3d.PS.hlsl", L"ps_6_0",
 		dxcUtils, dxcCompiler, includeHandler);
 
+	// 各設定の生成（入力レイアウトは3D・2D共通、残り3つは種類で切り替え）
+	D3D12_INPUT_LAYOUT_DESC inputLayout = CreateLayout();
+	D3D12_BLEND_DESC blendDesc = CreateBlendState(type);
+	D3D12_RASTERIZER_DESC rasterizerDesc = CreateRasterizerState(type);
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = CreateDepthStencilState(type);
 
-	// 各設定の生成
-	D3D12_INPUT_LAYOUT_DESC inputLayout{};
-	D3D12_BLEND_DESC blendDesc{};
-	D3D12_RASTERIZER_DESC rasterizerDesc{};
-
-	//ステートの設定
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	
 	// PSOの設定をまとめる
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 
-
+	// ルートシグネチャの設定（作成済みのものを使う）
 	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
 
 	// インプットレイアウトの設定
 	graphicsPipelineStateDesc.InputLayout = inputLayout;
-
 
 	// シェーダーの設定
 	graphicsPipelineStateDesc.VS = {
@@ -260,58 +257,17 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 		pixelShaderBlob->GetBufferSize()
 	};
 
-	switch (type)
-	{
-	case PipelineType::k3D:
-
-		// 各設定の生成
-		inputLayout = CreateLayout(type); 
-		blendDesc = CreateBlendState(type);
-		rasterizerDesc = CreateRasterizerState(type);
-		// ブレンド・ラスタライザの設定
-		graphicsPipelineStateDesc.BlendState = blendDesc;
-		graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
-
-		//depth機能を有効にする
-		depthStencilDesc.DepthEnable = true;
-		//書き込みをするところ
-		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-		//比較関数はlessEqual。つまり近いと描画される
-		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-		break;
-	case PipelineType::k2D:
-
-		// 各設定の生成
-		inputLayout = CreateLayout(type);
-		blendDesc = CreateBlendState(type);
-		rasterizerDesc = CreateRasterizerState(type);
-		// ブレンド・ラスタライザの設定
-		graphicsPipelineStateDesc.BlendState = blendDesc;
-		graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
-
-
-		//depth機能を有効にする
-		depthStencilDesc.DepthEnable = false;
-		//書き込みをするところ
-		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-		//比較関数はlessEqual。つまり近いと描画される
-		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-		break;
-	default:
-		break;
-	}
-
-	//DepthStencilの設定
+	// ブレンド・ラスタライザ・深度の設定
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// レンダーターゲットの設定
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
-	// プリミティブトポロジーの設定
+	// プリミティブトポロジーの設定（STRIPも三角形の仲間なのでTRIANGLEのまま）
 	graphicsPipelineStateDesc.PrimitiveTopologyType =
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 

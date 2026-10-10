@@ -13,6 +13,15 @@ void Sprite::Initialization(ComPtr<ID3D12Device> device) {
     mVertexBufferView.StrideInBytes = sizeof(VertexData);
     mVertexBufferView.SizeInBytes = sizeof(VertexData) * 4;
 
+    VertexData* vertexData = nullptr;
+    mPVertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+    // TRIANGLESTRIPの順番：左上 → 右上 → 左下 → 右下
+    vertexData[0] = { { 0.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f } }; // 左上
+    vertexData[1] = { { 1.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f } }; // 右上
+    vertexData[2] = { { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f } }; // 左下
+    vertexData[3] = { { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, -1.0f } }; // 右下
+
 
     mPVertexResource->Unmap(0, nullptr);
 
