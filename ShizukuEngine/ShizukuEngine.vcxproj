@@ -101,6 +101,7 @@
     <ClCompile Include="ShizukuEngine\PSO.cpp" />
     <ClCompile Include="ShizukuEngine\RenderRequests.cpp" />
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp" />
+    <ClCompile Include="ShizukuEngine\Sphere.cpp" />
     <ClCompile Include="ShizukuEngine\Sprite.cpp" />
     <ClCompile Include="ShizukuEngine\TextureManager.cpp" />
     <ClCompile Include="ShizukuEngine\TriangleModel.cpp" />
@@ -124,6 +125,7 @@
     <ClInclude Include="ShizukuEngine\PSO.h" />
     <ClInclude Include="ShizukuEngine\RenderRequests.h" />
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h" />
+    <ClInclude Include="ShizukuEngine\Sphere.h" />
     <ClInclude Include="ShizukuEngine\Sprite.h" />
     <ClInclude Include="ShizukuEngine\TextureManager.h" />
     <ClInclude Include="ShizukuEngine\TriangleModel.h" />

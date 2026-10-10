@@ -130,8 +130,10 @@ void DX12Context::PreDraw()
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	commandList->ResourceBarrier(1, &barrier);
 
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle =
+		dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
-	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
+	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//ウィンドウの元の色
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
 
@@ -141,8 +143,7 @@ void DX12Context::PreDraw()
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());//そしてセット
 
 
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle =
-		dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+
 
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 

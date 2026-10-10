@@ -101,6 +101,31 @@ void ShizukuEngine::DrawTriangle
 	mRenderRequests.DrawRequestsSubmission(req);
 }
 
+
+void ShizukuEngine::DrawSphere
+(
+	const Vector3& pos,
+	const Vector3& rot, 
+	const Vector3& scale,
+	const Vector4 color,
+	int textureInd
+) {
+	if (!mSphereModel) {
+		mSphereModel = std::make_unique<Sphere>();
+		mSphereModel->Initialization(mDX12Context.GetDevice());
+	}
+	DrawRequest req;
+	req.model = mSphereModel.get();
+	req.pos = pos;//位置を渡す
+	req.rot = rot;//回転度を渡す
+	req.scale = scale;//スケールを渡す
+	req.color = color;//色を渡す
+	req.textureIndex = textureInd;//テクスチャのインデックスを渡す
+	req.isMesh = false;//メッシュかの確認
+	mRenderRequests.DrawRequestsSubmission(req);
+}
+
+
 void ShizukuEngine::DrawSprite
 (
 	const Vector2& pos, 
