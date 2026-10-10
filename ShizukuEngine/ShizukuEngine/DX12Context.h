@@ -33,6 +33,7 @@ public:
 	//デバイスのゲッター
 	ID3D12Device *GetDevice() { return mDevice.Get(); }
 
+	ID3D12DescriptorHeap* GetDescriptorHeap() {return srvDescriptorHeap.Get();}
 
 private://プライベート関数
 

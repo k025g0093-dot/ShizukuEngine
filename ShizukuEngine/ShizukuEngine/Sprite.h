@@ -11,26 +11,20 @@ public:
     Sprite();
     ~Sprite() override;
 
-    void InitSprite(ComPtr<ID3D12Device> device);
+    void Initialization(ComPtr<ID3D12Device> device);
 
-    void SetUVTransform(const Matrix4x4& uvTransform) override;
 
 
     void Draw(ID3D12GraphicsCommandList* cmdList,
         UINT instanceCount,
         UINT startInstanceLocation)override;
 
-    int GetTextureIndex() const { return mTextureIndex; }
 
 private:
 
-    int   mTextureIndex = 0;
-    float mWidth = 0.0f;
-    float mHeight = 0.0f;
 
-    ComPtr<ID3D12Resource>   mPVertexResource;   // ★
-    ComPtr<ID3D12Resource>   mPMaterialResource; // ★
-    ComPtr<ID3D12Resource>   mPWvpResource;      // ★
+    ComPtr<ID3D12Resource>   mPVertexResource;   
+    ComPtr<ID3D12Resource>   mPMaterialResource; 
 
     D3D12_VERTEX_BUFFER_VIEW mVertexBufferView{};
 

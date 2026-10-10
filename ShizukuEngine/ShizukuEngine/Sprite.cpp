@@ -1,7 +1,8 @@
 #include "Sprite.h"
+Sprite::Sprite() = default;
 Sprite::~Sprite() = default;
 
-void Sprite::InitSprite(ComPtr<ID3D12Device> device) {
+void Sprite::Initialization(ComPtr<ID3D12Device> device) {
 
 
     // --- 頂点バッファ ---
@@ -12,11 +13,20 @@ void Sprite::InitSprite(ComPtr<ID3D12Device> device) {
     mVertexBufferView.StrideInBytes = sizeof(VertexData);
     mVertexBufferView.SizeInBytes = sizeof(VertexData) * 4;
 
+    VertexData* vertexData = nullptr;
+    mPVertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+    // TRIANGLESTRIPの順番：左上 → 右上 → 左下 → 右下
+    vertexData[0] = { { 0.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f } }; // 左上
+    vertexData[1] = { { 1.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f } }; // 右上
+    vertexData[2] = { { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f } }; // 左下
+    vertexData[3] = { { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, -1.0f } }; // 右下
+
 
     mPVertexResource->Unmap(0, nullptr);
 
     // --- マテリアルバッファ ---
-    mPMaterialResource = CreateBufferResource(device.Get(), Align256(sizeof(Material)));
+    mPMaterialResource = CreateBufferResource(device.Get(),sizeof(Material));
     Material* materialData = nullptr;
     mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
     materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -27,18 +37,6 @@ void Sprite::InitSprite(ComPtr<ID3D12Device> device) {
 
 
 }
-
-
-
-void Sprite::SetUVTransform(const Matrix4x4& uvTransform) {
-    if (!mPMaterialResource) return;
-
-    Material* materialData = nullptr;
-    mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-    materialData->uvTransform = uvTransform;
-    mPMaterialResource->Unmap(0, nullptr);
-}
-
 
 
 
@@ -54,8 +52,5 @@ void Sprite::Draw(ID3D12GraphicsCommandList* cmdList,
         mPMaterialResource->GetGPUVirtualAddress()
     );
 
-    cmdList->SetGraphicsRootConstantBufferView(1,
-        mPWvpResource->GetGPUVirtualAddress()
-    );
     cmdList->DrawInstanced(4, instanceCount, 0, startInstanceLocation);
 }

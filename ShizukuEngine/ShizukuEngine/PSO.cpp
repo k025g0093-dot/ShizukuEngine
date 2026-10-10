@@ -165,30 +165,57 @@ D3D12_INPUT_LAYOUT_DESC CreateLayout() {
 
 // ブレンドステートの生成
 // 色の合成方法を定義する（今回は透明度なしのシンプルな設定）
-D3D12_BLEND_DESC CreateBlendState() {
+D3D12_BLEND_DESC CreateBlendState(PipelineType type) {
 	D3D12_BLEND_DESC blendDesc{};
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
 		D3D12_COLOR_WRITE_ENABLE_ALL; // 全チャンネルへの書き込みを有効化
+
+	if (type == PipelineType::k2D) {
+		// 色：新しい色×α ＋ 今の色×(1-α)
+		blendDesc.RenderTarget[0].BlendEnable = TRUE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		// α：そのまま足す
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	}
 	return blendDesc;
 }
 
 // ラスタライザステートの生成
-// ポリゴンの描画方法を定義する
-D3D12_RASTERIZER_DESC CreateRasterizerState() {
+// 3Dは裏面を描画しない、2Dは裏返しても消えないようにカリングなし
+D3D12_RASTERIZER_DESC CreateRasterizerState(PipelineType type) {
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;  // 裏面を描画しない
+	rasterizerDesc.CullMode =
+		(type == PipelineType::k2D) ? D3D12_CULL_MODE_NONE : D3D12_CULL_MODE_BACK;
 	rasterizerDesc.FrontCounterClockwise = FALSE;
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴンを塗りつぶして描画
-	//rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	return rasterizerDesc;
+}
+
+D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState(PipelineType type) {
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+	if (type == PipelineType::k3D) {
+		depthStencilDesc.DepthEnable = true;
+		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	}
+	else {
+		depthStencilDesc.DepthEnable = false;
+	}
+	return depthStencilDesc;
 }
 
 // パイプラインステートオブジェクト（PSO）の生成
 // 描画に必要な全設定をまとめたオブジェクトを作る
+
 ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 	ID3D12Device* device,
 	ComPtr<ID3D12RootSignature>& rootSignature,
-	HRESULT& hr)
+	HRESULT& hr,
+	PipelineType type)
 {
 	// DXCコンパイラの初期化
 	IDxcUtils* dxcUtils = nullptr;
@@ -205,22 +232,20 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 		L"shaders/Object3d.PS.hlsl", L"ps_6_0",
 		dxcUtils, dxcCompiler, includeHandler);
 
-
-	// 各設定の生成
+	// 各設定の生成（入力レイアウトは3D・2D共通、残り3つは種類で切り替え）
 	D3D12_INPUT_LAYOUT_DESC inputLayout = CreateLayout();
-	D3D12_BLEND_DESC blendDesc = CreateBlendState();
-	D3D12_RASTERIZER_DESC rasterizerDesc = CreateRasterizerState();
+	D3D12_BLEND_DESC blendDesc = CreateBlendState(type);
+	D3D12_RASTERIZER_DESC rasterizerDesc = CreateRasterizerState(type);
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = CreateDepthStencilState(type);
 
 	// PSOの設定をまとめる
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 
-	// ルートシグネチャの設定
-	rootSignature = CreateRootSignature(device, hr);
+	// ルートシグネチャの設定（作成済みのものを使う）
 	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
 
 	// インプットレイアウトの設定
 	graphicsPipelineStateDesc.InputLayout = inputLayout;
-
 
 	// シェーダーの設定
 	graphicsPipelineStateDesc.VS = {
@@ -232,28 +257,17 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 		pixelShaderBlob->GetBufferSize()
 	};
 
-	// ブレンド・ラスタライザの設定
+	// ブレンド・ラスタライザ・深度の設定
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
-
-	//ステートの設定
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	//depth機能を有効にする
-	depthStencilDesc.DepthEnable = true;
-	//書き込みをするところ
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	//比較関数はlessEqual。つまり近いと描画される
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
-	//DepthStencilの設定
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// レンダーターゲットの設定
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
-	// プリミティブトポロジーの設定
+	// プリミティブトポロジーの設定（STRIPも三角形の仲間なのでTRIANGLEのまま）
 	graphicsPipelineStateDesc.PrimitiveTopologyType =
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 

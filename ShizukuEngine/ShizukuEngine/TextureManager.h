@@ -1,102 +1,68 @@
 #pragma once
-#include <Windows.h>
-#include <cstdint>
 #include <d3d12.h>
-#include <dxgi1_6.h>
-#include <dxgidebug.h>
-#include <cassert>
-#include <filesystem>
-#include <dbghelp.h>
-#include <strsafe.h>
-#include <string>
-#include <format>
 #include <wrl.h>
+#include <string>
 #include <array>
 #include <vector>
-#include <map>
-
-#pragma comment(lib,"d3d12.lib")
-#pragma comment(lib,"dxgi.lib")
-#pragma comment(lib,"dxguid.lib")
-#pragma comment(lib,"DbgHelp.lib")
-#pragma comment(lib, "DirectXTex.lib")
 
 #include "externals/DirectXTex/DirectXTex.h"
-#include "externals/DirectXTex/d3dx12.h"
-#include "ConvertString.h"
-#include "LogSistem.h"
-#include "VertexResource.h"
 
-using Microsoft::WRL::ComPtr;   // ★追加
-
-struct MaterialTextureSet {
-    int baseTextureIndex;
-    int normalTextureIndex;
-};
-
+//テクスチャの読み込みとSRVの管理を行う
 class TextureManager
 {
 public:
-    static TextureManager* GetInstance() {
-        static TextureManager instance;
-        return &instance;
-    }
 
-    static const int MAX_TEXTURES = 256;
-    static const int IMGUI_RESERVED = 8;
-    int m_textureCount = 0;
+	static const int kImGuiReserved = 8;//SRVヒープの先頭でImGui用に空けておく数
 
-    TextureManager() = default;
-    ~TextureManager() = default;
+	//デバイス、SRVヒープ、コマンドリストは外から借りる
+	void Initialize(
+		ID3D12Device* device,
+		ID3D12DescriptorHeap* srvHeap,
+		ID3D12GraphicsCommandList* commandList
+	);
 
-    void Initialize(ID3D12Device* device, ID3D12DescriptorHeap* srvHeap,
-        ID3D12GraphicsCommandList* commandList);
+	//テクスチャを読み込んで番号を返す（失敗したら-1）
+	int LoadTexture(const std::string& filePath);
 
-    int LoadTexture(const std::string& filePath);
+	//番号からシェーダーに渡すGPUハンドルを取得する
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(int index) ;
 
-    ID3D12DescriptorHeap* GetSRVHeap()       const { return m_srvHeap; }
-    D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(int index);
-    D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t descriptorSize, uint32_t index);
-    D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t descriptorSize, uint32_t index);
-    ID3D12DescriptorHeap* GetSrvDescriptorHeap() const { return srvDescriptorHeap; }
+	//読み込み済みのテクスチャ数
+	int GetTextureCount() const { return mTextureCount; }
 
-    ID3D12DescriptorHeap* srvDescriptorHeap = nullptr;
+private://プライベート関数
 
-    D3D12_GPU_DESCRIPTOR_HANDLE GetTextureSrvHandleGPU() const { return textureSrvHandleGPU; }
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
-private:
-    ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
-    void CreateTextureSRV(ID3D12Resource* textureResource, const DirectX::TexMetadata& metadata, int m_textureCount);
-    ComPtr<ID3D12Resource> UploadTexture(
-        ID3D12Resource* texture,
-        const DirectX::ScratchImage& mipImages);
+	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTexture(
+		ID3D12Resource* texture,
+		const DirectX::ScratchImage& mipImages);
 
-    std::map<std::wstring, int> m_filePathToIndexMap;
+	void CreateTextureSRV(
+		ID3D12Resource* textureResource,
+		const DirectX::TexMetadata& metadata,
+		int index);
 
-    ID3D12Device* m_device = nullptr;
-    ID3D12DescriptorHeap* m_srvHeap = nullptr;
+	//SRVヒープの位置（ImGui分のずらしを含めた番号）からハンドルを計算する
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandleFromHeapIndex(uint32_t heapIndex);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandleFromHeapIndex(uint32_t heapIndex) ;
 
-    // テクスチャリソース配列を ComPtr に統一
-    std::array<ComPtr<ID3D12Resource>, MAX_TEXTURES> m_textures; // ★
+private://メンバ変数
 
-    UINT m_descriptorSize = 0;
+	//外から借りているもの
+	ID3D12Device* mDevice = nullptr;
+	ID3D12DescriptorHeap* mSrvHeap = nullptr;
+	ID3D12GraphicsCommandList* mCommandList = nullptr;
 
-    // 以下は内部処理用。デバイス等は外部から借りる形なので生ポインタを維持
-    IDXGIFactory7* dxgiFactory = nullptr;
-    ID3D12Device* device = nullptr;
-    ID3D12CommandAllocator* commandAllocator = nullptr;
-    ID3D12GraphicsCommandList* m_commandList = nullptr;
-    HRESULT                     hr = S_OK;
+	//読み込んだテクスチャ
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> mTextures;
+	int mTextureCount = 0;
 
-    D3D12_RESOURCE_DESC resourceDesc{};
-    D3D12_RESOURCE_DESC depthResourceDesc{};
+	//GPUのコピーが終わるまで保持しておくアップロード用バッファ
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> mUploadResources;
 
-    // 汎用リソース類を ComPtr に
-    ComPtr<ID3D12Resource>      resource;             // ★
-    ComPtr<ID3D12Resource>      texture;              // ★
-    ComPtr<ID3D12Resource>      intermediateResource; // ★
-    std::vector<ComPtr<ID3D12Resource>> m_uploadResources;
+	//SRVヒープの1要素の大きさ
+	UINT mDescriptorSize = 0;
 
-    D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU{};
-    uint32_t                    descriptorSizeSRV{};
+	int mTextureCapacity = 0;
 };
