@@ -14,6 +14,7 @@
 //各種図形の関数が入ったヘッダ
 #include"TriangleModel.h"
 #include "Sprite.h"
+#include "Sphere.h"
 
 //ComPtr地獄だっきゃくのために必要
 using Microsoft::WRL::ComPtr;
@@ -57,7 +58,12 @@ public:
 	void DrawTriangle(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureInd);
 	
 	//--------------------------------------------------------------
-	//スプライトの描画関数（引数は、位置、回転、スケール、色、テクスチャです）
+	//三角形の描画関数（引数は、位置、回転、スケール、色、テクスチャです）
+	//--------------------------------------------------------------
+	void DrawSphere(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureInd);
+	
+	//--------------------------------------------------------------
+	//スプライトの描画関数（引数は、左上を起点に下位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
 	void DrawSprite(const Vector2& pos, const float& rot, const float & width,const float &height, const Vector4 color, int textureInd);
 
@@ -82,6 +88,7 @@ private://各種変数などの初期化
 
 
 	std::unique_ptr<TriangleModel> mTriangleModel;
+	std::unique_ptr<Sphere> mSphereModel;
 	std::unique_ptr<Sprite> mSprite;
 
 	Matrix4x4 mViewProjectionMatrix;

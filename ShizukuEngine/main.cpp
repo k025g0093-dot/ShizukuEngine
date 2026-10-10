@@ -30,6 +30,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 			for (int i = 0; i < 10; i++) {
 				engine->DrawTriangle({ pos.x + 0.1f * i,pos.y + 0.1f * i,pos.z - 1.5f * i }, rot, { 1,1,1 }, { 1,1,1,1 }, tex);
+				engine->DrawSphere({ pos.x + 0.1f * i,pos.y + 0.1f * i,pos.z +2.0f * i }, rot, { 1,1,1 }, { 1,1,1,1 }, tex);
 			}
 
 			engine->DrawSprite({ 100.0f, 100.0f }, 0.0f, 256.0f, 256.0f, { 1,1,1,1 }, tex);

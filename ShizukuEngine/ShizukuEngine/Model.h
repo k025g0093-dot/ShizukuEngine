@@ -8,7 +8,7 @@
 
 struct VertexData {
 	Vector4 position;
-	Vector2 texCord;
+	Vector2 texcord;
 	Vector3 normal;
 	Vector3 tangent;
 };
