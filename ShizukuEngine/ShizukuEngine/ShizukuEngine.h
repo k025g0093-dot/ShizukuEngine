@@ -24,13 +24,16 @@ struct DrawRequest;
 class ShizukuEngine
 {
 public:
-	ShizukuEngine(int Height, int width, wstring WinName);//インスタンス関数
+
+	//幅、高さの順で入れる
+	ShizukuEngine(int width, int Height, wstring WinName);//インスタンス関数
 	~ShizukuEngine();//メモリ開放
-	void GetInstance(int Height, int width, wstring WinName);//インスタンス取得関数
+
+	void GetInstance(int width, int Height,  wstring WinName);//インスタンス取得関数
 
 
 	//初期化関数
-	void Initialize(int Height, int width);
+	void Initialize(int width,int Height);
 
 	//更新処理
 	void Update();

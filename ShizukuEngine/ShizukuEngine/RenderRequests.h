@@ -45,6 +45,11 @@ private://ヘルパー関数など
 	//----------------------------------------
 	void Render2DTarget(const std::vector<DrawRequest>& requests2D, ComPtr<ID3D12GraphicsCommandList> commandList);
 
+	//----------------------------------------
+	//インスタンスバッファーを再作成する関数
+	//----------------------------------------
+	void CreateInstanceBuffer(int DrawCount);
+
 
 private://メンバ変数
 
@@ -54,6 +59,8 @@ private://メンバ変数
 	std::vector<DrawRequest> mDrawRequests;//ドローリクエストの変数
 
 	ComPtr<ID3D12Resource> mInstanceBuffer;
+
+	ID3D12Device* mDevice = nullptr;
 
 	InstanceData* mInstanceData = nullptr;
 	InstanceData* mMappedInstanceBuffer = nullptr;
