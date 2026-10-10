@@ -19,6 +19,7 @@ struct DrawRequest {
 	int lightId = -1;//ライトを付与する際のID
 	int renderOrder = 1;//レンダーのオーダー
 };
+
 class RenderRequests {
 public:
 
@@ -28,6 +29,9 @@ public:
 	void RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList,Matrix4x4 viewProjectionMatrix);
 
 	void DrawRequestsSubmission(DrawRequest drawRequest);
+
+	//正射影行列作成
+	void CreateOrthographicMatrix(int width, int height);
 
 private://ヘルパー関数など
 
@@ -40,7 +44,7 @@ private://ヘルパー関数など
 	//----------------------------------------
 	//2Dオブジェクトを対象とした描画リクエスト送信関数
 	//----------------------------------------
-	void Render2DTarget(const std::vector<DrawRequest>& requests2D, ComPtr<ID3D12GraphicsCommandList> commandList);
+	void Render2DTarget(const std::vector<DrawRequest>& requests2D, ComPtr<ID3D12GraphicsCommandList> commandList,int instanceOffset);
 
 	//----------------------------------------
 	//インスタンスバッファーを再作成する関数
@@ -52,7 +56,8 @@ private://メンバ変数
 
 	int mMaxDrawCount = 128;
 	ComPtr<ID3D12RootSignature>  rootSignature;//ルートシグネチャ
-	ComPtr<ID3D12PipelineState>  pipelineState;//パイプラインステート
+	ComPtr<ID3D12PipelineState>  pipelineState3D;//3D用パイプラインステート
+	ComPtr<ID3D12PipelineState>  pipelineState2D;//2D用パイプラインステート
 	std::vector<DrawRequest> mDrawRequests;//ドローリクエストの変数
 
 	ComPtr<ID3D12Resource> mInstanceBuffer;
@@ -63,5 +68,5 @@ private://メンバ変数
 	InstanceData* mMappedInstanceBuffer = nullptr;
 
 	Matrix4x4 mViewProjectionMatrix;
-
+	Matrix4x4 mOrtho;
 };

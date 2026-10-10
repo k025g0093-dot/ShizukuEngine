@@ -129,7 +129,7 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 
 // インプットレイアウトの生成
 // 頂点データの形式をGPUに教える
-D3D12_INPUT_LAYOUT_DESC CreateLayout() {
+D3D12_INPUT_LAYOUT_DESC CreateLayout(PipelineType type) {
 
 	// 頂点データの要素定義（今回はPOSITIONのみ）
 	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[4] = {};
@@ -165,22 +165,47 @@ D3D12_INPUT_LAYOUT_DESC CreateLayout() {
 
 // ブレンドステートの生成
 // 色の合成方法を定義する（今回は透明度なしのシンプルな設定）
-D3D12_BLEND_DESC CreateBlendState() {
+D3D12_BLEND_DESC CreateBlendState(PipelineType type) {
 	D3D12_BLEND_DESC blendDesc{};
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
 		D3D12_COLOR_WRITE_ENABLE_ALL; // 全チャンネルへの書き込みを有効化
+
+	if (type == PipelineType::k2D) {
+		// 色：新しい色×α ＋ 今の色×(1-α)
+		blendDesc.RenderTarget[0].BlendEnable = TRUE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		// α：そのまま足す
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	}
 	return blendDesc;
 }
 
 // ラスタライザステートの生成
-// ポリゴンの描画方法を定義する
-D3D12_RASTERIZER_DESC CreateRasterizerState() {
+// 3Dは裏面を描画しない、2Dは裏返しても消えないようにカリングなし
+D3D12_RASTERIZER_DESC CreateRasterizerState(PipelineType type) {
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;  // 裏面を描画しない
+	rasterizerDesc.CullMode =
+		(type == PipelineType::k2D) ? D3D12_CULL_MODE_NONE : D3D12_CULL_MODE_BACK;
 	rasterizerDesc.FrontCounterClockwise = FALSE;
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴンを塗りつぶして描画
-	//rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	return rasterizerDesc;
+}
+
+D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState(PipelineType type) {
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+	if (type == PipelineType::k3D) {
+		depthStencilDesc.DepthEnable = true;
+		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	}
+	else {
+		depthStencilDesc.DepthEnable = false;
+	}
+	return depthStencilDesc;
 }
 
 // パイプラインステートオブジェクト（PSO）の生成
@@ -188,7 +213,8 @@ D3D12_RASTERIZER_DESC CreateRasterizerState() {
 ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 	ID3D12Device* device,
 	ComPtr<ID3D12RootSignature>& rootSignature,
-	HRESULT& hr)
+	HRESULT& hr,
+	PipelineType type)
 {
 	// DXCコンパイラの初期化
 	IDxcUtils* dxcUtils = nullptr;
@@ -207,15 +233,17 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 
 
 	// 各設定の生成
-	D3D12_INPUT_LAYOUT_DESC inputLayout = CreateLayout();
-	D3D12_BLEND_DESC blendDesc = CreateBlendState();
-	D3D12_RASTERIZER_DESC rasterizerDesc = CreateRasterizerState();
+	D3D12_INPUT_LAYOUT_DESC inputLayout{};
+	D3D12_BLEND_DESC blendDesc{};
+	D3D12_RASTERIZER_DESC rasterizerDesc{};
 
+	//ステートの設定
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+	
 	// PSOの設定をまとめる
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 
-	// ルートシグネチャの設定
-	rootSignature = CreateRootSignature(device, hr);
+
 	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
 
 	// インプットレイアウトの設定
@@ -232,18 +260,48 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 		pixelShaderBlob->GetBufferSize()
 	};
 
-	// ブレンド・ラスタライザの設定
-	graphicsPipelineStateDesc.BlendState = blendDesc;
-	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
+	switch (type)
+	{
+	case PipelineType::k3D:
 
-	//ステートの設定
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	//depth機能を有効にする
-	depthStencilDesc.DepthEnable = true;
-	//書き込みをするところ
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	//比較関数はlessEqual。つまり近いと描画される
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		// 各設定の生成
+		inputLayout = CreateLayout(type); 
+		blendDesc = CreateBlendState(type);
+		rasterizerDesc = CreateRasterizerState(type);
+		// ブレンド・ラスタライザの設定
+		graphicsPipelineStateDesc.BlendState = blendDesc;
+		graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
+
+		//depth機能を有効にする
+		depthStencilDesc.DepthEnable = true;
+		//書き込みをするところ
+		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		//比較関数はlessEqual。つまり近いと描画される
+		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+		break;
+	case PipelineType::k2D:
+
+		// 各設定の生成
+		inputLayout = CreateLayout(type);
+		blendDesc = CreateBlendState(type);
+		rasterizerDesc = CreateRasterizerState(type);
+		// ブレンド・ラスタライザの設定
+		graphicsPipelineStateDesc.BlendState = blendDesc;
+		graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
+
+
+		//depth機能を有効にする
+		depthStencilDesc.DepthEnable = false;
+		//書き込みをするところ
+		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		//比較関数はlessEqual。つまり近いと描画される
+		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+		break;
+	default:
+		break;
+	}
 
 	//DepthStencilの設定
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;

@@ -39,6 +39,7 @@ void ShizukuEngine::Initialize( int width,int Height) {
 		mDX12Context.GetCommandList()
 	);
 	//レンダーリクエストの初期化
+	mRenderRequests.CreateOrthographicMatrix(width, Height);
 	mRenderRequests.InitRender(mDX12Context.GetDevice());
 #ifdef _DEBUG
 	mDebugLayer.SetupInfoQueue(mDX12Context.GetDevice());
@@ -121,7 +122,7 @@ void ShizukuEngine::DrawSprite
 	req.scale = { width,height,0 };
 	req.color = color;
 	req.textureIndex = textureInd;
-	req.is2D = true;
+	req.isSprit = true;
 	mRenderRequests.DrawRequestsSubmission(req);
 }
 
