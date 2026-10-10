@@ -82,6 +82,7 @@ void Sphere::Initialization(ComPtr<ID3D12Device> device) {
 	mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	materialData->enableNormalMap = 0;
+	materialData->enableLighting = true;
 	materialData->uvTransform = MakeIdentity4x4();
 	mPMaterialResource->Unmap(0, nullptr);
 

@@ -38,9 +38,12 @@ void ShizukuEngine::Initialize( int width,int Height) {
 		mDX12Context.GetDescriptorHeap(),
 		mDX12Context.GetCommandList()
 	);
+
+	mLightManager.Initialize(mDX12Context.GetDevice());
+
 	//レンダーリクエストの初期化
 	mRenderRequests.CreateOrthographicMatrix(width, Height);
-	mRenderRequests.InitRender(mDX12Context.GetDevice(),&mTextureManager);
+	mRenderRequests.InitRender(mDX12Context.GetDevice(),&mTextureManager,&mLightManager);
 #ifdef _DEBUG
 	mDebugLayer.SetupInfoQueue(mDX12Context.GetDevice());
 #endif
@@ -69,8 +72,12 @@ void ShizukuEngine::PostDraw()
 	Matrix4x4 view = mCamera.GetViewMatrix();
 	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mWidth, (float)mHeight);
 	mViewProjectionMatrix = Multiply(view, proj);
-
-	mRenderRequests.RenderAllRequests(mDX12Context.GetCommandList(), mViewProjectionMatrix);
+	Vector3 cameraTranslate = mCamera.transform.translate;
+	mRenderRequests.RenderAllRequests(
+		mDX12Context.GetCommandList(),
+		mViewProjectionMatrix,
+		cameraTranslate
+	);
 
 	//ここで未来のレンダーリクエスト関数を使用
 	//順番の前後には注意そこを間違えると描画されなくなる
@@ -121,6 +128,7 @@ void ShizukuEngine::DrawSphere
 	req.scale = scale;//スケールを渡す
 	req.color = color;//色を渡す
 	req.textureIndex = textureInd;//テクスチャのインデックスを渡す
+	req.lightId = 1;
 	req.isMesh = false;//メッシュかの確認
 	mRenderRequests.DrawRequestsSubmission(req);
 }
@@ -147,6 +155,7 @@ void ShizukuEngine::DrawSprite
 	req.scale = { width,height,0 };
 	req.color = color;
 	req.textureIndex = textureInd;
+	req.lightId = 1;
 	req.isSprit = true;
 	mRenderRequests.DrawRequestsSubmission(req);
 }

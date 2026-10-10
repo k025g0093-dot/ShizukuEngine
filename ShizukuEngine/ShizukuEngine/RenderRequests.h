@@ -21,17 +21,23 @@ struct DrawRequest {
 };
 //前方宣言
 class TextureManager;
+class LightManager;
 
 class RenderRequests {
 public:
 
 	void InitRender(
 		ComPtr<ID3D12Device> device,
-		TextureManager* textureManager
+		TextureManager* textureManager,
+		LightManager* lightManager
 	);
 
 	//描画レンダーリクエスト
-	void RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList,Matrix4x4 viewProjectionMatrix);
+	void RenderAllRequests(
+		ComPtr<ID3D12GraphicsCommandList> commandList,
+		Matrix4x4 viewProjectionMatrix,
+		Vector3 cameraTranslate
+		);
 
 	void DrawRequestsSubmission(DrawRequest drawRequest);
 
@@ -66,6 +72,8 @@ private://メンバ変数
 	ComPtr<ID3D12PipelineState>  pipelineState3D;//3D用パイプラインステート
 	ComPtr<ID3D12PipelineState>  pipelineState2D;//2D用パイプラインステート
 	TextureManager* mTextureManager = nullptr;
+	LightManager* mLightManager = nullptr;
+
 	std::vector<DrawRequest> mDrawRequests;//ドローリクエストの変数
 
 
@@ -74,8 +82,10 @@ private://メンバ変数
 	ID3D12Device* mDevice = nullptr;
 
 	InstanceData* mInstanceData = nullptr;
-	InstanceData* mMappedInstanceBuffer = nullptr;
 
-	Matrix4x4 mViewProjectionMatrix;
-	Matrix4x4 mOrtho;
+	Matrix4x4 mViewProjectionMatrix{};
+	Matrix4x4 mOrtho{};
+	Vector3 mCameraTranslate{};
+
+
 };

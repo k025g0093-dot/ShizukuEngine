@@ -15,7 +15,7 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 
 	// t0: texture, t1: normal texture, t3: lights
 	// t2: InstanceData は RootSRV で直接アドレスを渡すので不要
-	D3D12_DESCRIPTOR_RANGE descriptorRange[3] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
 	descriptorRange[0].BaseShaderRegister = 0;// t0 texture
 	descriptorRange[0].NumDescriptors = 1;
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
@@ -26,10 +26,6 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	descriptorRange[2].BaseShaderRegister = 3;//light
-	descriptorRange[2].NumDescriptors = 1;
-	descriptorRange[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	descriptorRange[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_ROOT_PARAMETER rootParameter[8] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
@@ -46,10 +42,9 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	rootParameter[2].DescriptorTable.pDescriptorRanges = &descriptorRange[0]; // t0 texture
 	rootParameter[2].DescriptorTable.NumDescriptorRanges = 1;
 
-	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
 	rootParameter[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[3].DescriptorTable.pDescriptorRanges = &descriptorRange[2]; // t3 lights
-	rootParameter[3].DescriptorTable.NumDescriptorRanges = 1;
+	rootParameter[3].Descriptor.ShaderRegister = 3;
 
 	rootParameter[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameter[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -63,9 +58,11 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	rootParameter[5].Constants.Num32BitValues = 1;
 
 	// [6] CBV b2 - Camera (pixel)
-	rootParameter[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 	rootParameter[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameter[6].Descriptor.ShaderRegister = 2;
+	rootParameter[6].Constants.ShaderRegister = 2;
+	rootParameter[6].Constants.Num32BitValues = 3;
+
 
 	// [7] 32bit constant b3 - ActiveLightCount (pixel)
 	rootParameter[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;

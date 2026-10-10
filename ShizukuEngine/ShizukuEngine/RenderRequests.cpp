@@ -1,13 +1,16 @@
 #include "RenderRequests.h"
 #include "TextureManager.h"
+#include "LightManager.h"
 
 void RenderRequests::InitRender(
 	ComPtr<ID3D12Device> device,
-	TextureManager* textureManager
+	TextureManager* textureManager,
+	LightManager* lightManager
 ) {
 
 	mDevice = device.Get();
 	mTextureManager = textureManager;
+	mLightManager = lightManager;
 
 	HRESULT hr;
 	//ルートシグネチャを作成
@@ -24,8 +27,11 @@ void RenderRequests::DrawRequestsSubmission(DrawRequest drawRequest) {
 }
 
 
-void RenderRequests::RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> commandList,Matrix4x4 viewProjectionMatrix)
-{
+void RenderRequests::RenderAllRequests(
+	ComPtr<ID3D12GraphicsCommandList> commandList,
+	Matrix4x4 viewProjectionMatrix,
+	Vector3 cameraTranslate
+){
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 	// 3Dリクエストと2Dリクエストを分離
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -33,6 +39,7 @@ void RenderRequests::RenderAllRequests(ComPtr<ID3D12GraphicsCommandList> command
 	std::vector<DrawRequest> request2D;
 
 	mViewProjectionMatrix = viewProjectionMatrix;
+	mCameraTranslate = cameraTranslate;
 
 	for (auto& req : mDrawRequests) {
 		if (req.isSprit) {
@@ -103,6 +110,8 @@ void RenderRequests::Render3DTarget(
 	//PSOの設定
 	commandList->SetPipelineState(pipelineState3D.Get());
 
+	mLightManager->Bind(commandList.Get());
+	commandList->SetGraphicsRoot32BitConstants(6, 3, &mCameraTranslate, 0);
 
 	for (int i = 0; i < (int)sortedRequests.size(); i++) {
 		if (i >= mMaxDrawCount)break;
@@ -158,6 +167,7 @@ void RenderRequests::Render3DTarget(
 		//トポロジーの設定
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+		//インスタンスバッファーへのセット
 		commandList->SetGraphicsRootShaderResourceView(
 				1, mInstanceBuffer->GetGPUVirtualAddress());
 
@@ -186,6 +196,8 @@ void RenderRequests::Render3DTarget(
 //----------------------------------------
 //2Dオブジェクトを対象とした描画リクエスト送信関数
 //----------------------------------------
+
+#pragma region 2Dのプライと描画リクエスト
 void RenderRequests::Render2DTarget(
 	const std::vector<DrawRequest>& requests2D,
 	ComPtr<ID3D12GraphicsCommandList> commandList
@@ -298,6 +310,9 @@ void RenderRequests::Render2DTarget(
 	}
 
 }
+
+#pragma endregion
+
 
 void RenderRequests::CreateInstanceBuffer(int DrawCount) {
 	mInstanceBuffer = CreateBufferResource(

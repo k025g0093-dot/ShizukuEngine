@@ -9,7 +9,9 @@
 #include "DebugLayer.h"
 #include "Camera.h"
 
+//マネジャクラス
 #include "TextureManager.h"
+#include "LightManager.h"
 
 //各種図形の関数が入ったヘッダ
 #include"TriangleModel.h"
@@ -83,6 +85,7 @@ private://各種変数などの初期化
 	DebugLayer mDebugLayer{};
 	Camera mCamera{};
 	TextureManager mTextureManager{};
+	LightManager mLightManager;
 
 	static ShizukuEngine* mInstance;
 

@@ -17,7 +17,7 @@ ConstantBuffer<Material> gMaterial : register(b0);
 
 struct Camera
 {
-      float3 worldPorition;
+      float3 worldPosition;
 };
 
 struct PixelShaderOutput
@@ -77,7 +77,7 @@ PixelShaderOutput main(VertexShaderOutput input)
 
       if (gMaterial.enableLighting != 0)
       {
-            float3 toEye = normalize(gCamera.worldPorition - input.worldPosition);
+            float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
             float4 baseColor = gMaterial.color * textureColor; // ← float4のまま計算する（rgbを取り出さない）
 
             float4 finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f); // ← float4で初期化
