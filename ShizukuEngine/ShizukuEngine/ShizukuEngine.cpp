@@ -4,20 +4,18 @@ using namespace std;
 //インスタンス初期化
 ShizukuEngine* ShizukuEngine::mInstance = nullptr;
 
-void ShizukuEngine::GetInstance(int Height, int width, wstring WinName) {
+void ShizukuEngine::GetInstance(int width, int Height,wstring WinName) {
 	if (mInstance == nullptr) {
 		//インスタンスがない場合はnewをする
-
 		mInstance = new ShizukuEngine(Height, width, WinName);
 	}
 }
 
-ShizukuEngine::ShizukuEngine(int Height, int width, wstring WinName){
+ShizukuEngine::ShizukuEngine(int width, int Height,  wstring WinName){
 	mHeight = Height;
 	mWidth = width;
-	mWinApp.InitWindow(Height, width, WinName);
-	Initialize(Height,width);
-
+	mWinApp.InitWindow(width, Height, WinName);
+	Initialize(width,Height);
 }
 
 //初期化関数
@@ -25,28 +23,33 @@ void ShizukuEngine::Initialize( int width,int Height) {
 
 	// COM は Windows 機能を使うために先に初期化しておく
 	HRESULT hrCo = CoInitializeEx(0, COINIT_MULTITHREADED);
-
 	// ログ用フォルダの作成とログ初期化
 	std::filesystem::create_directory("logs");
 	InitializeLog();
 #ifdef _DEBUG
 	mDebugLayer.EnableDebugLayer();
 #endif
-
+	//ファクトリーとobjectの初期化
 	mDX12Context.InitDXGIFactory(mWinApp.GetHwnd());
 	mDX12Context.CreateCommandObjects(mWinApp.GetHwnd(), mHeight, mWidth);
-
+	//テクスチャマネジャの初期化
+	mTextureManager.Initialize(
+		mDX12Context.GetDevice(),
+		mDX12Context.GetDescriptorHeap(),
+		mDX12Context.GetCommandList()
+	);
+	//レンダーリクエストの初期化
 	mRenderRequests.InitRender(mDX12Context.GetDevice());
-
-
-
 #ifdef _DEBUG
 	mDebugLayer.SetupInfoQueue(mDX12Context.GetDevice());
 #endif
-
-
 }
 
+
+int ShizukuEngine::LoadTexture(const std::string& filePath) {
+	//画像ファイルの読み込む
+	return mTextureManager.LoadTexture(filePath);
+}
 
 void ShizukuEngine::Update() {}
 
@@ -94,6 +97,31 @@ void ShizukuEngine::DrawTriangle
 	req.color = color;//色を渡す
 	req.textureIndex = textureInd;//テクスチャのインデックスを渡す
 	req.isMesh = false;//メッシュかの確認
+	mRenderRequests.DrawRequestsSubmission(req);
+}
+
+void ShizukuEngine::DrawSprite
+(
+	const Vector2& pos, 
+	const float& rot,
+	const float& width, 
+	const float& height,
+	const Vector4 color,
+	int textureInd
+) {
+	if (!mSprite) {
+		mSprite = std::make_unique<Sprite>();
+		mSprite->Initialization(mDX12Context.GetDevice());
+	}
+	
+	DrawRequest req;
+	req.model = mSprite.get();
+	req.pos = { pos.x,pos.y,0 };
+	req.rot = { 0,0,rot };
+	req.scale = { width,height,0 };
+	req.color = color;
+	req.textureIndex = textureInd;
+	req.is2D = true;
 	mRenderRequests.DrawRequestsSubmission(req);
 }
 

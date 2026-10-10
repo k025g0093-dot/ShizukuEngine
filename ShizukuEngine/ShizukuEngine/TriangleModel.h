@@ -30,7 +30,6 @@ private://メンバ変数
     ComPtr<ID3D12Resource>   mPLightResource;   // 追加
     Material* materialData = nullptr;
 
-    VertexData* mPVertexData = nullptr;
 
     uint32_t Align256(uint32_t size) {
         return (size + 0xff) & ~0xff;

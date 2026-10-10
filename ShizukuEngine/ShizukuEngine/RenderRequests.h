@@ -11,10 +11,7 @@ struct DrawRequest {
 	Vector4 color = { 1,1,1,1 };
 	Vector3 rot = { 0,0,0 };
 	Vector3 scale = { 1,1,1 };
-	Vector3 pos = { 0,0,0 };//３Dのオブジェクトなどで使用
-	Vector2 posV2 = { 0,0 };//2Dのテクスチャなどで使用
-	float width = 0.0f;
-	float height = 0.0f;
+	Vector3 pos = { 0,0,0 };
 	int textureIndex = 0;
 	bool isMesh = false;//3Dオブジェクト化どうかの確認
 	bool isSprit = false;//スプライトかそうでないかの確認
