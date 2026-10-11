@@ -132,6 +132,9 @@
     <ClCompile Include="ShizukuEngine\TextureManager.cpp">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
     </ClCompile>
+    <ClCompile Include="ShizukuEngine\Sphere.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D描画関係\図形関係</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -205,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="ShizukuEngine\TextureManager.h">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Sphere.h">
+      <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D描画関係\図形関係</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

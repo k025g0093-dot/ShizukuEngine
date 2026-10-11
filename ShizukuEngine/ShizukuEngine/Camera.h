@@ -5,8 +5,8 @@ class Camera {
 public:
     Camera() {
         transform.scale = { 1.0f, 1.0f,  1.0f };
-        transform.rotate = { 0.0f, 0.0f,  0.0f };
-        transform.translate = { 0.0f, 0.0f, -10.0f };
+        transform.rotate = { 0.3f, 0.0f,  0.0f };
+        transform.translate = { 0.0f, 5.0f, -20.0f };
         mNearPlane = 0.1f;
         mFarPlane = 10000.0f;
     }

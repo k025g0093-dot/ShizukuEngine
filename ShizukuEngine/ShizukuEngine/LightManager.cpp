@@ -2,19 +2,12 @@
 #include "VertexResource.h"
 #include "LogSistem.h"
 
-//インスタンスの初期化
-LightManager* LightManager::mInstance = nullptr;
-
-//インスタンス取得関数
-LightManager* LightManager::GetInstance() {
-    if (!mInstance) mInstance = new LightManager();
-    return mInstance;
-}
-
+LightManager::LightManager(){}
+LightManager::~LightManager(){}
 
 //ライトの初期化を行います
-void LightManager::Initialize(ID3D12Device* device, ID3D12DescriptorHeap* srvHeap) {
-    mDevice = device;
+void LightManager::Initialize(ComPtr<ID3D12Device> device) {
+    mDevice = device.Get();
 
     //ディレクショナルライトの初期化
     LightData defaultLight{};
@@ -25,10 +18,8 @@ void LightManager::Initialize(ID3D12Device* device, ID3D12DescriptorHeap* srvHea
     mLights[0] = defaultLight;
     mActiveLightCount = 1;
 
-    UINT descriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
     UINT bufferSize = sizeof(LightData) * maxLight;
-    mLightBuffer = CreateBufferResource(device, bufferSize);
+    mLightBuffer = CreateBufferResource(mDevice, bufferSize);
 
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
     srvDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -38,11 +29,6 @@ void LightManager::Initialize(ID3D12Device* device, ID3D12DescriptorHeap* srvHea
     srvDesc.Buffer.NumElements = maxLight;
     srvDesc.Buffer.StructureByteStride = sizeof(LightData);
 
-    D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
-    cpuHandle.ptr = srvHeap->GetCPUDescriptorHandleForHeapStart().ptr + descriptorSize * lightSrvSlot;
-    device->CreateShaderResourceView(mLightBuffer.Get(), &srvDesc, cpuHandle);
-
-    mLightSrvGpuHandle.ptr = srvHeap->GetGPUDescriptorHandleForHeapStart().ptr + descriptorSize * lightSrvSlot;
 
     Upload();
 }
@@ -55,8 +41,10 @@ void LightManager::SetLight(int index, const LightData& light) {
     Upload();
 }
 
-void LightManager::Bind(ID3D12GraphicsCommandList* cmdList, int id) {
-    cmdList->SetGraphicsRootDescriptorTable(3, mLightSrvGpuHandle);
+void LightManager::Bind(ID3D12GraphicsCommandList* cmdList) {
+    cmdList->SetGraphicsRootShaderResourceView(
+        3, mLightBuffer->GetGPUVirtualAddress());
+    cmdList->SetGraphicsRoot32BitConstant(7, mActiveLightCount, 0);
 }
 
 void LightManager::Upload() {

@@ -43,6 +43,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -52,12 +58,14 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions>/ignore:4049/ignore:4098 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4049 /ignore:4098 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include\assimpLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -75,13 +83,15 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/ignore:4049/ignore:4098 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4049 /ignore:4098 %(AdditionalOptions)</AdditionalOptions>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <AdditionalLibraryDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include\assimpLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -101,6 +111,7 @@
     <ClCompile Include="ShizukuEngine\PSO.cpp" />
     <ClCompile Include="ShizukuEngine\RenderRequests.cpp" />
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp" />
+    <ClCompile Include="ShizukuEngine\Sphere.cpp" />
     <ClCompile Include="ShizukuEngine\Sprite.cpp" />
     <ClCompile Include="ShizukuEngine\TextureManager.cpp" />
     <ClCompile Include="ShizukuEngine\TriangleModel.cpp" />
@@ -124,6 +135,7 @@
     <ClInclude Include="ShizukuEngine\PSO.h" />
     <ClInclude Include="ShizukuEngine\RenderRequests.h" />
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h" />
+    <ClInclude Include="ShizukuEngine\Sphere.h" />
     <ClInclude Include="ShizukuEngine\Sprite.h" />
     <ClInclude Include="ShizukuEngine\TextureManager.h" />
     <ClInclude Include="ShizukuEngine\TriangleModel.h" />
