@@ -26,7 +26,7 @@ public:
 	void PostDraw();
 	void PreDraw();
 
-
+	void SetImGuiRenderTarget();
 
 	//コマンドリストのゲッター
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList.Get(); }
@@ -35,7 +35,6 @@ public:
 
 	ID3D12DescriptorHeap* GetDescriptorHeap() { return srvDescriptorHeap.Get(); }
 	ID3D12CommandQueue* GetCommandQueue() {return commandQueue.Get();}
-
 
 private://プライベート関数
 
@@ -76,6 +75,8 @@ private://メンバ変数
 	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = nullptr;
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE mImGuiRtvHandles[2];
+
 	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = nullptr;
 	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 

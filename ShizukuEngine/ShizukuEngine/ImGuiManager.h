@@ -35,6 +35,8 @@ public:
 	//ImGuiの描画コマンドを積む（3D/2Dを描いた後、PRESENTへのバリアの前に呼ぶ）
 	void End(ID3D12GraphicsCommandList* commandList);
 
+	void RenderPlatformWindows();
+
 private://プライベート関数
 
 	//ImGuiがテクスチャ用のSRVを必要としたときに呼ばれる

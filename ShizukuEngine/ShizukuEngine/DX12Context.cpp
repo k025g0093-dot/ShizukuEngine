@@ -88,7 +88,7 @@ void DX12Context::CreateCommandObjects(
 	);
 	assert(SUCCEEDED(hr));
 
-	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 4, false);//GUIマルチビューポートで使用するため
 
 	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 
@@ -110,7 +110,16 @@ void DX12Context::CreateCommandObjects(
 	mDevice->CreateRenderTargetView(swapChainResources[0].Get(), &rtvDesc, rtvHandles[0]);
 	rtvHandles[1].ptr = rtvHandles[0].ptr + mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	mDevice->CreateRenderTargetView(swapChainResources[1].Get(), &rtvDesc, rtvHandles[1]);
+	
+	const UINT rtvDescriptorSize = mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
+	D3D12_RENDER_TARGET_VIEW_DESC imGuiRtvDesc = rtvDesc;
+	imGuiRtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;//ImGuiはsRGB変換なしで書き込む
+
+	for (int i = 0; i < 2; i++) {
+		mImGuiRtvHandles[i].ptr = rtvStartHandle.ptr + rtvDescriptorSize * (2 + i);
+		mDevice->CreateRenderTargetView(swapChainResources[i].Get(), &imGuiRtvDesc, mImGuiRtvHandles[i]);
+	}
 	InitFenceEvent();
 
 
@@ -291,4 +300,10 @@ ID3D12Resource* DX12Context::CreateDepthStencilTextureResource() {
 
 	return depthStencilResource.Get();
 
+}
+
+
+void DX12Context::SetImGuiRenderTarget() {
+	UINT backBufferIndex = swapChin->GetCurrentBackBufferIndex();
+	commandList->OMSetRenderTargets(1, &mImGuiRtvHandles[backBufferIndex], false, nullptr);
 }

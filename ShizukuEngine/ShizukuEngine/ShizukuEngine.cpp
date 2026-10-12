@@ -52,8 +52,8 @@ void ShizukuEngine::Initialize( int width,int Height) {
 		mDX12Context.GetCommandQueue(),
 		mDX12Context.GetDescriptorHeap(),
 		TextureManager::kImGuiReserved,
-		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,//DX12ContextのRTVと同じフォーマット
-		DXGI_FORMAT_D24_UNORM_S8_UINT   //DX12ContextのDSVと同じフォーマット
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		DXGI_FORMAT_UNKNOWN
 	);
 
 
@@ -94,11 +94,13 @@ void ShizukuEngine::PostDraw()
 		cameraTranslate
 	);
 
-	//ここで未来のレンダーリクエスト関数を使用
-	//順番の前後には注意そこを間違えると描画されなくなる
+	mDX12Context.SetImGuiRenderTarget();
 	mImGuiManager.End(mDX12Context.GetCommandList());
 
 	mDX12Context.PostDraw();
+
+	mImGuiManager.RenderPlatformWindows();
+
 }
 
 void ShizukuEngine::DrawTriangle
