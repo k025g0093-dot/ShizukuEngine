@@ -31,9 +31,11 @@ public:
 	//コマンドリストのゲッター
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList.Get(); }
 	//デバイスのゲッター
-	ID3D12Device *GetDevice() { return mDevice.Get(); }
+	ID3D12Device* GetDevice() { return mDevice.Get(); }
 
-	ID3D12DescriptorHeap* GetDescriptorHeap() {return srvDescriptorHeap.Get();}
+	ID3D12DescriptorHeap* GetDescriptorHeap() { return srvDescriptorHeap.Get(); }
+	ID3D12CommandQueue* GetCommandQueue() {return commandQueue.Get();}
+
 
 private://プライベート関数
 
@@ -56,7 +58,7 @@ private://メンバ変数
 	//DXGIとデバイス
 	ComPtr<IDXGIFactory7> dxgiFactory = {};
 	ComPtr < IDXGIAdapter4> useAdapter = nullptr;
-	DXGI_ADAPTER_DESC3 adapterDesc = {};//これはコムポでかけない
+	DXGI_ADAPTER_DESC3 adapterDesc = {};
 	ComPtr<ID3D12Device> mDevice = nullptr;
 
 	//コマンド関連

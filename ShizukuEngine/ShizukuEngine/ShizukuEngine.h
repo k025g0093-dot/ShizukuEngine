@@ -13,6 +13,9 @@
 #include "TextureManager.h"
 #include "LightManager.h"
 
+#include "ImGuiManager.h"
+
+
 //各種図形の関数が入ったヘッダ
 #include"TriangleModel.h"
 #include "Sprite.h"
@@ -86,6 +89,7 @@ private://各種変数などの初期化
 	Camera mCamera{};
 	TextureManager mTextureManager{};
 	LightManager mLightManager;
+	ImGuiManager mImGuiManager{};
 
 	static ShizukuEngine* mInstance;
 

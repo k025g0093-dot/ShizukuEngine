@@ -1,5 +1,6 @@
 #include"ShizukuEngine/ShizukuEngine.h"
 #include <Windows.h>
+#include <imgui.h>
 
 const int32_t kClineWidth = 1280;
 const int32_t kClineHeight = 720;
@@ -27,6 +28,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 			engine->PreDraw();
+
+			ImGui::ShowDemoWindow();
 
 			for (int i = 0; i < 10; i++) {
 				engine->DrawTriangle({ pos.x + 0.1f * i,pos.y + 0.1f * i,pos.z - 1.5f * i }, rot, { 1,1,1 }, { 1,1,1,1 }, tex);
