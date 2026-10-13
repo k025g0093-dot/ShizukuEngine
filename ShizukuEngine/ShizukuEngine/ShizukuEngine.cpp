@@ -40,6 +40,7 @@ void ShizukuEngine::Initialize( int width,int Height) {
 	);
 
 	mLightManager.Initialize(mDX12Context.GetDevice());
+	mModelManager.Initialize(mDX12Context.GetDevice());
 
 	//レンダーリクエストの初期化
 	mRenderRequests.CreateOrthographicMatrix(width, Height);
@@ -53,6 +54,11 @@ void ShizukuEngine::Initialize( int width,int Height) {
 int ShizukuEngine::LoadTexture(const std::string& filePath) {
 	//画像ファイルの読み込む
 	return mTextureManager.LoadTexture(filePath);
+}
+
+int ShizukuEngine::LoadModel(const std::string& filePath) {
+	//画像ファイルの読み込む
+	return mModelManager.Load(filePath);
 }
 
 void ShizukuEngine::Update() {}
@@ -160,3 +166,25 @@ void ShizukuEngine::DrawSprite
 	mRenderRequests.DrawRequestsSubmission(req);
 }
 
+void ShizukuEngine::DrawModel
+(
+	int modelIndex,
+	const Vector3& pos,
+	const Vector3& rot,
+	const Vector3& scale,
+	const Vector4 color,
+	int textureInd
+) {
+	//番号からモデルを借りる（読み込み失敗の-1や範囲外ならnullptrが返る）
+	MeshModel* model = mModelManager.Get(modelIndex);
+	if (!model) { return; }
+
+	DrawRequest req;
+	req.model = model;
+	req.pos = pos;//位置を渡す
+	req.rot = rot;//回転度を渡す
+	req.scale = scale;//スケールを渡す
+	req.color = color;//色を渡す
+	req.textureIndex = textureInd;//テクスチャのインデックスを渡す
+	mRenderRequests.DrawRequestsSubmission(req);
+}
