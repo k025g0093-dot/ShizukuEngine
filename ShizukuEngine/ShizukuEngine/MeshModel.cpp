@@ -40,6 +40,8 @@ bool MeshModel::LoadFromModel(
 	ProcessNode(scene->mRootNode, scene, vertices, indices); // 再帰トラバース
 	CreateBuffers(device, vertices,indices);
 
+	//GetTexPath
+
 	mPMaterialResource = CreateBufferResource(device.Get(), Align256(sizeof(Material)));
 	Material* materialData = nullptr;
 	mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
@@ -135,4 +137,22 @@ void MeshModel::CreateBuffers(
 	mIndexBufferView.BufferLocation = mPIndexResource->GetGPUVirtualAddress();
 	mIndexBufferView.SizeInBytes = sizeof(uint32_t) * mIndexCount;
 	mIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+}
+
+void MeshModel::GetTexPath(const aiMaterial *mtl, const std::string& filepath) {
+	aiString path;
+
+	if (mtl->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {
+		std::string texPath = path.C_Str();
+		// ファイル名だけの相対パスならFBXと同じディレクトリから探す
+		if (texPath.find('/') == std::string::npos && texPath.find('\\') == std::string::npos) {
+			std::string dir = filepath.substr(0, filepath.find_last_of("/\\"));
+			texPath = dir + "/" + texPath;
+		}
+		mTexturePath = texPath;
+		// ファイルが存在しなければスキップ
+		if (GetFileAttributesA(texPath.c_str()) != INVALID_FILE_ATTRIBUTES) {
+			mTexturePath = nullptr;
+		}
+	}
 }
