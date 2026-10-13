@@ -14,6 +14,9 @@
 #include "LightManager.h"
 #include "ModelManager.h"
 
+#include "ImGuiManager.h"
+
+
 //各種図形の関数が入ったヘッダ
 #include"TriangleModel.h"
 #include "Sprite.h"

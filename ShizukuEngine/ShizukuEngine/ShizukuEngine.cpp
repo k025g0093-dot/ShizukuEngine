@@ -45,6 +45,19 @@ void ShizukuEngine::Initialize( int width,int Height) {
 	//レンダーリクエストの初期化
 	mRenderRequests.CreateOrthographicMatrix(width, Height);
 	mRenderRequests.InitRender(mDX12Context.GetDevice(),&mTextureManager,&mLightManager);
+
+	//ImGuiの初期化
+	mImGuiManager.Initialize(
+		mWinApp.GetHwnd(),
+		mDX12Context.GetDevice(),
+		mDX12Context.GetCommandQueue(),
+		mDX12Context.GetDescriptorHeap(),
+		TextureManager::kImGuiReserved,
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		DXGI_FORMAT_UNKNOWN
+	);
+
+
 #ifdef _DEBUG
 	mDebugLayer.SetupInfoQueue(mDX12Context.GetDevice());
 #endif
@@ -70,10 +83,12 @@ ShizukuEngine::~ShizukuEngine() {}
 void ShizukuEngine::PreDraw() 
 {
 	mDX12Context.PreDraw();
+	mImGuiManager.Begin();
 }
 
 void ShizukuEngine::PostDraw() 
 {
+
 
 	Matrix4x4 view = mCamera.GetViewMatrix();
 	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mWidth, (float)mHeight);
@@ -85,10 +100,13 @@ void ShizukuEngine::PostDraw()
 		cameraTranslate
 	);
 
-	//ここで未来のレンダーリクエスト関数を使用
-	//順番の前後には注意そこを間違えると描画されなくなる
+	mDX12Context.SetImGuiRenderTarget();
+	mImGuiManager.End(mDX12Context.GetCommandList());
 
 	mDX12Context.PostDraw();
+
+	mImGuiManager.RenderPlatformWindows();
+
 }
 
 void ShizukuEngine::DrawTriangle
