@@ -78,23 +78,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	ShizukuEngine* engine = new ShizukuEngine(kClineWidth, kClineHeight, L"ShizukuEngine");
 
-	// ---------- テクスチャ（パーティクル用に2枚） ----------
-	const int textures[2] = {
-		engine->LoadTexture("resources/uvChecker.png"),
-		engine->LoadTexture("resources/monsterBall.png"),
-	};
-
-	// ---------- パーティクル ----------
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine(seedGenerator());
-	Emitter emitter{};
-	ParticleSettings settings{};
-	std::vector<Particle> particles;
-	int spawnedTotal = 0; // 交互にテクスチャを切り替えるための通し番号
+	//---------- 読み込み ----------
+	int tex = engine->LoadTexture("resources/uvChecker.png");
+	int model = engine->LoadModel("resources/suzanne.obj");//失敗したら-1（DrawModelは何もしない）
 
 	// ---------- FPSの履歴（グラフ表示用） ----------
 	std::array<float, 120> fpsHistory{};
 	int fpsHistoryOffset = 0;
+
+	//モデルを回して立体感を確認する用
+	float modelRotateY = 0.0f;
 
 	MSG msg{};
 	while (msg.message != WM_QUIT) {
@@ -106,87 +99,27 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 			engine->Update();
 
-			// ImGuiのフレーム開始もPreDrawの中で行われる
+			modelRotateY += 0.01f;
+
 			engine->PreDraw();
 
-			const ImGuiIO& io = ImGui::GetIO();
-			// ウィンドウをつかんで止まった後などに一気に進まないよう上限をつける
-			const float deltaTime = (io.DeltaTime < 0.1f) ? io.DeltaTime : 0.1f;
+			//---------- モデル ----------
+			engine->DrawModel(
+				model,
+				{ 0.0f, 0.0f, 0.0f },
+				{ 0.0f, modelRotateY, 0.0f },
+				{ 2.0f, 2.0f, 2.0f },
+				{ 1.0f, 1.0f, 1.0f, 1.0f },
+				tex
+			);
 
-			fpsHistory[fpsHistoryOffset] = io.Framerate;
-			fpsHistoryOffset = (fpsHistoryOffset + 1) % static_cast<int>(fpsHistory.size());
-
-			// ==================== デバッグ情報 ====================
-			ImGui::Begin("デバッグ情報");
-			ImGui::Text("FPS : %.1f (%.2f ms)", io.Framerate, 1000.0f / io.Framerate);
-			ImGui::PlotLines("##fps", fpsHistory.data(), static_cast<int>(fpsHistory.size()),
-				fpsHistoryOffset, nullptr, 0.0f, 120.0f, ImVec2(0.0f, 50.0f));
-			ImGui::Separator();
-			ImGui::Text("メモリ(プロセス) : %.1f MB", GetProcessMemoryMB());
-			ImGui::Text("パーティクル数 : %d", static_cast<int>(particles.size()));
-			ImGui::End();
-
-			// ==================== パーティクルの設定 ====================
-			ImGui::Begin("パーティクル");
-			ImGui::Checkbox("発生させる", &settings.isEmitting);
-			ImGui::DragFloat3("発生位置", &emitter.position.x, 0.1f);
-			ImGui::SliderInt("1回の発生数", &emitter.spawnCount, 1, 50);
-			ImGui::SliderFloat("発生間隔(秒)", &emitter.frequency, 0.01f, 1.0f);
-			ImGui::SliderFloat("重力", &settings.gravity, -30.0f, 0.0f);
-			ImGui::SliderFloat("横の速さ", &settings.sideSpeed, 0.0f, 10.0f);
-			ImGui::DragFloatRange2("上向きの速さ", &settings.minUpSpeed, &settings.maxUpSpeed, 0.1f, 0.0f, 30.0f);
-			ImGui::DragFloatRange2("寿命(秒)", &settings.minLife, &settings.maxLife, 0.05f, 0.1f, 10.0f);
-			ImGui::SliderFloat("大きさ", &settings.size, 0.05f, 1.0f);
-			ImGui::SliderInt("最大数", &settings.maxParticles, 10, 5000);
-			ImGui::Combo("テクスチャ", &settings.textureMode, "1 : uvChecker\0" "2 : monsterBall\0" "交互\0");
-			if (ImGui::Button("全部消す")) {
-				particles.clear();
-			}
-			ImGui::End();
-
-			// ==================== パーティクルの更新 ====================
-			// ---------- 発生 ----------
-			if (settings.isEmitting) {
-				emitter.frequencyTime += deltaTime;
-				while (emitter.frequencyTime >= emitter.frequency) {
-					emitter.frequencyTime -= emitter.frequency;
-					for (int i = 0; i < emitter.spawnCount; i++) {
-						if (static_cast<int>(particles.size()) >= settings.maxParticles) { break; }
-
-						int textureIndex = (settings.textureMode == 2)
-							? textures[spawnedTotal % 2]
-							: textures[settings.textureMode];
-						particles.push_back(MakeNewParticle(randomEngine, emitter, settings, textureIndex));
-						spawnedTotal++;
-					}
-				}
+			//---------- 今までの図形（モデルと重ならないよう横にずらす） ----------
+			for (int i = 0; i < 10; i++) {
+				engine->DrawTriangle({ pos.x - 6.0f + 0.1f * i, pos.y + 0.1f * i, pos.z - 1.5f * i }, rot, { 1,1,1 }, { 1,1,1,1 }, tex);
+				engine->DrawSphere({ pos.x + 6.0f + 0.1f * i, pos.y + 0.1f * i, pos.z + 2.0f * i }, rot, { 1,1,1 }, { 1,1,1,1 }, tex);
 			}
 
-			// ---------- 移動 ----------
-			for (Particle& particle : particles) {
-				particle.velocity.y += settings.gravity * deltaTime;
-				particle.position += particle.velocity * deltaTime;
-				particle.currentTime += deltaTime;
-			}
-
-			// 寿命が尽きたものを削除
-			std::erase_if(particles, [](const Particle& particle) {
-				return particle.currentTime >= particle.lifeTime;
-			});
-
-			// ==================== 描画 ====================
-			for (const Particle& particle : particles) {
-				// 残り寿命の割合(1→0)で小さくしていく
-				float remain = 1.0f - (particle.currentTime / particle.lifeTime);
-				float size = settings.size * remain;
-				engine->DrawSphere(
-					particle.position,
-					{ 0.0f, 0.0f, 0.0f },
-					{ size, size, size },
-					{ 1.0f, 1.0f, 1.0f, remain },
-					particle.textureIndex
-				);
-			}
+			engine->DrawSprite({ 100.0f, 100.0f }, 0.0f, 256.0f, 256.0f, { 1,1,1,1 }, tex);
 
 			engine->PostDraw();
 		}
