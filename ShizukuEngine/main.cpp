@@ -29,7 +29,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//---------- 読み込み ----------
 	int tex = engine->LoadTexture("resources/uvChecker.png");
-	int model = engine->LoadModel("resources/suzanne.obj");//失敗したら-1（DrawModelは何もしない）
+	int model = engine->LoadModel("resources/skyBox/skyDome.fbx");//失敗したら-1（DrawModelは何もしない）
 
 
 	Vector3 pos{0,0,0};
@@ -57,8 +57,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 				{ 0.0f, 0.0f, 0.0f },
 				{ 0.0f, modelRotateY, 0.0f },
 				{ 2.0f, 2.0f, 2.0f },
-				{ 1.0f, 1.0f, 1.0f, 1.0f },
-				tex
+				{ 1.0f, 1.0f, 1.0f, 1.0f }
 			);
 
 			//---------- 今までの図形（モデルと重ならないよう横にずらす） ----------

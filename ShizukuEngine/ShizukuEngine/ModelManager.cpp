@@ -2,6 +2,7 @@
 #include "ConvertString.h"
 #include <fstream>
 #include <filesystem>
+#include"TextureManager.h"
 
 int ModelManager::Load(const std::string& filePath) {
 
@@ -21,7 +22,11 @@ int ModelManager::Load(const std::string& filePath) {
 		return -1;
 	}
 
-	//if ();
+	assert(mTextureManager);
+	const std::string texPath = mesh->GetTexturePath();
+
+	const int texIndex = mTextureManager->LoadTexture(texPath);
+	mesh->SetTextureIndex(texIndex);
 
 	int index = static_cast<int>(mModels.size());
 	mModels.push_back(std::move(mesh));

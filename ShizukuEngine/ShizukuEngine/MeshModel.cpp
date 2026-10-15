@@ -24,7 +24,7 @@ const aiScene* MeshModel::Load(const std::string& filepath, Assimp::Importer& im
 
 //モデル読み込み
 bool MeshModel::LoadFromModel(
-	ComPtr<ID3D12Device> device,
+	ID3D12Device* device,
 	const std::string& filepath
 ) {
 
@@ -40,9 +40,14 @@ bool MeshModel::LoadFromModel(
 	ProcessNode(scene->mRootNode, scene, vertices, indices); // 再帰トラバース
 	CreateBuffers(device, vertices,indices);
 
-	//GetTexPath
+	if (scene->mNumMeshes > 0) {
+		const unsigned int materialIndex=scene->mMeshes[0]->mMaterialIndex;;
+		if (materialIndex < scene->mNumMaterials) {
+			TexPath(scene->mMaterials[materialIndex], filepath);
+		}
+	}
 
-	mPMaterialResource = CreateBufferResource(device.Get(), Align256(sizeof(Material)));
+	mPMaterialResource = CreateBufferResource(device, Align256(sizeof(Material)));
 	Material* materialData = nullptr;
 	mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -139,20 +144,20 @@ void MeshModel::CreateBuffers(
 	mIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 }
 
-void MeshModel::GetTexPath(const aiMaterial *mtl, const std::string& filepath) {
+void MeshModel::TexPath(const aiMaterial *mtl, const std::string& filepath) {
+	if (!mtl) {
+		return;
+	}
 	aiString path;
 
-	if (mtl->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {
-		std::string texPath = path.C_Str();
-		// ファイル名だけの相対パスならFBXと同じディレクトリから探す
-		if (texPath.find('/') == std::string::npos && texPath.find('\\') == std::string::npos) {
-			std::string dir = filepath.substr(0, filepath.find_last_of("/\\"));
-			texPath = dir + "/" + texPath;
-		}
-		mTexturePath = texPath;
-		// ファイルが存在しなければスキップ
-		if (GetFileAttributesA(texPath.c_str()) != INVALID_FILE_ATTRIBUTES) {
-			mTexturePath = nullptr;
-		}
+
+	if (mtl->GetTexture(aiTextureType_DIFFUSE, 0, &path) != AI_SUCCESS) { return; }
+	
+	std::filesystem::path texPath = path.C_Str();
+
+	// 相対パスなら、モデルファイルがあるフォルダから見たパスにする
+	if (texPath.is_relative()) {
+		texPath = std::filesystem::path(filepath).parent_path() / texPath;
 	}
+	mTexturePath = texPath.lexically_normal().generic_string();
 }

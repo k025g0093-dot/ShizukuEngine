@@ -6,24 +6,13 @@
 #include <string>
 #include <wrl.h>
 #include <vector>
-#include <fstream>
-#include <sstream>
+
 
 using Microsoft::WRL::ComPtr;
 
 struct VertexData;
 
-struct MaterialData
-{
-    std::string textureFilPath;
-    std::string normalTextureFilePath;
-};
 
-struct ModelData
-{
-    std::vector<VertexData> vertices;
-    MaterialData material;
-};
 
 class MeshModel : public Model 
 {   
@@ -33,14 +22,23 @@ public://パブリック
 	~MeshModel();
 
 
-	bool LoadFromModel(ComPtr<ID3D12Device> device, const std::string& filepath);
+	bool LoadFromModel(ID3D12Device *device, const std::string& filepath);
 
     void Draw(
         ID3D12GraphicsCommandList* cmdList,
         UINT instanceCount,
         UINT startInstanceLocation) override;
 
-    void GetTexPath(const aiMaterial *scene,const std::string& filepath);
+    void TexPath(const aiMaterial * mtl,const std::string& filepath);
+
+    const std::string GetTexturePath() const{ return  mTexturePath; }
+
+    //テクスチャーインデックスゲッター
+    const int GetTextureIndex()const { return mTextureIndex; }
+    //テクスチャーインデックスセッター
+    void SetTextureIndex(int textureIndex) {
+        mTextureIndex = textureIndex;
+    }
 
 private://プライベート関数
     
@@ -68,6 +66,8 @@ private://メンバ変数
 
     //マテリアル
     ComPtr<ID3D12Resource>   mPMaterialResource;
+
+    int mTextureIndex = -1;
 
     std::string mTexturePath;
 
