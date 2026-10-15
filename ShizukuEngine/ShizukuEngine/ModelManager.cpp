@@ -21,7 +21,7 @@ int ModelManager::Load(const std::string& filePath) {
 		return -1;
 	}
 
-	if()
+	//if ();
 
 	int index = static_cast<int>(mModels.size());
 	mModels.push_back(std::move(mesh));

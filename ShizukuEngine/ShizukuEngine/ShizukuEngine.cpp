@@ -40,7 +40,7 @@ void ShizukuEngine::Initialize( int width,int Height) {
 	);
 
 	mLightManager.Initialize(mDX12Context.GetDevice());
-	mModelManager.Initialize(mDX12Context.GetDevice());
+	mModelManager.Initialize(mDX12Context.GetDevice(),&mTextureManager);
 
 	//レンダーリクエストの初期化
 	mRenderRequests.CreateOrthographicMatrix(width, Height);
