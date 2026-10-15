@@ -1,6 +1,7 @@
 #pragma once
 #include "ConvertString.h"
 #include "LightManager.h"
+#include "Camera.h"
 #ifdef USE_IMGUI
 #endif // USE_IMGUI
 
@@ -44,6 +45,13 @@ class ImGuiLightManagerWindow : public ImGuiUIWindow
 {
 public:
     void update(LightManager* lm);
+};
+
+//カメラの位置・回転などをGUIで操作する
+class ImGuiCameraWindow : public ImGuiUIWindow
+{
+public:
+    void update(Camera* camera);
 };
 
 class ImGuiViewportWindow : public ImGuiUIWindow

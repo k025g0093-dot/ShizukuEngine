@@ -94,6 +94,7 @@ void ShizukuEngine::PostDraw()
 
 	//ライトのGUI（ImGuiのフレーム中に呼ぶ）
 	mLightWindow.update(&mLightManager);
+	mCameraWindow.update(&mCamera);
 
 	Matrix4x4 view = mCamera.GetViewMatrix();
 	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mWidth, (float)mHeight);

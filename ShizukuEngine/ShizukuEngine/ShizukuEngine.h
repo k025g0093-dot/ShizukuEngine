@@ -105,6 +105,7 @@ private://各種変数などの初期化
 	LightManager mLightManager;
 	ImGuiManager mImGuiManager{};
 	ImGuiLightManagerWindow mLightWindow{};//ライト操作用のGUI（確認用）
+	ImGuiCameraWindow mCameraWindow{};//カメラ操作用のGUI（確認用）
 	ModelManager mModelManager{};
 
 	static ShizukuEngine* mInstance;

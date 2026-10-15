@@ -29,7 +29,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	//---------- 読み込み ----------
 	int tex = engine->LoadTexture("resources/uvChecker.png");
-	int model = engine->LoadModel("resources/skyBox/skyDome.fbx");//失敗したら-1（DrawModelは何もしない）
+	int model = engine->LoadModel("resources/fbx/Dragon 2.5_fbx.fbx");//失敗したら-1（DrawModelは何もしない）
 
 
 	Vector3 pos{0,0,0};
