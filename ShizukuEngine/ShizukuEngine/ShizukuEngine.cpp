@@ -40,10 +40,24 @@ void ShizukuEngine::Initialize( int width,int Height) {
 	);
 
 	mLightManager.Initialize(mDX12Context.GetDevice());
+	mModelManager.Initialize(mDX12Context.GetDevice(),&mTextureManager);
 
 	//レンダーリクエストの初期化
 	mRenderRequests.CreateOrthographicMatrix(width, Height);
 	mRenderRequests.InitRender(mDX12Context.GetDevice(),&mTextureManager,&mLightManager);
+
+	//ImGuiの初期化
+	mImGuiManager.Initialize(
+		mWinApp.GetHwnd(),
+		mDX12Context.GetDevice(),
+		mDX12Context.GetCommandQueue(),
+		mDX12Context.GetDescriptorHeap(),
+		TextureManager::kImGuiReserved,
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		DXGI_FORMAT_UNKNOWN
+	);
+
+
 #ifdef _DEBUG
 	mDebugLayer.SetupInfoQueue(mDX12Context.GetDevice());
 #endif
@@ -55,6 +69,11 @@ int ShizukuEngine::LoadTexture(const std::string& filePath) {
 	return mTextureManager.LoadTexture(filePath);
 }
 
+int ShizukuEngine::LoadModel(const std::string& filePath) {
+	//画像ファイルの読み込む
+	return mModelManager.Load(filePath);
+}
+
 void ShizukuEngine::Update() {}
 
 //開放処理
@@ -64,10 +83,12 @@ ShizukuEngine::~ShizukuEngine() {}
 void ShizukuEngine::PreDraw() 
 {
 	mDX12Context.PreDraw();
+	mImGuiManager.Begin();
 }
 
 void ShizukuEngine::PostDraw() 
 {
+
 
 	Matrix4x4 view = mCamera.GetViewMatrix();
 	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mWidth, (float)mHeight);
@@ -79,10 +100,13 @@ void ShizukuEngine::PostDraw()
 		cameraTranslate
 	);
 
-	//ここで未来のレンダーリクエスト関数を使用
-	//順番の前後には注意そこを間違えると描画されなくなる
+	mDX12Context.SetImGuiRenderTarget();
+	mImGuiManager.End(mDX12Context.GetCommandList());
 
 	mDX12Context.PostDraw();
+
+	mImGuiManager.RenderPlatformWindows();
+
 }
 
 void ShizukuEngine::DrawTriangle
@@ -160,3 +184,25 @@ void ShizukuEngine::DrawSprite
 	mRenderRequests.DrawRequestsSubmission(req);
 }
 
+void ShizukuEngine::DrawModel
+(
+	int modelIndex,
+	const Vector3& pos,
+	const Vector3& rot,
+	const Vector3& scale,
+	const Vector4 color,
+	int textureInd
+) {
+	//番号からモデルを借りる（読み込み失敗の-1や範囲外ならnullptrが返る）
+	MeshModel* model = mModelManager.Get(modelIndex);
+	if (!model) { return; }
+
+	DrawRequest req;
+	req.model = model;
+	req.pos = pos;//位置を渡す
+	req.rot = rot;//回転度を渡す
+	req.scale = scale;//スケールを渡す
+	req.color = color;//色を渡す
+	req.textureIndex = textureInd;//テクスチャのインデックスを渡す
+	mRenderRequests.DrawRequestsSubmission(req);
+}

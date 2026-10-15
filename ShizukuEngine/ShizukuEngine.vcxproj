@@ -53,7 +53,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_IMGUI;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -105,9 +105,13 @@
     <ClCompile Include="ShizukuEngine\DebugLayer.cpp" />
     <ClCompile Include="ShizukuEngine\DX12Context.cpp" />
     <ClCompile Include="ShizukuEngine\DXC.cpp" />
+    <ClCompile Include="ShizukuEngine\ImGuiManager.cpp" />
+    <ClCompile Include="ShizukuEngine\ImGuiWindow.cpp" />
     <ClCompile Include="ShizukuEngine\LightManager.cpp" />
     <ClCompile Include="ShizukuEngine\LogSistem.cpp" />
+    <ClCompile Include="ShizukuEngine\MeshModel.cpp" />
     <ClCompile Include="ShizukuEngine\Model.cpp" />
+    <ClCompile Include="ShizukuEngine\ModelManager.cpp" />
     <ClCompile Include="ShizukuEngine\PSO.cpp" />
     <ClCompile Include="ShizukuEngine\RenderRequests.cpp" />
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp" />
@@ -128,10 +132,14 @@
     <ClInclude Include="ShizukuEngine\DebugLayer.h" />
     <ClInclude Include="ShizukuEngine\DX12Context.h" />
     <ClInclude Include="ShizukuEngine\DXC.h" />
+    <ClInclude Include="ShizukuEngine\ImGuiManager.h" />
+    <ClInclude Include="ShizukuEngine\ImGuiWindow.h" />
     <ClInclude Include="ShizukuEngine\InstanceData.h" />
     <ClInclude Include="ShizukuEngine\LightManager.h" />
     <ClInclude Include="ShizukuEngine\LogSistem.h" />
+    <ClInclude Include="ShizukuEngine\MeshModel.h" />
     <ClInclude Include="ShizukuEngine\Model.h" />
+    <ClInclude Include="ShizukuEngine\ModelManager.h" />
     <ClInclude Include="ShizukuEngine\PSO.h" />
     <ClInclude Include="ShizukuEngine\RenderRequests.h" />
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h" />
@@ -185,6 +193,9 @@
   <ItemGroup>
     <ProjectReference Include="ShizukuEngine\externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
+    <ProjectReference Include="ShizukuEngine\externals\imgui\ImGui.vcxproj">
+      <Project>{4aea73d6-829a-4167-931b-2254022c069a}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -55,9 +55,6 @@ void TriangleModel::Draw(
 	//マテリアル
 	cmdList->SetGraphicsRootConstantBufferView(0, mPMaterialResource->GetGPUVirtualAddress());
 
-	// テクスチャセット
-	//if (textureIndex >= 0) {
-	//	cmdList->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetGPUHandle(textureIndex));
-	//}
+
 	cmdList->DrawInstanced(3, instanceCount, 0, startInstanceLocation);
 }
