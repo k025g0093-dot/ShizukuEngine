@@ -134,6 +134,7 @@
     <ClInclude Include="ShizukuEngine\DXC.h" />
     <ClInclude Include="ShizukuEngine\ImGuiManager.h" />
     <ClInclude Include="ShizukuEngine\ImGuiWindow.h" />
+    <ClInclude Include="ShizukuEngine\Input.h" />
     <ClInclude Include="ShizukuEngine\InstanceData.h" />
     <ClInclude Include="ShizukuEngine\LightManager.h" />
     <ClInclude Include="ShizukuEngine\LogSistem.h" />

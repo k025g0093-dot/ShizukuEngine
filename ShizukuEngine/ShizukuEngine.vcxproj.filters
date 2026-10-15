@@ -67,7 +67,6 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\デバックレイヤー">
       <UniqueIdentifier>{8e134a24-3978-4329-9b33-2d92aa95f82e}</UniqueIdentifier>
     </Filter>
-  
     <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など\3Dモデル関係">
       <UniqueIdentifier>{16059aef-eeae-4e3c-840c-a7bdc12a8749}</UniqueIdentifier>
     </Filter>
@@ -82,6 +81,9 @@
     </Filter>
     <Filter Include="ソース ファイル\ShizukuEngine\GUI">
       <UniqueIdentifier>{9720fe66-a38e-4eae-937c-3f286ffbdd2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\各種機能\入力処理">
+      <UniqueIdentifier>{5163838b-841f-45ad-b3c7-ae96a3cc1eac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -242,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="ShizukuEngine\ImGuiManager.h">
       <Filter>ソース ファイル\ShizukuEngine\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Input.h">
+      <Filter>ソース ファイル\ShizukuEngine\各種機能\入力処理</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
