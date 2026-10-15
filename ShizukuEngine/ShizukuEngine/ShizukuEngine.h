@@ -102,6 +102,7 @@ private://各種変数などの初期化
 	Camera mCamera{};
 	TextureManager mTextureManager{};
 	LightManager mLightManager;
+	ImGuiManager mImGuiManager{};
 	ModelManager mModelManager{};
 
 	static ShizukuEngine* mInstance;

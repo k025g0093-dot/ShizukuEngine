@@ -40,6 +40,8 @@ public://パブリック
         UINT instanceCount,
         UINT startInstanceLocation) override;
 
+    void GetTexPath(const aiMaterial *scene,const std::string& filepath);
+
 private://プライベート関数
     
     static const aiScene* Load(const std::string& filepath, Assimp::Importer& importer);
@@ -66,6 +68,8 @@ private://メンバ変数
 
     //マテリアル
     ComPtr<ID3D12Resource>   mPMaterialResource;
+
+    std::string mTexturePath;
 
     uint32_t Align256(uint32_t size)
     {

@@ -5,13 +5,14 @@
 #include <memory>
 #include <d3d12.h>
 #include "MeshModel.h"
+#include "TextureManager.h"
 
 //モデルの読み込みと所有を行う（同じパスは2回目から読み込まずに同じ番号を返す）
 class ModelManager {
 public:
 
     
-    void Initialize(ID3D12Device* device);
+    void Initialize(ID3D12Device* device, TextureManager* textureManager);
 
     //モデルを読み込んで番号を返す
     int Load(const std::string& filePath);
@@ -23,6 +24,7 @@ private://メンバ変数
 
     //外から借りているもの
     ID3D12Device* mDevice = nullptr;
+    TextureManager* mTextureManager = nullptr;
 
     //読み込んだモデル
     std::vector<std::unique_ptr<MeshModel>> mModels;

@@ -20,6 +20,9 @@ int ModelManager::Load(const std::string& filePath) {
 		OutputDebugStringA(("Error: Failed to load model: " + filePath + "\n").c_str());	
 		return -1;
 	}
+
+	//if ();
+
 	int index = static_cast<int>(mModels.size());
 	mModels.push_back(std::move(mesh));
 
@@ -28,8 +31,9 @@ int ModelManager::Load(const std::string& filePath) {
 
 }
 
-void ModelManager::Initialize(ID3D12Device* device) {
+void ModelManager::Initialize(ID3D12Device* device, TextureManager* textureManager) {
 	mDevice = device;
+	mTextureManager=textureManager;
 }
 
 
