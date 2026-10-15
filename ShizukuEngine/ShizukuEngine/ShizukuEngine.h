@@ -15,6 +15,7 @@
 #include "ModelManager.h"
 
 #include "ImGuiManager.h"
+#include "ImGuiWindow.h"
 
 
 //各種図形の関数が入ったヘッダ
@@ -103,6 +104,7 @@ private://各種変数などの初期化
 	TextureManager mTextureManager{};
 	LightManager mLightManager;
 	ImGuiManager mImGuiManager{};
+	ImGuiLightManagerWindow mLightWindow{};//ライト操作用のGUI（確認用）
 	ModelManager mModelManager{};
 
 	static ShizukuEngine* mInstance;
