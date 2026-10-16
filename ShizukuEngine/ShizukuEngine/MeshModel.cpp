@@ -88,7 +88,7 @@ void MeshModel::ProcessNode(aiNode* node, const aiScene* scene,
 			aiVector3D pos = nodeTransform * mesh->mVertices[v];
 			vert.position = { pos.x, pos.y, pos.z, 1.0f };
 			if (mesh->mTextureCoords[0]) {
-				vert.texcord = { mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y };
+				vert.texcord = { mesh->mTextureCoords[0][v].x,  mesh->mTextureCoords[0][v].y };
 			}
 			if (mesh->mNormals) {
 				aiVector3D nm = aiMatrix3x3(nodeTransform) * mesh->mNormals[v];
