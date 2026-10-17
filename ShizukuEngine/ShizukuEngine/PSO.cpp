@@ -162,44 +162,64 @@ D3D12_INPUT_LAYOUT_DESC CreateLayout() {
 
 // ブレンドステートの生成
 // 色の合成方法を定義する（今回は透明度なしのシンプルな設定）
+// ブレンドステートの生成
+// ブレンドモードに合わせて、シェーダーの出力色(Src)と画面の色(Dest)の混ぜ方を決める
 D3D12_BLEND_DESC CreateBlendState(BlendMode blendMode) {
 	D3D12_BLEND_DESC blendDesc{};
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
 		D3D12_COLOR_WRITE_ENABLE_ALL; // 全チャンネルへの書き込みを有効化
 
-	// 色：新しい色×α ＋ 今の色×(1-α)
-	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-
-	if (blendMode==BlendMode::kBlendModeNormal) {
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-	}else if 
-		(blendMode==BlendMode::kBlendModeAdd) {
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
-		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
-	}else if 
-		(blendMode==BlendMode::kBlendModeSubtract) {
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
-		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_REV_SUBTRACT;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
-	}else if 
-		(blendMode==BlendMode::kBlendModeMultiply) {
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ZERO;
-		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_SRC_COLOR;
-	}else if 
-		(blendMode==BlendMode::kBlendModeScreen) {
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_INV_DEST_COLOR;
-		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	// ブレンドなしなら、ここで終わり
+	if (blendMode == kBlendModeNone) {
+		blendDesc.RenderTarget[0].BlendEnable = FALSE;
+		return blendDesc;
 	}
-	
 
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+
+	// α：全モード共通（出力のαをそのまま使う）
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	// 色：モードごとに切り替える
+	switch (blendMode) {
+	case kBlendModeNormal:
+		// Src × α + Dest × (1 - α)
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		break;
+	case kBlendModeAdd:
+		// Src × α + Dest × 1
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		break;
+	case kBlendModeSubtract:
+		// Dest × 1 - Src × α
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		break;
+	case kBlendModeMultiply:
+		// Src × 0 + Dest × Src
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_SRC_COLOR;
+		break;
+	case kBlendModeScreen:
+		// Src × (1 - Dest) + Dest × 1
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_INV_DEST_COLOR;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		break;
+	default:
+		// 想定外の値（kCountOfBlendModeなど）はNormalと同じにしておく
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		break;
+	}
 	return blendDesc;
 }
 

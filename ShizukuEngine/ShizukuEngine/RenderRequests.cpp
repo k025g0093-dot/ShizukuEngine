@@ -16,9 +16,11 @@ void RenderRequests::InitRender(
 	//ルートシグネチャを作成
 	rootSignature = CreateRootSignature(mDevice, hr);
 	//PSOの作成
-	pipelineState3D = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType:: k3D);
-	pipelineState2D = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k2D);
-
+	for (int i = 0; i < kCountOfBlendMode; i++) {
+		const BlendMode blendMode = static_cast<BlendMode>(i);
+		pipelineState3D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k3D, blendMode);
+		pipelineState2D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k2D, blendMode);
+	}
 	CreateInstanceBuffer(mMaxDrawCount);
 }
 
@@ -108,7 +110,7 @@ void RenderRequests::Render3DTarget(
 	//ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
 	//PSOの設定
-	commandList->SetPipelineState(pipelineState3D.Get());
+	commandList->SetPipelineState(pipelineState3D[kBlendModeNormal].Get());
 
 	mLightManager->Bind(commandList.Get());
 	commandList->SetGraphicsRoot32BitConstants(6, 3, &mCameraTranslate, 0);
@@ -226,7 +228,7 @@ void RenderRequests::Render2DTarget(
 	//ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
 	//PSOの設定
-	commandList->SetPipelineState(pipelineState2D.Get());
+	commandList->SetPipelineState(pipelineState2D[kBlendModeNormal].Get());
 
 
 	for (int i = 0; i < (int)sortedRequests.size(); i++) {

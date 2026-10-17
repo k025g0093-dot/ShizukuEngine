@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "InstanceData.h"
 #include <algorithm> 
+#include<array>
 //ドローリクエストの構造体
 struct DrawRequest {
 	Model* model = nullptr;
@@ -69,8 +70,9 @@ private://メンバ変数
 
 	int mMaxDrawCount = 128;
 	ComPtr<ID3D12RootSignature>  rootSignature;//ルートシグネチャ
-	ComPtr<ID3D12PipelineState>  pipelineState3D;//3D用パイプラインステート
-	ComPtr<ID3D12PipelineState>  pipelineState2D;//2D用パイプラインステート
+	//ブレンドモードごとのPSO（添字にBlendModeを使う）
+	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState3D;//3D用
+	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState2D;//2D用
 	TextureManager* mTextureManager = nullptr;
 	LightManager* mLightManager = nullptr;
 
