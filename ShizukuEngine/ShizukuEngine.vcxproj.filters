@@ -85,6 +85,9 @@
     <Filter Include="ソース ファイル\ShizukuEngine\各種機能\入力処理">
       <UniqueIdentifier>{5163838b-841f-45ad-b3c7-ae96a3cc1eac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\音楽に関するもの">
+      <UniqueIdentifier>{b0291c97-b902-481c-ba52-903115b09b3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -155,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="ShizukuEngine\ImGuiManager.cpp">
       <Filter>ソース ファイル\ShizukuEngine\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\Sound.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\音楽に関するもの</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="ShizukuEngine\Input.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\入力処理</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\Sound.h">
+      <Filter>ソース ファイル\ShizukuEngine\音楽に関するもの</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

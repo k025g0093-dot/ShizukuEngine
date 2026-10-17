@@ -1,4 +1,5 @@
 #include "ImGuiWindow.h"
+#include "ModelManager.h"
 
 
 #include <cmath>
@@ -193,6 +194,52 @@ void ImGuiCameraWindow::update(Camera* camera) {
 
 		if (ImGui::Button("初期位置に戻す")) {
 			*camera = Camera{};
+		}
+	}
+	end();
+#endif // USE_IMGUI
+}
+
+
+
+//=============================
+//モデル操作ウィンドウ
+//=============================
+void ImGuiModelWindow::update(ModelManager* modelManager) {
+#ifdef USE_IMGUI
+	if (!modelManager) { return; }
+
+	if (begin("モデル")) {
+		const int modelCount = modelManager->GetModelCount();
+		if (modelCount == 0) {
+			ImGui::TextDisabled("読み込まれたモデルはありません");
+		}
+
+		for (int i = 0; i < modelCount; i++) {
+			MeshModel* model = modelManager->Get(i);
+			if (!model) { continue; }
+
+			ImGui::PushID(i);
+			const std::string label = "モデル " + std::to_string(i);
+			if (ImGui::CollapsingHeader(label.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+				const std::string texturePath = model->GetTexturePath();
+				ImGui::Text("テクスチャ : %s", texturePath.empty() ? "(なし)" : texturePath.c_str());
+
+				Vector4 color = model->GetColor();
+				if (ImGui::ColorEdit4("色", &color.x)) {
+					model->SetColor(color);
+				}
+
+				bool enableLighting = model->GetEnableLighting();
+				if (ImGui::Checkbox("ライティング", &enableLighting)) {
+					model->SetEnableLighting(enableLighting);
+				}
+
+				if (ImGui::Button("色を戻す")) {
+					model->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+				}
+			}
+			ImGui::PopID();
 		}
 	}
 	end();

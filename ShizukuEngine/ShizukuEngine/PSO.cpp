@@ -162,22 +162,44 @@ D3D12_INPUT_LAYOUT_DESC CreateLayout() {
 
 // ブレンドステートの生成
 // 色の合成方法を定義する（今回は透明度なしのシンプルな設定）
-D3D12_BLEND_DESC CreateBlendState(PipelineType type) {
+D3D12_BLEND_DESC CreateBlendState(BlendMode blendMode) {
 	D3D12_BLEND_DESC blendDesc{};
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
 		D3D12_COLOR_WRITE_ENABLE_ALL; // 全チャンネルへの書き込みを有効化
 
-	if (type == PipelineType::k2D) {
-		// 色：新しい色×α ＋ 今の色×(1-α)
-		blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		// α：そのまま足す
+	// 色：新しい色×α ＋ 今の色×(1-α)
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+
+	if (blendMode==BlendMode::kBlendModeNormal) {
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	}else if 
+		(blendMode==BlendMode::kBlendModeAdd) {
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	}else if 
+		(blendMode==BlendMode::kBlendModeSubtract) {
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_REV_SUBTRACT;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+	}else if 
+		(blendMode==BlendMode::kBlendModeMultiply) {
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_SRC_COLOR;
+	}else if 
+		(blendMode==BlendMode::kBlendModeScreen) {
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_INV_DEST_COLOR;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
 	}
+	
+
 	return blendDesc;
 }
 
@@ -212,7 +234,8 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 	ID3D12Device* device,
 	ComPtr<ID3D12RootSignature>& rootSignature,
 	HRESULT& hr,
-	PipelineType type)
+	PipelineType type,
+	BlendMode blendMode)
 {
 	// DXCコンパイラの初期化
 	IDxcUtils* dxcUtils = nullptr;
@@ -231,7 +254,7 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 
 	// 各設定の生成（入力レイアウトは3D・2D共通、残り3つは種類で切り替え）
 	D3D12_INPUT_LAYOUT_DESC inputLayout = CreateLayout();
-	D3D12_BLEND_DESC blendDesc = CreateBlendState(type);
+	D3D12_BLEND_DESC blendDesc = CreateBlendState(blendMode);
 	D3D12_RASTERIZER_DESC rasterizerDesc = CreateRasterizerState(type);
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = CreateDepthStencilState(type);
 

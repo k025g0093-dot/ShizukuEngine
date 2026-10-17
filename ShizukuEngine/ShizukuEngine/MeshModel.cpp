@@ -48,13 +48,7 @@ bool MeshModel::LoadFromModel(
 	}
 
 	mPMaterialResource = CreateBufferResource(device, Align256(sizeof(Material)));
-	Material* materialData = nullptr;
-	mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData->enableNormalMap = 0;
-	materialData->enableLighting = true;
-	materialData->uvTransform = MakeIdentity4x4();
-	mPMaterialResource->Unmap(0, nullptr);
+	UpdateMaterial();
 
 	return true;
 
@@ -160,4 +154,30 @@ void MeshModel::TexPath(const aiMaterial *mtl, const std::string& filepath) {
 		texPath = std::filesystem::path(filepath).parent_path() / texPath;
 	}
 	mTexturePath = texPath.lexically_normal().generic_string();
+}
+
+
+//マテリアルの色を変える
+void MeshModel::SetColor(const Vector4& color) {
+	mColor = color;
+	UpdateMaterial();
+}
+
+//ライティングの有無を変える
+void MeshModel::SetEnableLighting(bool enableLighting) {
+	mEnableLighting = enableLighting;
+	UpdateMaterial();
+}
+
+//メンバの値をマテリアルのバッファに書き込む
+void MeshModel::UpdateMaterial() {
+	if (!mPMaterialResource) { return; }
+
+	Material* materialData = nullptr;
+	mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	materialData->color = mColor;
+	materialData->enableNormalMap = 0;
+	materialData->enableLighting = mEnableLighting ? 1 : 0;
+	materialData->uvTransform = MakeIdentity4x4();
+	mPMaterialResource->Unmap(0, nullptr);
 }

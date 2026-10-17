@@ -2,6 +2,8 @@
 #include "ConvertString.h"
 #include "LightManager.h"
 #include "Camera.h"
+
+class ModelManager;
 #ifdef USE_IMGUI
 #endif // USE_IMGUI
 
@@ -52,6 +54,13 @@ class ImGuiCameraWindow : public ImGuiUIWindow
 {
 public:
     void update(Camera* camera);
+};
+
+//読み込んだモデルの色などをGUIで操作する
+class ImGuiModelWindow : public ImGuiUIWindow
+{
+public:
+    void update(ModelManager* modelManager);
 };
 
 class ImGuiViewportWindow : public ImGuiUIWindow

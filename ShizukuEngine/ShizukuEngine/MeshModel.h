@@ -40,6 +40,14 @@ public://パブリック
         mTextureIndex = textureIndex;
     }
 
+    //マテリアルの色（シェーダーのgMaterial.colorに届く。同じモデルを使う全インスタンスに効く）
+    void SetColor(const Vector4& color);
+    const Vector4& GetColor() const { return mColor; }
+
+    //ライティングを受けるかどうか
+    void SetEnableLighting(bool enableLighting);
+    bool GetEnableLighting() const { return mEnableLighting; }
+
 private://プライベート関数
     
     static const aiScene* Load(const std::string& filepath, Assimp::Importer& importer);
@@ -47,6 +55,9 @@ private://プライベート関数
     void ProcessNode(aiNode* node, const aiScene* scene,
         std::vector<VertexData>& vertices, std::vector<uint32_t>& indices,
         const aiMatrix4x4& parentTransform = aiMatrix4x4());
+
+    //mColorなどの値をマテリアルのバッファに書き込む
+    void UpdateMaterial();
 
     void CreateBuffers(
         ComPtr<ID3D12Device> device,
@@ -70,6 +81,10 @@ private://メンバ変数
     int mTextureIndex = -1;
 
     std::string mTexturePath;
+
+    //マテリアルの値（UpdateMaterialでバッファに反映する）
+    Vector4 mColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+    bool mEnableLighting = true;
 
     uint32_t Align256(uint32_t size)
     {
