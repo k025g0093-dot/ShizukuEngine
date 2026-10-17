@@ -1,4 +1,5 @@
 #include "ImGuiWindow.h"
+#include "ModelManager.h"
 
 
 #include <cmath>
@@ -158,5 +159,89 @@ void ImGuiLightManagerWindow::update(LightManager* lm) {
 
 
 
+//=============================
+//カメラ操作ウィンドウ
+//=============================
+void ImGuiCameraWindow::update(Camera* camera) {
+#ifdef USE_IMGUI
+	if (!camera) { return; }
+
+	if (begin("カメラ")) {
+		ImGui::DragFloat3("位置", &camera->transform.translate.x, 0.1f);
+
+		//回転は中身がラジアンなので、表示と入力だけ度に変換する
+		const float kRadToDeg = 180.0f / 3.14159265f;
+		float rotateDeg[3] = {
+			camera->transform.rotate.x * kRadToDeg,
+			camera->transform.rotate.y * kRadToDeg,
+			camera->transform.rotate.z * kRadToDeg,
+		};
+		if (ImGui::DragFloat3("回転(度)", rotateDeg, 0.5f)) {
+			camera->transform.rotate.x = rotateDeg[0] / kRadToDeg;
+			camera->transform.rotate.y = rotateDeg[1] / kRadToDeg;
+			camera->transform.rotate.z = rotateDeg[2] / kRadToDeg;
+		}
+
+		//near < far を保つように範囲を制限する
+		float nearPlane = camera->GetNearPlane();
+		float farPlane = camera->GetFarPlane();
+		if (ImGui::DragFloat("Near", &nearPlane, 0.01f, 0.01f, farPlane - 0.01f)) {
+			camera->SetNearPlane(nearPlane);
+		}
+		if (ImGui::DragFloat("Far", &farPlane, 10.0f, nearPlane + 0.01f, 100000.0f)) {
+			camera->SetFarPlane(farPlane);
+		}
+
+		if (ImGui::Button("初期位置に戻す")) {
+			*camera = Camera{};
+		}
+	}
+	end();
+#endif // USE_IMGUI
+}
 
 
+
+//=============================
+//モデル操作ウィンドウ
+//=============================
+void ImGuiModelWindow::update(ModelManager* modelManager) {
+#ifdef USE_IMGUI
+	if (!modelManager) { return; }
+
+	if (begin("モデル")) {
+		const int modelCount = modelManager->GetModelCount();
+		if (modelCount == 0) {
+			ImGui::TextDisabled("読み込まれたモデルはありません");
+		}
+
+		for (int i = 0; i < modelCount; i++) {
+			MeshModel* model = modelManager->Get(i);
+			if (!model) { continue; }
+
+			ImGui::PushID(i);
+			const std::string label = "モデル " + std::to_string(i);
+			if (ImGui::CollapsingHeader(label.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+				const std::string texturePath = model->GetTexturePath();
+				ImGui::Text("テクスチャ : %s", texturePath.empty() ? "(なし)" : texturePath.c_str());
+
+				Vector4 color = model->GetColor();
+				if (ImGui::ColorEdit4("色", &color.x)) {
+					model->SetColor(color);
+				}
+
+				bool enableLighting = model->GetEnableLighting();
+				if (ImGui::Checkbox("ライティング", &enableLighting)) {
+					model->SetEnableLighting(enableLighting);
+				}
+
+				if (ImGui::Button("色を戻す")) {
+					model->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+				}
+			}
+			ImGui::PopID();
+		}
+	}
+	end();
+#endif // USE_IMGUI
+}

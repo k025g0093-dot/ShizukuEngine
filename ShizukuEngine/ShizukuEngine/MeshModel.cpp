@@ -24,7 +24,7 @@ const aiScene* MeshModel::Load(const std::string& filepath, Assimp::Importer& im
 
 //モデル読み込み
 bool MeshModel::LoadFromModel(
-	ComPtr<ID3D12Device> device,
+	ID3D12Device* device,
 	const std::string& filepath
 ) {
 
@@ -40,16 +40,15 @@ bool MeshModel::LoadFromModel(
 	ProcessNode(scene->mRootNode, scene, vertices, indices); // 再帰トラバース
 	CreateBuffers(device, vertices,indices);
 
-	//GetTexPath
+	if (scene->mNumMeshes > 0) {
+		const unsigned int materialIndex=scene->mMeshes[0]->mMaterialIndex;;
+		if (materialIndex < scene->mNumMaterials) {
+			TexPath(scene->mMaterials[materialIndex], filepath);
+		}
+	}
 
-	mPMaterialResource = CreateBufferResource(device.Get(), Align256(sizeof(Material)));
-	Material* materialData = nullptr;
-	mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData->enableNormalMap = 0;
-	materialData->enableLighting = true;
-	materialData->uvTransform = MakeIdentity4x4();
-	mPMaterialResource->Unmap(0, nullptr);
+	mPMaterialResource = CreateBufferResource(device, Align256(sizeof(Material)));
+	UpdateMaterial();
 
 	return true;
 
@@ -83,7 +82,7 @@ void MeshModel::ProcessNode(aiNode* node, const aiScene* scene,
 			aiVector3D pos = nodeTransform * mesh->mVertices[v];
 			vert.position = { pos.x, pos.y, pos.z, 1.0f };
 			if (mesh->mTextureCoords[0]) {
-				vert.texcord = { mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y };
+				vert.texcord = { mesh->mTextureCoords[0][v].x,  mesh->mTextureCoords[0][v].y };
 			}
 			if (mesh->mNormals) {
 				aiVector3D nm = aiMatrix3x3(nodeTransform) * mesh->mNormals[v];
@@ -139,20 +138,46 @@ void MeshModel::CreateBuffers(
 	mIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 }
 
-void MeshModel::GetTexPath(const aiMaterial *mtl, const std::string& filepath) {
+void MeshModel::TexPath(const aiMaterial *mtl, const std::string& filepath) {
+	if (!mtl) {
+		return;
+	}
 	aiString path;
 
-	if (mtl->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {
-		std::string texPath = path.C_Str();
-		// ファイル名だけの相対パスならFBXと同じディレクトリから探す
-		if (texPath.find('/') == std::string::npos && texPath.find('\\') == std::string::npos) {
-			std::string dir = filepath.substr(0, filepath.find_last_of("/\\"));
-			texPath = dir + "/" + texPath;
-		}
-		mTexturePath = texPath;
-		// ファイルが存在しなければスキップ
-		if (GetFileAttributesA(texPath.c_str()) != INVALID_FILE_ATTRIBUTES) {
-			mTexturePath = nullptr;
-		}
+
+	if (mtl->GetTexture(aiTextureType_DIFFUSE, 0, &path) != AI_SUCCESS) { return; }
+	
+	std::filesystem::path texPath = path.C_Str();
+
+	// 相対パスなら、モデルファイルがあるフォルダから見たパスにする
+	if (texPath.is_relative()) {
+		texPath = std::filesystem::path(filepath).parent_path() / texPath;
 	}
+	mTexturePath = texPath.lexically_normal().generic_string();
+}
+
+
+//マテリアルの色を変える
+void MeshModel::SetColor(const Vector4& color) {
+	mColor = color;
+	UpdateMaterial();
+}
+
+//ライティングの有無を変える
+void MeshModel::SetEnableLighting(bool enableLighting) {
+	mEnableLighting = enableLighting;
+	UpdateMaterial();
+}
+
+//メンバの値をマテリアルのバッファに書き込む
+void MeshModel::UpdateMaterial() {
+	if (!mPMaterialResource) { return; }
+
+	Material* materialData = nullptr;
+	mPMaterialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	materialData->color = mColor;
+	materialData->enableNormalMap = 0;
+	materialData->enableLighting = mEnableLighting ? 1 : 0;
+	materialData->uvTransform = MakeIdentity4x4();
+	mPMaterialResource->Unmap(0, nullptr);
 }

@@ -15,6 +15,7 @@
 #include "ModelManager.h"
 
 #include "ImGuiManager.h"
+#include "ImGuiWindow.h"
 
 
 //各種図形の関数が入ったヘッダ
@@ -66,25 +67,25 @@ public:
 	//--------------------------------------------------------------
 	//三角形の描画関数（引数は、位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
-	void DrawTriangle(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureInd);
+	void DrawTriangle(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx);
 
 	//--------------------------------------------------------------
 	//三角形の描画関数（引数は、位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
-	void DrawSphere(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureInd);
+	void DrawSphere(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx);
 
 	//--------------------------------------------------------------
 	//スプライトの描画関数（引数は、左上を起点に下位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
-	void DrawSprite(const Vector2& pos, const float& rot, const float& width, const float& height, const Vector4 color, int textureInd);
+	void DrawSprite(const Vector2& pos, const float& rot, const float& width, const float& height, const Vector4 color, int textureIndx);
 
 	//--------------------------------------------------------------
 	//スプライトの描画関数（引数は、左上を起点に下位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
 	//--------------------------------------------------------------
-	//モデルの描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）
+	//モデルの描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）テクスチャは宣言をしなくても平気です
 	//--------------------------------------------------------------
-	void DrawModel(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureInd);
+	void DrawModel(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx =-1);
 
 private://ヘルパー関数など内部関数がメイン
 
@@ -103,6 +104,9 @@ private://各種変数などの初期化
 	TextureManager mTextureManager{};
 	LightManager mLightManager;
 	ImGuiManager mImGuiManager{};
+	ImGuiLightManagerWindow mLightWindow{};//ライト操作用のGUI（確認用）
+	ImGuiCameraWindow mCameraWindow{};//カメラ操作用のGUI（確認用）
+	ImGuiModelWindow mModelWindow{};//モデルの色を操作するGUI（確認用）
 	ModelManager mModelManager{};
 
 	static ShizukuEngine* mInstance;

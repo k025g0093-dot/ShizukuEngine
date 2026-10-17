@@ -5,7 +5,9 @@
 #include <memory>
 #include <d3d12.h>
 #include "MeshModel.h"
-#include "TextureManager.h"
+
+//前方宣言
+class TextureManager;
 
 //モデルの読み込みと所有を行う（同じパスは2回目から読み込まずに同じ番号を返す）
 class ModelManager {
@@ -19,6 +21,9 @@ public:
 
     //番号からモデルを借りる
     MeshModel* Get(int index) const;
+
+    //読み込み済みのモデルの数
+    int GetModelCount() const { return static_cast<int>(mModels.size()); }
 
 private://メンバ変数
 

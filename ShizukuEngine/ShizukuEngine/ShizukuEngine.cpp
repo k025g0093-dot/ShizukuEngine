@@ -39,6 +39,8 @@ void ShizukuEngine::Initialize( int width,int Height) {
 		mDX12Context.GetCommandList()
 	);
 
+	mTextureManager.LoadTexture("resources/white1x1.png");
+
 	mLightManager.Initialize(mDX12Context.GetDevice());
 	mModelManager.Initialize(mDX12Context.GetDevice(),&mTextureManager);
 
@@ -89,6 +91,11 @@ void ShizukuEngine::PreDraw()
 void ShizukuEngine::PostDraw() 
 {
 
+
+	//ライトのGUI（ImGuiのフレーム中に呼ぶ）
+	mLightWindow.update(&mLightManager);
+	mCameraWindow.update(&mCamera);
+	mModelWindow.update(&mModelManager);
 
 	Matrix4x4 view = mCamera.GetViewMatrix();
 	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mWidth, (float)mHeight);
@@ -191,7 +198,7 @@ void ShizukuEngine::DrawModel
 	const Vector3& rot,
 	const Vector3& scale,
 	const Vector4 color,
-	int textureInd
+	int textureIndx
 ) {
 	//番号からモデルを借りる（読み込み失敗の-1や範囲外ならnullptrが返る）
 	MeshModel* model = mModelManager.Get(modelIndex);
@@ -203,6 +210,11 @@ void ShizukuEngine::DrawModel
 	req.rot = rot;//回転度を渡す
 	req.scale = scale;//スケールを渡す
 	req.color = color;//色を渡す
-	req.textureIndex = textureInd;//テクスチャのインデックスを渡す
+	if(textureIndx==-1){
+		req.textureIndex = model->GetTextureIndex();
+	}
+	else {
+		req.textureIndex = textureIndx;//テクスチャのインデックスを渡す
+	}
 	mRenderRequests.DrawRequestsSubmission(req);
 }
