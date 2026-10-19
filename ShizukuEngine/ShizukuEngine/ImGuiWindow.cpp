@@ -1,6 +1,8 @@
 #include "ImGuiWindow.h"
 #include "ModelManager.h"
 
+#include <psapi.h>
+#pragma comment(lib, "psapi.lib")
 
 #include <cmath>
 #include <cstring>
@@ -67,6 +69,47 @@ void ImGuiUIWindow::end()
 //=============================
 //IGStartupWindowの実装
 //=============================
+
+
+void ImGuiDebugWindow::Update(const DebugStats& stats) {
+#ifdef USE_IMGUI
+	const ImGuiIO& io = ImGui::GetIO();
+
+	//FPSの履歴を更新（リングバッファ）
+	mFpsHistory[mHistoryOffset] = io.Framerate;
+	mHistoryOffset = (mHistoryOffset + 1) % kHistoryCount;
+
+	if (begin("デバッグ")) {
+		//---------- パフォーマンス ----------
+		if (ImGui::CollapsingHeader("パフォーマンス", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::Text("FPS : %.1f (%.2f ms)", io.Framerate, 1000.0f / io.Framerate);
+			ImGui::PlotLines("##fps", mFpsHistory, kHistoryCount, mHistoryOffset,
+				nullptr, 0.0f, 144.0f, ImVec2(0.0f, 50.0f));
+
+			//このプロセスが使っているメモリ
+			PROCESS_MEMORY_COUNTERS_EX counters{};
+			if (GetProcessMemoryInfo(GetCurrentProcess(),
+				reinterpret_cast<PROCESS_MEMORY_COUNTERS*>(&counters), sizeof(counters))) {
+				ImGui::Text("メモリ : %.1f MB", counters.PrivateUsage / (1024.0f * 1024.0f));
+			}
+		}
+
+		//---------- 描画 ----------
+		if (ImGui::CollapsingHeader("描画", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::Text("描画リクエスト : %d", stats.drawRequestCount);
+			ImGui::Text("ドローコール   : %d", stats.drawCallCount);
+		}
+
+		//---------- リソース ----------
+		if (ImGui::CollapsingHeader("リソース", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::Text("テクスチャ : %d", stats.textureCount);
+			ImGui::Text("モデル     : %d", stats.modelCount);
+			ImGui::Text("ライト     : %d", stats.lightCount);
+		}
+	}
+	end();
+#endif // USE_IMGUI
+}
 
 
 

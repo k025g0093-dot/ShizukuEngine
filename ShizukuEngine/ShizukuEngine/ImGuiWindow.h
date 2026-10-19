@@ -40,8 +40,26 @@ protected:
 };
 
 
+//デバッグウィンドウに表示する情報
+struct DebugStats {
+    int drawRequestCount = 0;  //積まれた描画リクエストの数
+    int drawCallCount = 0;     //実際のドローコールの数（まとめた後）
+    int textureCount = 0;      //読み込み済みテクスチャ数
+    int modelCount = 0;        //読み込み済みモデル数
+    int lightCount = 0;        //有効なライト数
+};
 
 
+class ImGuiDebugWindow: public ImGuiUIWindow
+{
+public:
+    void Update(const DebugStats& stats);
+
+private:
+    static constexpr int kHistoryCount = 240;
+    float mFpsHistory[kHistoryCount] = {};
+    int mHistoryOffset = 0;
+};
 
 class ImGuiLightManagerWindow : public ImGuiUIWindow
 {

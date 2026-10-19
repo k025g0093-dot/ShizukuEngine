@@ -109,6 +109,8 @@ private://各種変数などの初期化
 	ImGuiModelWindow mModelWindow{};//モデルの色を操作するGUI（確認用）
 	ModelManager mModelManager{};
 
+	ImGuiDebugWindow mDebugWindow{};//デバック情報を載せたGUI
+
 	static ShizukuEngine* mInstance;
 
 

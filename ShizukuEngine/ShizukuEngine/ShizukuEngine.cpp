@@ -97,6 +97,14 @@ void ShizukuEngine::PostDraw()
 	mCameraWindow.update(&mCamera);
 	mModelWindow.update(&mModelManager);
 
+	DebugStats stats{};
+	//stats.drawRequestCount = mRenderRequests.GetLastRequestCount();
+	//stats.drawCallCount = mRenderRequests.GetLastDrawCallCount();
+	stats.textureCount = mTextureManager.GetTextureCount();
+	stats.modelCount = mModelManager.GetModelCount();
+	stats.lightCount = mLightManager.GetActiveLightCount();
+	mDebugWindow.Update(stats);
+
 	Matrix4x4 view = mCamera.GetViewMatrix();
 	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mWidth, (float)mHeight);
 	mViewProjectionMatrix = Multiply(view, proj);

@@ -45,6 +45,8 @@ public:
 	//正射影行列作成
 	void CreateOrthographicMatrix(int width, int height);
 
+
+
 private://ヘルパー関数など
 
 	//----------------------------------------
@@ -67,6 +69,9 @@ private://ヘルパー関数など
 	void BindTexture(ID3D12GraphicsCommandList* commandList, int textureIndex);
 
 private://メンバ変数
+
+	int mLastRequestCount = 0;   //前フレームの描画リクエスト数
+	int mLastDrawCallCount = 0;  //前フレームのドローコール数
 
 	int mMaxDrawCount = 128;
 	ComPtr<ID3D12RootSignature>  rootSignature;//ルートシグネチャ

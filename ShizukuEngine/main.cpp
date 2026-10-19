@@ -32,7 +32,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	int model = engine->LoadModel("resources/bunny.obj");//失敗したら-1（DrawModelは何もしない）
 
 
-	Vector3 pos{0,0,0};
+	Vector3 pos{ 0,0,0 };
 
 	//モデルを回して立体感を確認する用
 	float modelRotateY = 0.0f;
@@ -52,15 +52,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			engine->PreDraw();
 
 			//---------- モデル ----------
-			for (int i = 0; i < 10; i++) {
-				engine->DrawModel(
-					model,
-					{ 0.0f, 0.0f, 1.5f * static_cast<float>(i) },
-					{ 0.0f, modelRotateY, 0.0f },
-					{ 2.0f, 2.0f, 2.0f },
-					{ 1.0f, 1.0f, 1.0f, 1.0f }
-				);
-			}
+			engine->DrawModel(
+				model,
+				{ 0.0f, 0.0f, 0.0f },
+				{ 0.0f, modelRotateY, 0.0f },
+				{ 2.0f, 2.0f, 2.0f },
+				{ 1.0f, 1.0f, 1.0f, 1.0f }
+			);
 			//---------- 今までの図形（モデルと重ならないよう横にずらす） ----------
 			for (int i = 0; i < 10; i++) {
 				engine->DrawTriangle({ pos.x - 3.0f + 0.1f * i, pos.y + 0.1f * i, pos.z - 1.5f * i }, { 0,0,0 }, { 1,1,1 }, { 1,1,1,1 }, tex);
