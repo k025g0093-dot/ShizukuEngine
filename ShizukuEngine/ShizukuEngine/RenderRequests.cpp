@@ -1,16 +1,19 @@
 #include "RenderRequests.h"
 #include "TextureManager.h"
 #include "LightManager.h"
+#include"DX12Context.h"
 
 void RenderRequests::InitRender(
 	ComPtr<ID3D12Device> device,
 	TextureManager* textureManager,
-	LightManager* lightManager
+	LightManager* lightManager,
+	DX12Context* dX12Context
 ) {
 
 	mDevice = device.Get();
 	mTextureManager = textureManager;
 	mLightManager = lightManager;
+	mDX12Context = dX12Context;
 
 	HRESULT hr;
 	//ルートシグネチャを作成
@@ -165,12 +168,15 @@ void RenderRequests::Render3DTarget(
 	}
 
 	mShadowPass.End(commandList.Get());
-		
+	
+	mDX12Context->SetMainRenderTarget();
 
 	//ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
 	mLightManager->Bind(commandList.Get());
 	commandList->SetGraphicsRoot32BitConstants(6, 3, &mCameraTranslate, 0);
+
+	mShadowPass.BindForMainPass(commandList.Get());
 
 	//今セットしているブレンドモード
 	BlendMode currentBlendMode = kCountOfBlendMode;

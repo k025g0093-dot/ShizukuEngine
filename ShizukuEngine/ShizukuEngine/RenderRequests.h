@@ -26,6 +26,7 @@ struct DrawRequest {
 //前方宣言
 class TextureManager;
 class LightManager;
+class DX12Context;
 
 class RenderRequests {
 public:
@@ -33,7 +34,8 @@ public:
 	void InitRender(
 		ComPtr<ID3D12Device> device,
 		TextureManager* textureManager,
-		LightManager* lightManager
+		LightManager* lightManager,
+		DX12Context* dX12Context
 	);
 
 	//描画レンダーリクエスト
@@ -83,6 +85,7 @@ private://メンバ変数
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState2D;//2D用
 	TextureManager* mTextureManager = nullptr;
 	LightManager* mLightManager = nullptr;
+	DX12Context* mDX12Context = nullptr;
 
 	std::vector<DrawRequest> mDrawRequests;//ドローリクエストの変数
 
@@ -90,6 +93,7 @@ private://メンバ変数
 	ComPtr<ID3D12Resource> mInstanceBuffer;
 
 	ID3D12Device* mDevice = nullptr;
+
 
 	InstanceData* mInstanceData = nullptr;
 	ShadowPass mShadowPass;
