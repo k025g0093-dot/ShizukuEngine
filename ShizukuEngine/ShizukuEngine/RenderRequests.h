@@ -5,6 +5,8 @@
 #include "InstanceData.h"
 #include <algorithm> 
 #include<array>
+#include "ShadowPass.h"
+
 //ドローリクエストの構造体
 struct DrawRequest {
 	Model* model = nullptr;
@@ -90,6 +92,7 @@ private://メンバ変数
 	ID3D12Device* mDevice = nullptr;
 
 	InstanceData* mInstanceData = nullptr;
+	ShadowPass mShadowPass;
 
 	Matrix4x4 mViewProjectionMatrix{};
 	Matrix4x4 mOrtho{};

@@ -13,8 +13,8 @@ Sound::Sound() {
 
 Sound::~Sound() {
     xAudio2.Reset();
-    MFShutdown();       // ← 追加
-    CoUninitialize();   // ← 追加
+    MFShutdown();
+    CoUninitialize();
 }
 
 SoundData Sound::SoundLoad(const char* filename)

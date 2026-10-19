@@ -88,6 +88,9 @@
     <Filter Include="ソース ファイル\ShizukuEngine\音楽に関するもの">
       <UniqueIdentifier>{b0291c97-b902-481c-ba52-903115b09b3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\シャドウマップ">
+      <UniqueIdentifier>{524b5ec7-1f5c-43cd-acaf-117cde91270b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -161,6 +164,12 @@
     </ClCompile>
     <ClCompile Include="ShizukuEngine\Sound.cpp">
       <Filter>ソース ファイル\ShizukuEngine\音楽に関するもの</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\ShadowMapBuffer.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\シャドウマップ</Filter>
+    </ClCompile>
+    <ClCompile Include="ShizukuEngine\ShadowPass.cpp">
+      <Filter>ソース ファイル\ShizukuEngine\シャドウマップ</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -256,6 +265,12 @@
     </ClInclude>
     <ClInclude Include="ShizukuEngine\Sound.h">
       <Filter>ソース ファイル\ShizukuEngine\音楽に関するもの</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\ShadowPass.h">
+      <Filter>ソース ファイル\ShizukuEngine\シャドウマップ</Filter>
+    </ClInclude>
+    <ClInclude Include="ShizukuEngine\ShadowMapBuffer.h">
+      <Filter>ソース ファイル\ShizukuEngine\シャドウマップ</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

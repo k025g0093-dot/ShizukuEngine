@@ -160,6 +160,8 @@
     <ClCompile Include="ShizukuEngine\ModelManager.cpp" />
     <ClCompile Include="ShizukuEngine\PSO.cpp" />
     <ClCompile Include="ShizukuEngine\RenderRequests.cpp" />
+    <ClCompile Include="ShizukuEngine\ShadowMapBuffer.cpp" />
+    <ClCompile Include="ShizukuEngine\ShadowPass.cpp" />
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp" />
     <ClCompile Include="ShizukuEngine\Sound.cpp" />
     <ClCompile Include="ShizukuEngine\Sphere.cpp" />
@@ -190,6 +192,8 @@
     <ClInclude Include="ShizukuEngine\ModelManager.h" />
     <ClInclude Include="ShizukuEngine\PSO.h" />
     <ClInclude Include="ShizukuEngine\RenderRequests.h" />
+    <ClInclude Include="ShizukuEngine\ShadowMapBuffer.h" />
+    <ClInclude Include="ShizukuEngine\ShadowPass.h" />
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h" />
     <ClInclude Include="ShizukuEngine\Sound.h" />
     <ClInclude Include="ShizukuEngine\Sphere.h" />

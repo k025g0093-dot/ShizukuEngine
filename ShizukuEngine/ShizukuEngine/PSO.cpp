@@ -15,7 +15,7 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 
 	// t0: texture, t1: normal texture, t3: lights
 	// t2: InstanceData は RootSRV で直接アドレスを渡すので不要
-	D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[3] = {};
 	descriptorRange[0].BaseShaderRegister = 0;// t0 texture
 	descriptorRange[0].NumDescriptors = 1;
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
@@ -26,8 +26,12 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	descriptorRange[2].BaseShaderRegister = 4; // t4 shadowMap
+	descriptorRange[2].NumDescriptors = 1;
+	descriptorRange[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRange[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER rootParameter[8] = {};
+	D3D12_ROOT_PARAMETER rootParameter[10] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 0; // b0 material
@@ -70,6 +74,17 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	rootParameter[7].Constants.ShaderRegister = 3; // b3
 	rootParameter[7].Constants.RegisterSpace = 0;
 	rootParameter[7].Constants.Num32BitValues = 1; // uintひとつだけ送る
+
+	// [8] CBV b4 - ライトVP (ALL visibility)
+	rootParameter[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParameter[8].Descriptor.ShaderRegister = 4;
+
+	// [9] DescriptorTable t4 - シャドウマップ
+	rootParameter[9].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter[9].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameter[9].DescriptorTable.pDescriptorRanges = &descriptorRange[2];
+	rootParameter[9].DescriptorTable.NumDescriptorRanges = 1;
 
 	descriptionRootSignature.pParameters = rootParameter;
 	descriptionRootSignature.NumParameters = _countof(rootParameter);
@@ -316,6 +331,67 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
 	// PSOの生成
+	ComPtr<ID3D12PipelineState> graphicsPipelineState;
+	hr = device->CreateGraphicsPipelineState(
+		&graphicsPipelineStateDesc,
+		IID_PPV_ARGS(graphicsPipelineState.GetAddressOf()));
+	assert(SUCCEEDED(hr));
+
+	return graphicsPipelineState;
+}
+
+
+ComPtr<ID3D12PipelineState> CreateShadowPipelineState(
+	ID3D12Device* device,
+	ComPtr<ID3D12RootSignature>& rootSignature,
+	HRESULT& hr
+) {
+	// DXCコンパイラの初期化
+	IDxcUtils* dxcUtils = nullptr;
+	IDxcCompiler3* dxcCompiler = nullptr;
+	IDxcIncludeHandler* includeHandler = nullptr;
+	DxcCompilerInclude(hr, dxcUtils, dxcCompiler, includeHandler);
+
+	// 頂点シェーダーのみコンパイル（深度だけでいいのでピクセルシェーダーは不要）
+	IDxcBlob* vertexShaderBlob = CompileShader(
+		L"shaders/shadow.VS.hlsl", L"vs_6_0",
+		dxcUtils, dxcCompiler, includeHandler);
+
+	// 各設定の生成（既存のヘルパーを流用）
+	D3D12_INPUT_LAYOUT_DESC inputLayout = CreateLayout();
+	D3D12_BLEND_DESC blendDesc = CreateBlendState(kBlendModeNone);
+	D3D12_RASTERIZER_DESC rasterizerDesc = CreateRasterizerState(PipelineType::k3D);
+
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+	depthStencilDesc.DepthEnable = TRUE;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	depthStencilDesc.StencilEnable = FALSE;
+
+	// PSOの設定をまとめる（グラフィックス用）
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
+
+	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
+
+	graphicsPipelineStateDesc.InputLayout = inputLayout;
+
+	graphicsPipelineStateDesc.VS = {
+		vertexShaderBlob->GetBufferPointer(),
+		vertexShaderBlob->GetBufferSize()
+	};
+	// ピクセルシェーダーは設定しない（深度専用、色出力なし）
+	graphicsPipelineStateDesc.PS = {}; // 空のまま
+
+	graphicsPipelineStateDesc.BlendState = blendDesc;
+	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
+	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
+	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT; // ShadowMapBufferと合わせる
+
+	graphicsPipelineStateDesc.NumRenderTargets = 0; //  カラー出力は無し
+	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	graphicsPipelineStateDesc.SampleDesc.Count = 1;
+	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+
 	ComPtr<ID3D12PipelineState> graphicsPipelineState;
 	hr = device->CreateGraphicsPipelineState(
 		&graphicsPipelineStateDesc,

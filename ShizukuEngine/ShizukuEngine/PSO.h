@@ -28,6 +28,11 @@ enum BlendMode {
     kCountOfBlendMode,
 };
 
+//-----------------------------------------------------
+//通常のパイプラインとルートシグネチャの作成関数
+//-----------------------------------------------------
+
+//パイプラインステートの作成関数
 ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
     ID3D12Device* device,
     ComPtr<ID3D12RootSignature>& rootSignature,
@@ -36,9 +41,24 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
     BlendMode blendMode
 );
 
+//ルートシグネチャの作成関数
 ComPtr<ID3D12RootSignature> CreateRootSignature(
     ID3D12Device* device,
     HRESULT& hr);
+
+
+//-----------------------------------------------------
+//陰用のパイプラインの作成関数
+//-----------------------------------------------------
+
+//陰用のパイプラインステート作成関数
+ComPtr<ID3D12PipelineState> CreateShadowPipelineState(
+    ID3D12Device* device,
+    ComPtr<ID3D12RootSignature>& rootSignature,
+    HRESULT& hr
+);
+
+
 
 D3D12_BLEND_DESC CreateBlendState(BlendMode blendMode);
 D3D12_RASTERIZER_DESC CreateRasterizerState(PipelineType type);

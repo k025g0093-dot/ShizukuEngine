@@ -30,6 +30,10 @@ public:
 	//読み込み済みのテクスチャ数
 	int GetTextureCount() const { return mTextureCount; }
 
+	int AllocateSrv();
+
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle(int index);
+
 private://プライベート関数
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);

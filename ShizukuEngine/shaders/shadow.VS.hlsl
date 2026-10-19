@@ -2,7 +2,7 @@
 
 StructuredBuffer<InstanceData> gInstances : register(t2);
 
-cbuffer DrawInfoBuffer : register(b2)
+cbuffer DrawInfoBuffer : register(b1)
 {
       uint baseInstance;
 };
