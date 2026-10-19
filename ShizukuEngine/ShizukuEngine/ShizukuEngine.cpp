@@ -46,7 +46,11 @@ void ShizukuEngine::Initialize( int width,int Height) {
 
 	//レンダーリクエストの初期化
 	mRenderRequests.CreateOrthographicMatrix(width, Height);
-	mRenderRequests.InitRender(mDX12Context.GetDevice(),&mTextureManager,&mLightManager);
+	mRenderRequests.InitRender(
+		mDX12Context.GetDevice(),
+		&mTextureManager,
+		&mLightManager,
+		&mDX12Context);
 
 	//ImGuiの初期化
 	mImGuiManager.Initialize(

@@ -1,16 +1,19 @@
 #include "RenderRequests.h"
 #include "TextureManager.h"
 #include "LightManager.h"
+#include"DX12Context.h"
 
 void RenderRequests::InitRender(
 	ComPtr<ID3D12Device> device,
 	TextureManager* textureManager,
-	LightManager* lightManager
+	LightManager* lightManager,
+	DX12Context* dX12Context
 ) {
 
 	mDevice = device.Get();
 	mTextureManager = textureManager;
 	mLightManager = lightManager;
+	mDX12Context = dX12Context;
 
 	HRESULT hr;
 	//ルートシグネチャを作成
@@ -21,6 +24,8 @@ void RenderRequests::InitRender(
 		pipelineState3D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k3D, blendMode);
 		pipelineState2D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k2D, blendMode);
 	}
+	mShadowPass.Initialize(device.Get(), mTextureManager, rootSignature);
+
 	CreateInstanceBuffer(mMaxDrawCount);
 }
 
@@ -107,10 +112,7 @@ void RenderRequests::Render3DTarget(
 		}
 	);
 
-	//ルートシグネチャの設定
-	commandList->SetGraphicsRootSignature(rootSignature.Get());
-	mLightManager->Bind(commandList.Get());
-	commandList->SetGraphicsRoot32BitConstants(6, 3, &mCameraTranslate, 0);
+
 
 	for (int i = 0; i < (int)sortedRequests.size(); i++) {
 		if (i >= mMaxDrawCount)break;
@@ -141,8 +143,44 @@ void RenderRequests::Render3DTarget(
 		mInstanceData[i].WVP= Multiply(mInstanceData[i].World, mViewProjectionMatrix);
 	}
 
+
+	mShadowPass.Update(mLightManager->GetLight(0));
+	mShadowPass.Begin(commandList.Get(), rootSignature.Get());
+	//インスタンスバッファーへのセット
+	commandList->SetGraphicsRootShaderResourceView(
+		1, mInstanceBuffer->GetGPUVirtualAddress());
+	// 全モデルをシャドウPSOで描画（既存のdraw loopと同じ構造）
+	int sStart = 0;
+	while (sStart < (int)sortedRequests.size()) {
+		const DrawRequest& head = sortedRequests[sStart];
+		int count = 1;
+		while (sStart + count < (int)sortedRequests.size()) {
+			const DrawRequest& next = sortedRequests[sStart + count];
+			if (next.model != head.model || next.textureIndex != head.textureIndex || next.renderOrder != head.renderOrder) break;
+			count++;
+		}
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		if (head.model) {
+			commandList->SetGraphicsRoot32BitConstant(5, sStart, 0);
+			head.model->Draw(commandList.Get(), count, sStart);
+		}
+		sStart += count;
+	}
+
+	mShadowPass.End(commandList.Get());
+	
+	mDX12Context->SetMainRenderTarget();
+
+	//ルートシグネチャの設定
+	commandList->SetGraphicsRootSignature(rootSignature.Get());
+	mLightManager->Bind(commandList.Get());
+	commandList->SetGraphicsRoot32BitConstants(6, 3, &mCameraTranslate, 0);
+
+	mShadowPass.BindForMainPass(commandList.Get());
+
 	//今セットしているブレンドモード
 	BlendMode currentBlendMode = kCountOfBlendMode;
+
 
 	int start = 0;
 	//ソートの範囲内で描画のリクエストを作成していく
@@ -172,6 +210,7 @@ void RenderRequests::Render3DTarget(
 			}
 			count++;
 		}
+
 
 		//トポロジーの設定
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

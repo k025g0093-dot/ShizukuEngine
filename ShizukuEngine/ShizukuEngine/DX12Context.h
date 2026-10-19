@@ -2,7 +2,6 @@
 #include "AllD3D12Include.h"
 #include  <algorithm>
 
-
 #include "LogSistem.h"
 #include "ConvertString.h"
 
@@ -28,6 +27,8 @@ public:
 
 	void SetImGuiRenderTarget();
 
+	void SetMainRenderTarget();
+
 	//コマンドリストのゲッター
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList.Get(); }
 	//デバイスのゲッター
@@ -35,6 +36,7 @@ public:
 
 	ID3D12DescriptorHeap* GetDescriptorHeap() { return srvDescriptorHeap.Get(); }
 	ID3D12CommandQueue* GetCommandQueue() {return commandQueue.Get();}
+
 
 private://プライベート関数
 

@@ -142,36 +142,15 @@ void DX12Context::PreDraw()
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle =
 		dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
-	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
+	SetMainRenderTarget();
+
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//ウィンドウの元の色
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
-
-
 	//descriptorHeapsの作成
 	ComPtr<ID3D12DescriptorHeap> descriptorHeaps[] = { srvDescriptorHeap };
 	commandList->SetDescriptorHeaps(1, descriptorHeaps->GetAddressOf());//そしてセット
 
-
-
-
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-	D3D12_VIEWPORT viewport{};
-	viewport.Width = static_cast<float>(mWidth);
-	viewport.Height = static_cast<float>(mHeight);
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	commandList->RSSetViewports(1, &viewport);
-
-	D3D12_RECT scissorRect{};
-	scissorRect.left = 0;
-	scissorRect.right = mWidth;
-	scissorRect.top = 0;
-	scissorRect.bottom = mHeight;
-	commandList->RSSetScissorRects(1, &scissorRect);
-
 }
 
 
@@ -306,4 +285,27 @@ ID3D12Resource* DX12Context::CreateDepthStencilTextureResource() {
 void DX12Context::SetImGuiRenderTarget() {
 	UINT backBufferIndex = swapChin->GetCurrentBackBufferIndex();
 	commandList->OMSetRenderTargets(1, &mImGuiRtvHandles[backBufferIndex], false, nullptr);
+}
+
+void DX12Context::SetMainRenderTarget() {
+
+	// ビューポート復元（PreDrawと同じ値）
+	const float sceneRenderWidth = static_cast<float>( mWidth);
+	const float sceneRenderHeight = static_cast<float>(mHeight);
+
+	D3D12_VIEWPORT mainVP{};
+	mainVP.Width = sceneRenderWidth;
+	mainVP.Height = sceneRenderHeight;
+	mainVP.MaxDepth = 1.0f;
+	commandList->RSSetViewports(1, &mainVP);
+	D3D12_RECT mainRect{};
+	mainRect.right = (LONG)sceneRenderWidth;
+	mainRect.bottom = (LONG)sceneRenderHeight;
+	commandList->RSSetScissorRects(1, &mainRect);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE mainDsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	UINT backBufferIndex = swapChin->GetCurrentBackBufferIndex();
+	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &mainDsvHandle);
+
+
 }

@@ -94,6 +94,31 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUHandle(int index) {
 	return handle;
 }
 
+int TextureManager::AllocateSrv()
+{
+	// 上限チェック：ヒープに空きがなければ失敗
+	if (mTextureCount >= mTextureCapacity) { return -1; }
+	// 今の位置を、この枠の番号として覚えておく
+	int index = mTextureCount;
+	// mTextures と番号の数をそろえる
+	mTextures.push_back(nullptr);
+
+	mTextureCount++;
+
+	return index;
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE TextureManager::GetCPUHandle(int index)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE handle = {};
+	if (mSrvHeap && index >= 0 && index < mTextureCount) {
+		handle = mSrvHeap->GetCPUDescriptorHandleForHeapStart();
+		//ImGui分オフセットしてGPUハンドルを返す
+		handle.ptr += static_cast<UINT64>(kImGuiReserved + index) * mDescriptorSize;
+	}
+	return handle;
+}
+
 
 ComPtr<ID3D12Resource> TextureManager::CreateTextureResource(
 	const DirectX::TexMetadata& metadata) {
@@ -212,7 +237,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGPUHandleFromHeapIndex(
 	handleGPU.ptr += mDescriptorSize * index;
 	return handleGPU;
 }
-
 
 
 #pragma endregion
