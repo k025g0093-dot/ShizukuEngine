@@ -98,7 +98,8 @@ void RenderRequests::Render3DTarget(
 		[](const DrawRequest& a, const DrawRequest& b) {
 			// renderOrdeを最優先で描画（小さいほうを優先して描画）
 			if (a.renderOrder != b.renderOrder)return a.renderOrder < b.renderOrder;
-
+			//ブレンドモードごとにまとめる
+			if (a.blendMode != b.blendMode)return a.blendMode < b.blendMode;
 			//バッチ化処理
 			if (a.model != b.model)return a.model < b.model;
 			if (a.textureIndex != b.textureIndex)return a.textureIndex < b.textureIndex;
@@ -106,12 +107,8 @@ void RenderRequests::Render3DTarget(
 		}
 	);
 
-
 	//ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
-	//PSOの設定
-	commandList->SetPipelineState(pipelineState3D[kBlendModeNormal].Get());
-
 	mLightManager->Bind(commandList.Get());
 	commandList->SetGraphicsRoot32BitConstants(6, 3, &mCameraTranslate, 0);
 
@@ -144,12 +141,20 @@ void RenderRequests::Render3DTarget(
 		mInstanceData[i].WVP= Multiply(mInstanceData[i].World, mViewProjectionMatrix);
 	}
 
+	//今セットしているブレンドモード
+	BlendMode currentBlendMode = kCountOfBlendMode;
+
 	int start = 0;
 	//ソートの範囲内で描画のリクエストを作成していく
 	while (start < (int)sortedRequests.size())
 	{
 		//ソートの一番最初の値を入れるheadに入れる
 		const DrawRequest& head = sortedRequests[start];
+
+		if (head.blendMode != currentBlendMode) {
+			commandList->SetPipelineState(pipelineState3D[head.blendMode].Get());
+			currentBlendMode = head.blendMode;
+		}
 
 		int count = 1;
 		while (start + count < (int)sortedRequests.size())
@@ -160,7 +165,9 @@ void RenderRequests::Render3DTarget(
 			//同じモデルをまとめて処理するために行う
 			if (next.model != head.model ||
 				next.textureIndex != head.textureIndex ||
-				next.renderOrder != head.renderOrder) {
+				next.renderOrder != head.renderOrder||
+				next.blendMode!=head.blendMode
+				) {
 				break;
 			}
 			count++;
@@ -216,7 +223,8 @@ void RenderRequests::Render2DTarget(
 		[](const DrawRequest& a, const DrawRequest& b) {
 			// renderOrdeを最優先で描画（小さいほうを優先して描画）
 			if (a.renderOrder != b.renderOrder)return a.renderOrder < b.renderOrder;
-
+			//ブレンドモードごとにまとめる
+			if (a.blendMode != b.blendMode)return a.blendMode < b.blendMode;
 			//バッチ化処理
 			if (a.model != b.model)return a.model < b.model;
 			if (a.textureIndex != b.textureIndex)return a.textureIndex < b.textureIndex;
@@ -227,9 +235,6 @@ void RenderRequests::Render2DTarget(
 
 	//ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
-	//PSOの設定
-	commandList->SetPipelineState(pipelineState2D[kBlendModeNormal].Get());
-
 
 	for (int i = 0; i < (int)sortedRequests.size(); i++) {
 		if (i >= mMaxDrawCount)break;
@@ -267,12 +272,20 @@ void RenderRequests::Render2DTarget(
 
 	}
 
+	//今セットしているブレンドモード
+	BlendMode currentBlendMode = kCountOfBlendMode;
+
 	int start = 0;
 	//ソートの範囲内で描画のリクエストを作成していく
 	while (start < (int)sortedRequests.size())
 	{
 		//ソートの一番最初の値を入れるheadに入れる
 		const DrawRequest& head = sortedRequests[start];
+
+		if (head.blendMode != currentBlendMode) {
+			commandList->SetPipelineState(pipelineState2D[head.blendMode].Get());
+			currentBlendMode = head.blendMode;
+		}
 
 		int count = 1;
 		while (start + count < (int)sortedRequests.size())
@@ -283,7 +296,9 @@ void RenderRequests::Render2DTarget(
 			//同じモデルをまとめて処理するために行う
 			if (next.model != head.model ||
 				next.textureIndex != head.textureIndex ||
-				next.renderOrder != head.renderOrder) {
+				next.renderOrder != head.renderOrder||
+				next.blendMode != head.blendMode
+				) {
 				break;
 			}
 			count++;

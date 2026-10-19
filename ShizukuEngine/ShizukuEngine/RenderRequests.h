@@ -9,6 +9,7 @@
 struct DrawRequest {
 	Model* model = nullptr;
 	std::vector<Vector3>vertices;
+	BlendMode blendMode = kBlendModeNormal;
 	Vector4 color = { 1,1,1,1 };
 	Vector3 rot = { 0,0,0 };
 	Vector3 scale = { 1,1,1 };
