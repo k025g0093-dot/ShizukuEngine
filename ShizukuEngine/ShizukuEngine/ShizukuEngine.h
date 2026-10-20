@@ -1,27 +1,26 @@
 #pragma once
 //ウィンドウアプリなどの作成ヘッダ
-#include "WinApp.h"
-#include "DXGI.h"
-#include "DX12Context.h"
-#include "RenderRequests.h"
+#include "Core/WinApp.h"
+#include "DirectX/DX12Context.h"
+#include "Render/RenderRequests.h"
 
-#include "LogSistem.h"
-#include "DebugLayer.h"
-#include "Camera.h"
+#include "Core/LogSistem.h"
+#include "DirectX/DebugLayer.h"
+#include "Camera/Camera.h"
 
 //マネジャクラス
-#include "TextureManager.h"
-#include "LightManager.h"
-#include "ModelManager.h"
+#include "TextureManager/TextureManager.h"
+#include "Light/LightManager.h"
+#include "Model/ModelManager.h"
 
-#include "ImGuiManager.h"
-#include "ImGuiWindow.h"
+#include "GUI/ImGuiManager.h"
+#include "GUI/ImGuiWindow.h"
 
 
 //各種図形の関数が入ったヘッダ
-#include"TriangleModel.h"
-#include "Sprite.h"
-#include "Sphere.h"
+#include"Model/Primitive/TriangleModel.h"
+#include "Model/Sprite/Sprite.h"
+#include "Model/Primitive/Sphere.h"
 
 //ComPtr地獄だっきゃくのために必要
 using Microsoft::WRL::ComPtr;
