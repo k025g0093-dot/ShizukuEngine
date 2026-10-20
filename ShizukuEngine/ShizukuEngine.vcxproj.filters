@@ -91,84 +91,87 @@
     <Filter Include="ソース ファイル\ShizukuEngine\シャドウマップ">
       <UniqueIdentifier>{524b5ec7-1f5c-43cd-acaf-117cde91270b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\ShizukuEngine\描画に関するもの図形など\fbxAnimation">
+      <UniqueIdentifier>{24bebe50-70fe-4537-a16f-f42667c1d8bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\DX12Context.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\DX12Context.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\CommandList</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\ConvertString.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Core\ConvertString.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\LogSistem.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Core\LogSistem.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
     </ClCompile>
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp">
       <Filter>ソース ファイル\ShizukuEngine</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\WinApp.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Core\WinApp.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\WinApp</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\Vector.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Math\Vector.cpp">
       <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\DXC.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\DXC.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\DXC</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\PSO.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\PSO.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\TriangleModel.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Model\Primitive\TriangleModel.cpp">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D図形関係\図形関係</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\VertexResource.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\VertexResource.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\VertexResource</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\LightManager.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Light\LightManager.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\ライティングに関するもの</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\RenderRequests.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Render\RenderRequests.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\RenderRequests</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\Camera.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Camera\Camera.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\DebugLayer.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\DebugLayer.cpp">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\デバックレイヤー</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\Model.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Model\Model.cpp">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D図形関係</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\Sprite.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Model\Sprite\Sprite.cpp">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\TextureManager.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\TextureManager\TextureManager.cpp">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\Sphere.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Model\Primitive\Sphere.cpp">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D図形関係\図形関係</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\MeshModel.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Model\3DModel\MeshModel.cpp">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3Dモデル関係</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\ModelManager.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Model\ModelManager.cpp">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3Dモデル関係</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\ImGuiWindow.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\GUI\ImGuiWindow.cpp">
       <Filter>ソース ファイル\ShizukuEngine\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\ImGuiManager.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\GUI\ImGuiManager.cpp">
       <Filter>ソース ファイル\ShizukuEngine\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\Sound.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Sound\Sound.cpp">
       <Filter>ソース ファイル\ShizukuEngine\音楽に関するもの</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\ShadowMapBuffer.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Render\ShadowMapBuffer.cpp">
       <Filter>ソース ファイル\ShizukuEngine\シャドウマップ</Filter>
     </ClCompile>
-    <ClCompile Include="ShizukuEngine\ShadowPass.cpp">
+    <ClCompile Include="ShizukuEngine\Engine\Render\ShadowPass.cpp">
       <Filter>ソース ファイル\ShizukuEngine\シャドウマップ</Filter>
     </ClCompile>
   </ItemGroup>
@@ -176,100 +179,100 @@
     <ClInclude Include="resource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\AllD3D12Include.h">
+    <ClInclude Include="ShizukuEngine\Engine\Allinclude\AllD3D12Include.h">
       <Filter>ソース ファイル\ShizukuEngine\AllInclude.h</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\DX12Context.h">
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\DX12Context.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\CommandList</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\ConvertString.h">
+    <ClInclude Include="ShizukuEngine\Engine\Core\ConvertString.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\ConvertString</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\LogSistem.h">
+    <ClInclude Include="ShizukuEngine\Engine\Core\LogSistem.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\LogSistem</Filter>
     </ClInclude>
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h">
       <Filter>ソース ファイル\ShizukuEngine</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\WinApp.h">
+    <ClInclude Include="ShizukuEngine\Engine\Core\WinApp.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\WinApp</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Vector.h">
+    <ClInclude Include="ShizukuEngine\Engine\Math\Vector.h">
       <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Vector2.h">
+    <ClInclude Include="ShizukuEngine\Engine\Math\Vector2.h">
       <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Vector3.h">
+    <ClInclude Include="ShizukuEngine\Engine\Math\Vector3.h">
       <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Vector4.h">
+    <ClInclude Include="ShizukuEngine\Engine\Math\Vector4.h">
       <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\DXC.h">
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\DXC.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\DXC</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\PSO.h">
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\PSO.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\パイプラインステート</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\TriangleModel.h">
+    <ClInclude Include="ShizukuEngine\Engine\Model\Primitive\TriangleModel.h">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D図形関係\図形関係</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\AllVector.h">
+    <ClInclude Include="ShizukuEngine\Engine\Allinclude\AllVector.h">
       <Filter>ソース ファイル\ShizukuEngine\AllInclude.h</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\VertexResource.h">
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\VertexResource.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\VertexResource</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\LightManager.h">
+    <ClInclude Include="ShizukuEngine\Engine\Light\LightManager.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\ライティングに関するもの</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\RenderRequests.h">
+    <ClInclude Include="ShizukuEngine\Engine\Render\RenderRequests.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\RenderRequests</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Camera.h">
+    <ClInclude Include="ShizukuEngine\Engine\Camera\Camera.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\DebugLayer.h">
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\DebugLayer.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\デバックレイヤー</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\InstanceData.h">
+    <ClInclude Include="ShizukuEngine\Engine\Render\InstanceData.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\RenderRequests</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Model.h">
+    <ClInclude Include="ShizukuEngine\Engine\Model\Model.h">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D図形関係</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Sprite.h">
+    <ClInclude Include="ShizukuEngine\Engine\Model\Sprite\Sprite.h">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\TextureManager.h">
+    <ClInclude Include="ShizukuEngine\Engine\TextureManager\TextureManager.h">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\2D描画関係</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Sphere.h">
+    <ClInclude Include="ShizukuEngine\Engine\Model\Primitive\Sphere.h">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3D図形関係\図形関係</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\MeshModel.h">
+    <ClInclude Include="ShizukuEngine\Engine\Model\3DModel\MeshModel.h">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3Dモデル関係</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\ModelManager.h">
+    <ClInclude Include="ShizukuEngine\Engine\Model\ModelManager.h">
       <Filter>ソース ファイル\ShizukuEngine\描画に関するもの図形など\3Dモデル関係</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\ImGuiWindow.h">
+    <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiWindow.h">
       <Filter>ソース ファイル\ShizukuEngine\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\ImGuiManager.h">
+    <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiManager.h">
       <Filter>ソース ファイル\ShizukuEngine\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Input.h">
+    <ClInclude Include="ShizukuEngine\Engine\Core\Input.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\入力処理</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Sound.h">
+    <ClInclude Include="ShizukuEngine\Engine\Sound\Sound.h">
       <Filter>ソース ファイル\ShizukuEngine\音楽に関するもの</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\ShadowPass.h">
+    <ClInclude Include="ShizukuEngine\Engine\Render\ShadowPass.h">
       <Filter>ソース ファイル\ShizukuEngine\シャドウマップ</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\ShadowMapBuffer.h">
+    <ClInclude Include="ShizukuEngine\Engine\Render\ShadowMapBuffer.h">
       <Filter>ソース ファイル\ShizukuEngine\シャドウマップ</Filter>
     </ClInclude>
   </ItemGroup>

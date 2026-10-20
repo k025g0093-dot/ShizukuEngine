@@ -76,7 +76,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -101,7 +101,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,7 +127,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(ProjectDir)ShizukuEngine;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
@@ -146,66 +146,66 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ShizukuEngine\Camera.cpp" />
-    <ClCompile Include="ShizukuEngine\ConvertString.cpp" />
-    <ClCompile Include="ShizukuEngine\DebugLayer.cpp" />
-    <ClCompile Include="ShizukuEngine\DX12Context.cpp" />
-    <ClCompile Include="ShizukuEngine\DXC.cpp" />
-    <ClCompile Include="ShizukuEngine\ImGuiManager.cpp" />
-    <ClCompile Include="ShizukuEngine\ImGuiWindow.cpp" />
-    <ClCompile Include="ShizukuEngine\LightManager.cpp" />
-    <ClCompile Include="ShizukuEngine\LogSistem.cpp" />
-    <ClCompile Include="ShizukuEngine\MeshModel.cpp" />
-    <ClCompile Include="ShizukuEngine\Model.cpp" />
-    <ClCompile Include="ShizukuEngine\ModelManager.cpp" />
-    <ClCompile Include="ShizukuEngine\PSO.cpp" />
-    <ClCompile Include="ShizukuEngine\RenderRequests.cpp" />
-    <ClCompile Include="ShizukuEngine\ShadowMapBuffer.cpp" />
-    <ClCompile Include="ShizukuEngine\ShadowPass.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Camera\Camera.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Core\ConvertString.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\DebugLayer.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\DX12Context.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\DXC.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\GUI\ImGuiManager.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\GUI\ImGuiWindow.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Light\LightManager.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Core\LogSistem.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Model\3DModel\MeshModel.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Model\Model.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Model\ModelManager.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\PSO.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Render\RenderRequests.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Render\ShadowMapBuffer.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Render\ShadowPass.cpp" />
     <ClCompile Include="ShizukuEngine\ShizukuEngine.cpp" />
-    <ClCompile Include="ShizukuEngine\Sound.cpp" />
-    <ClCompile Include="ShizukuEngine\Sphere.cpp" />
-    <ClCompile Include="ShizukuEngine\Sprite.cpp" />
-    <ClCompile Include="ShizukuEngine\TextureManager.cpp" />
-    <ClCompile Include="ShizukuEngine\TriangleModel.cpp" />
-    <ClCompile Include="ShizukuEngine\Vector.cpp" />
-    <ClCompile Include="ShizukuEngine\VertexResource.cpp" />
-    <ClCompile Include="ShizukuEngine\WinApp.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Sound\Sound.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Model\Primitive\Sphere.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Model\Sprite\Sprite.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\TextureManager\TextureManager.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Model\Primitive\TriangleModel.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Math\Vector.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\VertexResource.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Core\WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ShizukuEngine\AllD3D12Include.h" />
-    <ClInclude Include="ShizukuEngine\AllVector.h" />
-    <ClInclude Include="ShizukuEngine\Camera.h" />
-    <ClInclude Include="ShizukuEngine\ConvertString.h" />
-    <ClInclude Include="ShizukuEngine\DebugLayer.h" />
-    <ClInclude Include="ShizukuEngine\DX12Context.h" />
-    <ClInclude Include="ShizukuEngine\DXC.h" />
-    <ClInclude Include="ShizukuEngine\ImGuiManager.h" />
-    <ClInclude Include="ShizukuEngine\ImGuiWindow.h" />
-    <ClInclude Include="ShizukuEngine\Input.h" />
-    <ClInclude Include="ShizukuEngine\InstanceData.h" />
-    <ClInclude Include="ShizukuEngine\LightManager.h" />
-    <ClInclude Include="ShizukuEngine\LogSistem.h" />
-    <ClInclude Include="ShizukuEngine\MeshModel.h" />
-    <ClInclude Include="ShizukuEngine\Model.h" />
-    <ClInclude Include="ShizukuEngine\ModelManager.h" />
-    <ClInclude Include="ShizukuEngine\PSO.h" />
-    <ClInclude Include="ShizukuEngine\RenderRequests.h" />
-    <ClInclude Include="ShizukuEngine\ShadowMapBuffer.h" />
-    <ClInclude Include="ShizukuEngine\ShadowPass.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Allinclude\AllD3D12Include.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Allinclude\AllVector.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Camera\Camera.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Core\ConvertString.h" />
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\DebugLayer.h" />
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\DX12Context.h" />
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\DXC.h" />
+    <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiManager.h" />
+    <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiWindow.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Core\Input.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Render\InstanceData.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Light\LightManager.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Core\LogSistem.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Model\3DModel\MeshModel.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Model\Model.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Model\ModelManager.h" />
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\PSO.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Render\RenderRequests.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Render\ShadowMapBuffer.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Render\ShadowPass.h" />
     <ClInclude Include="ShizukuEngine\ShizukuEngine.h" />
-    <ClInclude Include="ShizukuEngine\Sound.h" />
-    <ClInclude Include="ShizukuEngine\Sphere.h" />
-    <ClInclude Include="ShizukuEngine\Sprite.h" />
-    <ClInclude Include="ShizukuEngine\TextureManager.h" />
-    <ClInclude Include="ShizukuEngine\TriangleModel.h" />
-    <ClInclude Include="ShizukuEngine\Vector.h" />
-    <ClInclude Include="ShizukuEngine\Vector2.h" />
-    <ClInclude Include="ShizukuEngine\Vector3.h" />
-    <ClInclude Include="ShizukuEngine\Vector4.h" />
-    <ClInclude Include="ShizukuEngine\VertexResource.h" />
-    <ClInclude Include="ShizukuEngine\WinApp.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Sound\Sound.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Model\Primitive\Sphere.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Model\Sprite\Sprite.h" />
+    <ClInclude Include="ShizukuEngine\Engine\TextureManager\TextureManager.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Model\Primitive\TriangleModel.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Math\Vector.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Math\Vector2.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Math\Vector3.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Math\Vector4.h" />
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\VertexResource.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Core\WinApp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig" />
