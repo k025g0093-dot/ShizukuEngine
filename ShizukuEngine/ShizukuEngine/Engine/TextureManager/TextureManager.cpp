@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <algorithm>
 
-#include "externals/DirectXTex/d3dx12.h"
+#include "d3dx12.h"
 #include "Core/ConvertString.h"
 #include "DirectX/VertexResource.h"
 

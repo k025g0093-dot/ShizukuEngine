@@ -5,7 +5,7 @@
 #include <array>
 #include <vector>
 
-#include "externals/DirectXTex/DirectXTex.h"
+#include "DirectXTex.h"
 
 //テクスチャの読み込みとSRVの管理を行う
 class TextureManager
