@@ -29,7 +29,7 @@ public://パブリック
         UINT instanceCount,
         UINT startInstanceLocation) override;
 
-    void TexPath(const aiMaterial * mtl,const std::string& filepath);
+    void TexPath(const aiMaterial * mtl,const std::string& filepath)override;
 
     const std::string GetTexturePath() const{ return  mTexturePath; }
 
