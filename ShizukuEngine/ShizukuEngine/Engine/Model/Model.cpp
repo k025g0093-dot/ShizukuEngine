@@ -5,3 +5,4 @@ Matrix4x4 Model::GetWorldMatrix()const {
 // メンバ変数の m_scale, m_rotation, m_position からワールド行列を合成して返す
     return MakeAffineMatrix(mScale, mRotation, mPosition);
 }
+

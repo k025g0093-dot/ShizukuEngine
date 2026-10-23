@@ -76,7 +76,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine;$(ProjectDir)ShizukuEngine\externals\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -101,7 +101,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine;$(ProjectDir)ShizukuEngine\externals\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,7 +127,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(ProjectDir)ShizukuEngine;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(ProjectDir)ShizukuEngine;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine;$(ProjectDir)ShizukuEngine\externals\glm</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
@@ -145,6 +145,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\AssimpGLMHelpersMath\GlmConvert.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\Camera\Camera.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\Core\ConvertString.cpp" />
@@ -171,8 +172,10 @@
     <ClCompile Include="ShizukuEngine\Engine\Math\Vector.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\DirectX\VertexResource.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\Core\WinApp.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\SkinnedModel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ShizukuEngine\Engine\Model\3DAnimation\AssimpGLMHelpersMath\GlmConvert.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShizukuEngine\Engine\Allinclude\AllD3D12Include.h" />
     <ClInclude Include="ShizukuEngine\Engine\Allinclude\AllVector.h" />
@@ -206,6 +209,7 @@
     <ClInclude Include="ShizukuEngine\Engine\Math\Vector4.h" />
     <ClInclude Include="ShizukuEngine\Engine\DirectX\VertexResource.h" />
     <ClInclude Include="ShizukuEngine\Engine\Core\WinApp.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Model\3DAnimation\SkinnedModel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig" />

@@ -1,7 +1,7 @@
 #include "DXC.h"
 #include <cassert>
-#include "LogSistem.h"
-#include "ConvertString.h"
+#include "Core/LogSistem.h"
+#include "Core/ConvertString.h"
 #include <format>
 
 // DXCコンパイラの初期化

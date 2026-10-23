@@ -5,6 +5,8 @@
 #include "DirectX/VertexResource.h"
 #include "Light/LightManager.h"
 
+struct aiMaterial; //マテリアル情報
+struct aiString;
 
 struct VertexData {
 	Vector4 position;
@@ -55,11 +57,11 @@ public:
     // オプション：各モデルが独自の transform を設定する場合
     virtual void SetUVTransform(const Matrix4x4&) {}
 
-
+    virtual void TexPath(const aiMaterial* mtl, const std::string& filepath) {}
 
     virtual void Draw(
         ID3D12GraphicsCommandList* cmdList,
         UINT instanceCount,
-        UINT startInstanceLocation) = 0;
+        UINT startInstanceLocation) = 0 {}
 
 };

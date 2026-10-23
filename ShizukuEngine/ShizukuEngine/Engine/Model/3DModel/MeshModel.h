@@ -1,5 +1,5 @@
 #pragma once
-#include "Model.h"
+#include "Model/Model.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -29,7 +29,7 @@ public://パブリック
         UINT instanceCount,
         UINT startInstanceLocation) override;
 
-    void TexPath(const aiMaterial * mtl,const std::string& filepath);
+    void TexPath(const aiMaterial * mtl,const std::string& filepath)override;
 
     const std::string GetTexturePath() const{ return  mTexturePath; }
 
