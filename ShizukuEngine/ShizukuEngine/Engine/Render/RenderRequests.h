@@ -6,6 +6,7 @@
 #include <algorithm> 
 #include<array>
 #include "ShadowPass.h"
+#include "Model/SkinningConstants.h"
 
 //ドローリクエストの構造体
 struct DrawRequest {
@@ -82,6 +83,7 @@ private://メンバ変数
 	ComPtr<ID3D12RootSignature>  rootSignature;//ルートシグネチャ
 	//ブレンドモードごとのPSO（添字にBlendModeを使う）
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState3D;//3D用
+	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineStateSkinned3D;//アニメーションモデル用
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState2D;//2D用
 	TextureManager* mTextureManager = nullptr;
 	LightManager* mLightManager = nullptr;
@@ -91,6 +93,7 @@ private://メンバ変数
 
 
 	ComPtr<ID3D12Resource> mInstanceBuffer;
+	ComPtr<ID3D12Resource> mSkinnedInstanceBuffer;
 
 	ID3D12Device* mDevice = nullptr;
 
@@ -100,6 +103,7 @@ private://メンバ変数
 
 	Matrix4x4 mViewProjectionMatrix{};
 	Matrix4x4 mOrtho{};
+	Matrix4x4* mMappedBoneMatrices{};
 	Vector3 mCameraTranslate{};
 
 

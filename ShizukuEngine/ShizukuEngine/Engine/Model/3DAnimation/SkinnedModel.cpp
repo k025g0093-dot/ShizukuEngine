@@ -12,20 +12,18 @@ SkinnedModel::SkinnedModel() {}
 SkinnedModel::~SkinnedModel() {}
 
 const aiScene* SkinnedModel::Load(const std::string& filepath, Assimp::Importer& importer) {
-
 	const aiScene* scene = importer.ReadFile(filepath,
 		aiProcess_Triangulate |
 		aiProcess_GenSmoothNormals |
 		aiProcess_ValidateDataStructure |
 		aiProcess_ImproveCacheLocality |
 		aiProcess_SortByPType |
-		aiProcess_LimitBoneWeights|
+		aiProcess_LimitBoneWeights |
 		aiProcess_ConvertToLeftHanded);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
 		return nullptr;
 	}
-
 	return scene;
 
 }
@@ -34,48 +32,52 @@ bool SkinnedModel::LoadSkinnedModel(
 	ID3D12Device* device,
 	const std::string& filepath
 ) {
-
 	//ファイルが合っていない場合はfalseを返す
 	Assimp::Importer importer;
 	const aiScene* scene = Load(filepath, importer);
 	if (!scene || !scene->mRootNode)return false;
-
 	//スキン用の構造体を使用
 	std::vector<Vertex>vertices;
 	std::vector<uint32_t>indices;
-
 	ProcessMesh(*scene->mMeshes, scene);
 	CreateBuffers(device, vertices, indices);
-
 	if (scene->mNumMeshes > 0) {
 		const unsigned int materialIndex = scene->mMeshes[0]->mMaterialIndex;
 		if (materialIndex < scene->mNumMaterials) {
 			TexPath(scene->mMaterials[materialIndex], filepath);
 		}
 	}
-
 	mPMaterialResource = CreateBufferResource(device, Align256(sizeof(Material)));
 	UpdateMaterial();
 
 	return true;
 }
 
+
+void SkinnedModel::Draw(
+	ID3D12GraphicsCommandList* cmdList,
+	UINT instanceCount, 
+	UINT startInstanceLocation) {
+
+	cmdList->IASetVertexBuffers(0, 1, &mVertexBufferView);
+	cmdList->IASetIndexBuffer(&mIndexBufferView);
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmdList->SetGraphicsRootConstantBufferView(0, mPMaterialResource->GetGPUVirtualAddress());
+	cmdList->DrawIndexedInstanced(mIndexCount, instanceCount, 0, 0, startInstanceLocation);
+
+}
+
 void SkinnedModel::SetVertexBoneDataToDefault(Vertex& vertex) {
-	for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+	for (int i = 0; i < kMaxBoneIngluence; i++) {
 		vertex.mBoneIds[i] = -1;
 		vertex.mWeights[i] = 0.0f;
 	}
 }
 
 void SkinnedModel::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
-
-
-
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
 		Vertex vertex;
-
 		SetVertexBoneDataToDefault(vertex);
-
 		vertex.position = GlmConvert::GetGLMVec(mesh->mVertices[i]);
 		vertex.normal = GlmConvert::GetGLMVec(mesh->mNormals[i]);
 
@@ -88,15 +90,14 @@ void SkinnedModel::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 		else {
 			vertex.texCoords = glm::vec2(0.0f, 0.0f);
 		}
-			mVertices.push_back(vertex);
-		
+		mVertices.push_back(vertex);
 		ExtractBoneWeightForVertices(mVertices, mesh, scene);
 	}
 }
 
 void SkinnedModel::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
 {
-	for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+	for (int i = 0; i < kMaxBoneIngluence; ++i)
 	{
 		if (vertex.mBoneIds[i] < 0)
 		{
@@ -113,11 +114,11 @@ void SkinnedModel::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, a
 
 		int boneID = -1;
 		std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-		if(mBoneInfoMap.find(boneName)==mBoneInfoMap.end()){
+		if (mBoneInfoMap.find(boneName) == mBoneInfoMap.end()) {
 
 			BoneInFo newBoneInfo;
 			newBoneInfo.id = mBoneCounter;
-			newBoneInfo.offset= GlmConvert::ConvertMatrixToGLMFormat(
+			newBoneInfo.offset = GlmConvert::ConvertMatrixToGLMFormat(
 				mesh->mBones[boneIndex]->mOffsetMatrix);
 			mBoneInfoMap[boneName] = newBoneInfo;
 			boneID = mBoneCounter;
@@ -144,7 +145,6 @@ void SkinnedModel::CreateBuffers(
 	std::vector<Vertex>& vertices,
 	std::vector<uint32_t>& indices
 ) {
-
 	mVertexCount = (uint32_t)vertices.size();
 	mIndexCount = (uint32_t)indices.size();
 
@@ -154,7 +154,6 @@ void SkinnedModel::CreateBuffers(
 	mPVertexResource->Map(0, nullptr, &pData);
 	memcpy(pData, vertices.data(), sizeof(Vertex) * mVertexCount);
 	mPVertexResource->Unmap(0, nullptr);
-
 
 	mVertexBufferView.BufferLocation = mPVertexResource->GetGPUVirtualAddress();
 	mVertexBufferView.SizeInBytes = sizeof(Vertex) * (UINT)mVertexCount;
@@ -173,23 +172,17 @@ void SkinnedModel::CreateBuffers(
 }
 
 void SkinnedModel::TexPath(const aiMaterial* mtl, const std::string& filepath) {
-
 	if (!mtl) {
 		return;
 	}
 	aiString path;
-
-
 	if (mtl->GetTexture(aiTextureType_DIFFUSE, 0, &path) != AI_SUCCESS) { return; }
-
 	std::filesystem::path texPath = path.C_Str();
-
 	// 相対パスなら、モデルファイルがあるフォルダから見たパスにする
 	if (texPath.is_relative()) {
 		texPath = std::filesystem::path(filepath).parent_path() / texPath;
 	}
 	mTexturePath = texPath.lexically_normal().generic_string();
-
 }
 
 //マテリアルの色を変える

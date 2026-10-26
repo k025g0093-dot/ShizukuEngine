@@ -22,9 +22,17 @@ void RenderRequests::InitRender(
 	for (int i = 0; i < kCountOfBlendMode; i++) {
 		const BlendMode blendMode = static_cast<BlendMode>(i);
 		pipelineState3D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k3D, blendMode);
+		pipelineStateSkinned3D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::kSkinned3D, blendMode);
 		pipelineState2D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k2D, blendMode);
 	}
 	mShadowPass.Initialize(device.Get(), mTextureManager, rootSignature);
+
+	mSkinnedInstanceBuffer = CreateBufferResource(mDevice, sizeof(Matrix4x4) * kMaxBones);
+	mSkinnedInstanceBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mMappedBoneMatrices));
+	
+	for (int i = 0; i < kMaxBones; i++) {
+		mMappedBoneMatrices[i] = MakeIdentity4x4();
+	}
 
 	CreateInstanceBuffer(mMaxDrawCount);
 }
@@ -210,7 +218,6 @@ void RenderRequests::Render3DTarget(
 			}
 			count++;
 		}
-
 
 		//トポロジーの設定
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
