@@ -287,6 +287,9 @@
     <ClInclude Include="ShizukuEngine\Engine\Model\3DAnimation\AssimpGLMHelpersMath\GlmConvert.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="ShizukuEngine\Engine\Model\SkinningConstants.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig">
@@ -320,5 +323,6 @@
     <FxCompile Include="shaders\shadow.VS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
+    <FxCompile Include="shaders\SkinnedObject3d.VS.hlsl" />
   </ItemGroup>
 </Project>

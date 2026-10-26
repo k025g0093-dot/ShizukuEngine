@@ -1,5 +1,5 @@
 #pragma once
-#define MAX_BONE_INFLUENCE 4
+#include "../SkinningConstants.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include "Model/Model.h"
@@ -25,8 +25,8 @@ struct Vertex {
 	glm::vec3 tangent;
 	//biTangent
 	glm::vec3 biTangent;
-	int mBoneIds[MAX_BONE_INFLUENCE];
-	float mWeights[MAX_BONE_INFLUENCE];
+	int mBoneIds[kMaxBoneIngluence];
+	float mWeights[kMaxBoneIngluence];
 };
 
 struct BoneInFo {
@@ -44,6 +44,11 @@ public:
 
 	//ファイル取得を行うload関数
 	bool LoadSkinnedModel(ID3D12Device* device, const std::string& filepath);
+
+	void Draw(
+		ID3D12GraphicsCommandList* cmdList,
+		UINT instanceCount,
+		UINT startInstanceLocation) override;
 
 	void TexPath(const aiMaterial* mtl, const std::string& filepath)override;
 

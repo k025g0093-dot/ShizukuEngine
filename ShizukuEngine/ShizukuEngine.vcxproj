@@ -187,6 +187,7 @@
     <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiManager.h" />
     <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiWindow.h" />
     <ClInclude Include="ShizukuEngine\Engine\Core\Input.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Model\SkinningConstants.h" />
     <ClInclude Include="ShizukuEngine\Engine\Render\InstanceData.h" />
     <ClInclude Include="ShizukuEngine\Engine\Light\LightManager.h" />
     <ClInclude Include="ShizukuEngine\Engine\Core\LogSistem.h" />
@@ -252,6 +253,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="shaders\SkinnedObject3d.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

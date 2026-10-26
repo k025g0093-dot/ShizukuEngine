@@ -31,7 +31,7 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	descriptorRange[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	descriptorRange[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER rootParameter[10] = {};
+	D3D12_ROOT_PARAMETER rootParameter[11] = {};
 	rootParameter[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameter[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[0].Descriptor.ShaderRegister = 0; // b0 material
@@ -85,6 +85,10 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 	rootParameter[9].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameter[9].DescriptorTable.pDescriptorRanges = &descriptorRange[2];
 	rootParameter[9].DescriptorTable.NumDescriptorRanges = 1;
+
+	rootParameter[10].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameter[10].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootParameter[10].Descriptor.ShaderRegister = 5;
 
 	descriptionRootSignature.pParameters = rootParameter;
 	descriptionRootSignature.NumParameters = _countof(rootParameter);
@@ -174,10 +178,52 @@ D3D12_INPUT_LAYOUT_DESC CreateLayout() {
 	return inputLayoutDesc;
 }
 
+
+// スキンモデル用のインプットレイアウト
+// SkinnedModel.h の Vertex と同じ並びにする
+D3D12_INPUT_LAYOUT_DESC CreateSkinnedLayout() {
+
+	// 関数を抜けても残るようにstaticにする
+	static D3D12_INPUT_ELEMENT_DESC inputElementDescs[7] = {};
+	inputElementDescs[0].SemanticName = "POSITION";
+	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32_FLOAT; // glm::vec3
+	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[1].SemanticName = "NORMAL";
+	inputElementDescs[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[2].SemanticName = "TEXCOORD";
+	inputElementDescs[2].Format = DXGI_FORMAT_R32G32_FLOAT; // glm::vec2
+	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[3].SemanticName = "TANGENT";
+	inputElementDescs[3].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[4].SemanticName = "BINORMAL";
+	inputElementDescs[4].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[4].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[5].SemanticName = "BLENDINDICES";
+	inputElementDescs[5].Format = DXGI_FORMAT_R32G32B32A32_SINT; // int[4]
+	inputElementDescs[5].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs[6].SemanticName = "BLENDWEIGHT";
+	inputElementDescs[6].Format = DXGI_FORMAT_R32G32B32A32_FLOAT; // float[4]
+	inputElementDescs[6].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
+	inputLayoutDesc.pInputElementDescs = inputElementDescs;
+	inputLayoutDesc.NumElements = _countof(inputElementDescs);
+	return inputLayoutDesc;
+}
+
+
 #pragma endregion
 
 // ブレンドステートの生成
-// 色の合成方法を定義する（今回は透明度なしのシンプルな設定）
+// 色の合成方法を定義する
 // ブレンドステートの生成
 // ブレンドモードに合わせて、シェーダーの出力色(Src)と画面の色(Dest)の混ぜ方を決める
 D3D12_BLEND_DESC CreateBlendState(BlendMode blendMode) {
@@ -252,7 +298,7 @@ D3D12_RASTERIZER_DESC CreateRasterizerState(PipelineType type) {
 
 D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState(PipelineType type) {
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	if (type == PipelineType::k3D) {
+	if (type == PipelineType::k3D||type==PipelineType::kSkinned3D) {
 		depthStencilDesc.DepthEnable = true;
 		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
@@ -265,7 +311,6 @@ D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState(PipelineType type) {
 
 // パイプラインステートオブジェクト（PSO）の生成
 // 描画に必要な全設定をまとめたオブジェクトを作る
-
 ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 	ID3D12Device* device,
 	ComPtr<ID3D12RootSignature>& rootSignature,
@@ -277,19 +322,28 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 	IDxcUtils* dxcUtils = nullptr;
 	IDxcCompiler3* dxcCompiler = nullptr;
 	IDxcIncludeHandler* includeHandler = nullptr;
+	IDxcBlob* vertexShaderBlob = nullptr;
 	DxcCompilerInclude(hr, dxcUtils, dxcCompiler, includeHandler);
 
 	// シェーダーのコンパイル
-	IDxcBlob* vertexShaderBlob = CompileShader(
-		L"shaders/Object3d.VS.hlsl", L"vs_6_0",
-		dxcUtils, dxcCompiler, includeHandler);
+	if (type == PipelineType::kSkinned3D) {
 
+		vertexShaderBlob = CompileShader(
+			L"shaders/SkinnedObject3d.VS.hlsl", L"vs_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+	}
+	else{
+		vertexShaderBlob = CompileShader(
+			L"shaders/Object3d.VS.hlsl", L"vs_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+	}
 	IDxcBlob* pixelShaderBlob = CompileShader(
 		L"shaders/Object3d.PS.hlsl", L"ps_6_0",
 		dxcUtils, dxcCompiler, includeHandler);
 
 	// 各設定の生成（入力レイアウトは3D・2D共通、残り3つは種類で切り替え）
-	D3D12_INPUT_LAYOUT_DESC inputLayout = CreateLayout();
+	D3D12_INPUT_LAYOUT_DESC inputLayout = 
+		(type == PipelineType::kSkinned3D) ? CreateSkinnedLayout() : CreateLayout();
 	D3D12_BLEND_DESC blendDesc = CreateBlendState(blendMode);
 	D3D12_RASTERIZER_DESC rasterizerDesc = CreateRasterizerState(type);
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = CreateDepthStencilState(type);
