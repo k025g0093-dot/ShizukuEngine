@@ -23,6 +23,7 @@ void RenderRequests::InitRender(
 		const BlendMode blendMode = static_cast<BlendMode>(i);
 		pipelineState3D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k3D, blendMode);
 		pipelineStateSkinned3D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::kSkinned3D, blendMode);
+		pipelineStateParticle3D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::kParticle, blendMode);
 		pipelineState2D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k2D, blendMode);
 	}
 	mShadowPass.Initialize(device.Get(), mTextureManager, rootSignature);
@@ -111,11 +112,15 @@ void RenderRequests::Render3DTarget(
 		[](const DrawRequest& a, const DrawRequest& b) {
 			// renderOrdeを最優先で描画（小さいほうを優先して描画）
 			if (a.renderOrder != b.renderOrder)return a.renderOrder < b.renderOrder;
+			//パーティクルごと
+			if (a.isParticle != b.isParticle)return a.isParticle < b.isParticle;
 			//ブレンドモードごとにまとめる
 			if (a.blendMode != b.blendMode)return a.blendMode < b.blendMode;
 			//バッチ化処理
 			if (a.model != b.model)return a.model < b.model;
 			if (a.textureIndex != b.textureIndex)return a.textureIndex < b.textureIndex;
+			
+
 			return false;
 		}
 	);
@@ -149,6 +154,7 @@ void RenderRequests::Render3DTarget(
 
 		mInstanceData[i].World= MakeAffineMatrix(safeScale,safeRot,safePos);
 		mInstanceData[i].WVP= Multiply(mInstanceData[i].World, mViewProjectionMatrix);
+		mInstanceData[i].Color = request.color;
 	}
 
 
@@ -161,6 +167,10 @@ void RenderRequests::Render3DTarget(
 	int sStart = 0;
 	while (sStart < (int)sortedRequests.size()) {
 		const DrawRequest& head = sortedRequests[sStart];
+
+		//パーティクルの場合早期リターン
+		//if (head.isParticle)return;
+
 		int count = 1;
 		while (sStart + count < (int)sortedRequests.size()) {
 			const DrawRequest& next = sortedRequests[sStart + count];
@@ -187,7 +197,7 @@ void RenderRequests::Render3DTarget(
 	mShadowPass.BindForMainPass(commandList.Get());
 
 	//今セットしているブレンドモード
-	BlendMode currentBlendMode = kCountOfBlendMode;
+	ID3D12PipelineState* currentPipelineState = nullptr;
 
 
 	int start = 0;
@@ -195,11 +205,17 @@ void RenderRequests::Render3DTarget(
 	while (start < (int)sortedRequests.size())
 	{
 		//ソートの一番最初の値を入れるheadに入れる
-		const DrawRequest& head = sortedRequests[start];
+		DrawRequest& head = sortedRequests[start];
 
-		if (head.blendMode != currentBlendMode) {
-			commandList->SetPipelineState(pipelineState3D[head.blendMode].Get());
-			currentBlendMode = head.blendMode;
+		//パーティクルかの確認をしてブレンドモードを選択
+		ID3D12PipelineState* pipelineState = head.isParticle ?
+			pipelineStateParticle3D[head.blendMode].Get() :
+			pipelineState3D[head.blendMode].Get();
+
+		//パイプが前回と違う場合切り替えを行う
+		if (pipelineState != currentPipelineState) {
+			commandList->SetPipelineState(pipelineState);
+			currentPipelineState = pipelineState;
 		}
 
 		int count = 1;
@@ -211,8 +227,9 @@ void RenderRequests::Render3DTarget(
 			//同じモデルをまとめて処理するために行う
 			if (next.model != head.model ||
 				next.textureIndex != head.textureIndex ||
-				next.renderOrder != head.renderOrder||
-				next.blendMode!=head.blendMode
+				next.renderOrder != head.renderOrder ||
+				next.blendMode != head.blendMode ||
+				next.isParticle!=head.isParticle
 				) {
 				break;
 			}
@@ -224,7 +241,7 @@ void RenderRequests::Render3DTarget(
 
 		//インスタンスバッファーへのセット
 		commandList->SetGraphicsRootShaderResourceView(
-				1, mInstanceBuffer->GetGPUVirtualAddress());
+			1, mInstanceBuffer->GetGPUVirtualAddress());
 
 		if (head.model) {
 			//スタートのインデックスにインスタンス「スタート」のインデックスを渡す
@@ -239,9 +256,7 @@ void RenderRequests::Render3DTarget(
 		}
 
 		start += count;
-
 	}
-
 
 }
 
@@ -316,6 +331,7 @@ void RenderRequests::Render2DTarget(
 
 		mInstanceData[instanceOffset +i].WVP = Multiply(mInstanceData[instanceOffset +i].World, mOrtho);
 
+		mInstanceData[instanceOffset+i].Color = request.color;
 	}
 
 	//今セットしているブレンドモード

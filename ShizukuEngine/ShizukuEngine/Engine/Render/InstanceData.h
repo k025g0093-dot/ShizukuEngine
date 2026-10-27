@@ -4,6 +4,7 @@
 
 struct InstanceData
 {
-	Matrix4x4 WVP;
-	Matrix4x4 World;
+	Matrix4x4 WVP;//ワールドビューポート
+	Matrix4x4 World;//ワールド座標
+	Vector4 Color;//色
 };

@@ -21,6 +21,7 @@ struct DrawRequest {
 	bool isMesh = false;//3Dオブジェクト化どうかの確認
 	bool isSprit = false;//スプライトかそうでないかの確認
 	bool is2D = false;
+	bool isParticle = false;//パーティクルかどうかの確認
 	int lightId = -1;//ライトを付与する際のID
 	int renderOrder = 1;//レンダーのオーダー
 };
@@ -84,6 +85,7 @@ private://メンバ変数
 	//ブレンドモードごとのPSO（添字にBlendModeを使う）
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState3D;//3D用
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineStateSkinned3D;//アニメーションモデル用
+	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineStateParticle3D;//パーティクル用
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState2D;//2D用
 	TextureManager* mTextureManager = nullptr;
 	LightManager* mLightManager = nullptr;

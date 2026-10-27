@@ -19,7 +19,6 @@ struct VertexShaderInput
       float3 normal : NORMAL0;
 
       float3 tangent : TANGENT0;
-
 };
 
 VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID)
@@ -32,5 +31,6 @@ VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID
       output.texcoord = input.texcoord;
       output.tangent = normalize(mul(input.tangent, (float3x3) instance.World));
       output.worldPosition = mul(input.position, instance.World).xyz;
+      output.color = instance.Color;
       return output;
 }

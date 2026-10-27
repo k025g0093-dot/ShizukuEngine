@@ -56,10 +56,6 @@ PixelShaderOutput main(VertexShaderOutput input)
       {
             discard;
       }
-      if (output.color.a == 0.0f)
-      {
-            discard;
-      }
       
       float3 normal = normalize(input.normal);
 
@@ -140,11 +136,16 @@ PixelShaderOutput main(VertexShaderOutput input)
             shadowFactor = lerp(0.5f, 1.0f, lit);
             
             output.color.rgb = finalColor.rgb * shadowFactor;
-            output.color.a = gMaterial.color.a * textureColor.a;
+            output.color.a = input.color.a * textureColor.a;
       }
       else
       {
-            output.color = gMaterial.color * textureColor;
+            output.color = input.color * textureColor;
+      }
+      
+      if (output.color.a == 0.0f)
+      {
+            discard;
       }
 
       return output;

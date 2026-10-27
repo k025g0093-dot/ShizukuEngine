@@ -8,7 +8,8 @@ using Microsoft::WRL::ComPtr;
 enum class PipelineType {
     k3D,
     k2D,
-    kSkinned3D
+    kSkinned3D,
+    kParticle,
 };
 
 enum BlendMode {
