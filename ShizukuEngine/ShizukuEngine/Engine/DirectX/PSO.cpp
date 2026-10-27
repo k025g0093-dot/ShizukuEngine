@@ -163,8 +163,7 @@ D3D12_INPUT_LAYOUT_DESC CreateLayout() {
 	inputElementDescs[2].SemanticName = "NORMAL";
 	inputElementDescs[2].SemanticIndex = 0;
 	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset =
-		D3D12_APPEND_ALIGNED_ELEMENT;
+	inputElementDescs[2].AlignedByteOffset =D3D12_APPEND_ALIGNED_ELEMENT;
 
 
 	inputElementDescs[3].SemanticName = "TANGENT";
@@ -290,7 +289,7 @@ D3D12_BLEND_DESC CreateBlendState(BlendMode blendMode) {
 D3D12_RASTERIZER_DESC CreateRasterizerState(PipelineType type) {
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	rasterizerDesc.CullMode =
-		(type == PipelineType::k2D) ? D3D12_CULL_MODE_NONE : D3D12_CULL_MODE_BACK;
+		(type == PipelineType::k2D || type== PipelineType::kParticle) ? D3D12_CULL_MODE_NONE : D3D12_CULL_MODE_BACK;
 	rasterizerDesc.FrontCounterClockwise = FALSE;
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴンを塗りつぶして描画
 	return rasterizerDesc;
@@ -298,12 +297,20 @@ D3D12_RASTERIZER_DESC CreateRasterizerState(PipelineType type) {
 
 D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState(PipelineType type) {
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	if (type == PipelineType::k3D||type==PipelineType::kSkinned3D) {
+	//深度に関する設定
+	if (type == PipelineType::k3D || type == PipelineType::kSkinned3D) {
 		depthStencilDesc.DepthEnable = true;
 		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 	}
+	else if (type == PipelineType::kParticle) {
+		//基本的には同じだが細かい内容が違う
+		depthStencilDesc.DepthEnable = true;
+		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	}
 	else {
+		//2Dの場合基本的に使用しない
 		depthStencilDesc.DepthEnable = false;
 	}
 	return depthStencilDesc;
@@ -323,23 +330,64 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 	IDxcCompiler3* dxcCompiler = nullptr;
 	IDxcIncludeHandler* includeHandler = nullptr;
 	IDxcBlob* vertexShaderBlob = nullptr;
+	IDxcBlob* pixelShaderBlob=nullptr;
 	DxcCompilerInclude(hr, dxcUtils, dxcCompiler, includeHandler);
 
 	// シェーダーのコンパイル
-	if (type == PipelineType::kSkinned3D) {
 
-		vertexShaderBlob = CompileShader(
-			L"shaders/SkinnedObject3d.VS.hlsl", L"vs_6_0",
-			dxcUtils, dxcCompiler, includeHandler);
-	}
-	else{
+	switch (type)
+	{
+	case PipelineType::k3D://通常の3Dオブジェクト
+		
 		vertexShaderBlob = CompileShader(
 			L"shaders/Object3d.VS.hlsl", L"vs_6_0",
 			dxcUtils, dxcCompiler, includeHandler);
+
+		pixelShaderBlob = CompileShader(
+			L"shaders/Object3d.PS.hlsl", L"ps_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+		
+		break;
+	case PipelineType::kSkinned3D://ボーンのあるオブジェクト
+		
+		vertexShaderBlob = CompileShader(
+			L"shaders/SkinnedObject3d.VS.hlsl", L"vs_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+
+		pixelShaderBlob = CompileShader(
+			L"shaders/Object3d.PS.hlsl", L"ps_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+		
+		break;
+	case PipelineType::k2D:
+
+		vertexShaderBlob = CompileShader(
+			L"shaders/Object3d.VS.hlsl", L"vs_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+
+		pixelShaderBlob = CompileShader(
+			L"shaders/Object3d.PS.hlsl", L"ps_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+		
+		break;
+	case PipelineType::kParticle://パーティクル用
+
+		vertexShaderBlob = CompileShader(
+			L"shaders/Particle.VS.hlsl", L"vs_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+
+		pixelShaderBlob = CompileShader(
+			L"shaders/Particle.PS.hlsl", L"ps_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+
+		break;
+	default:
+
+		assert(vertexShaderBlob);
+		assert(pixelShaderBlob);
+
+		break;
 	}
-	IDxcBlob* pixelShaderBlob = CompileShader(
-		L"shaders/Object3d.PS.hlsl", L"ps_6_0",
-		dxcUtils, dxcCompiler, includeHandler);
 
 	// 各設定の生成（入力レイアウトは3D・2D共通、残り3つは種類で切り替え）
 	D3D12_INPUT_LAYOUT_DESC inputLayout = 

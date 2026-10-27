@@ -58,6 +58,7 @@ VertexShaderOutput main(SkinnedVertexShaderInput input, uint instanceId : SV_Ins
       output.normal = normalize(mul(totalNormal, (float3x3) instance.World));
       output.tangent = normalize(mul(input.tangent, (float3x3) instance.World));
       output.worldPosition = mul(totalPosition, instance.World).xyz;
+      output.color = instance.Color;
       
       return output;
 

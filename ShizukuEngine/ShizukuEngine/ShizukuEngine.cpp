@@ -230,3 +230,33 @@ void ShizukuEngine::DrawModel
 	}
 	mRenderRequests.DrawRequestsSubmission(req);
 }
+
+
+void ShizukuEngine::DrawModelParticle
+(
+	int modelIndex,
+	const Vector3& pos,
+	const Vector3& rot,
+	const Vector3& scale,
+	const Vector4 color,
+	int textureIndx
+) {
+	//番号からモデルを借りる（読み込み失敗の-1や範囲外ならnullptrが返る）
+	MeshModel* model = mModelManager.Get(modelIndex);
+	if (!model) { return; }
+
+	DrawRequest req;
+	req.model = model;
+	req.pos = pos;//位置を渡す
+	req.rot = rot;//回転度を渡す
+	req.scale = scale;//スケールを渡す
+	req.color = color;//色を渡す
+	req.isParticle = true;
+	if(textureIndx==-1){
+		req.textureIndex = model->GetTextureIndex();
+	}
+	else {
+		req.textureIndex = textureIndx;//テクスチャのインデックスを渡す
+	}
+	mRenderRequests.DrawRequestsSubmission(req);
+}

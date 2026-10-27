@@ -31,6 +31,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	int tex = engine->LoadTexture("resources/uvChecker.png");
 	int model = engine->LoadModel("resources/fbx/Dragon 2.5_fbx.fbx");//失敗したら-1（DrawModelは何もしない）
 	int terrain = engine->LoadModel("resources/terrain/terrain.obj");
+	int particle = engine->LoadModel("resources/plane.obj");
 
 	Vector3 pos{ 0,0,0 };
 
@@ -67,6 +68,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 				{ 2.0f, 2.0f, 2.0f },
 				{ 1.0f, 1.0f, 1.0f, 1.0f }
 			);
+
+			for (int i = 0; i < 100; i++) {
+				engine->DrawModelParticle(particle,{ pos.x - 3.0f + 0.1f * i, pos.y + 0.1f * i, pos.z - 1.5f * i }, { 0,0,0 }, { 1,1,1 }, { 1,1,1,1 });
+			}
 
 			//---------- 今までの図形（モデルと重ならないよう横にずらす） ----------
 			for (int i = 0; i < 10; i++) {
