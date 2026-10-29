@@ -145,6 +145,9 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ShizukuEngine\Engine\DeltaTaime\Clock.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Math\RandomEngine.cpp" />
+    <ClCompile Include="ShizukuEngine\Engine\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\AssimpGLMHelpersMath\GlmConvert.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\Camera\Camera.cpp" />
@@ -175,6 +178,9 @@
     <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\SkinnedModel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ShizukuEngine\Engine\DeltaTaime\Clock.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Math\RandomEngine.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Particle\ParticleEmitter.h" />
     <ClInclude Include="ShizukuEngine\Engine\Model\3DAnimation\AssimpGLMHelpersMath\GlmConvert.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShizukuEngine\Engine\Allinclude\AllD3D12Include.h" />
