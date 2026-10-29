@@ -113,10 +113,12 @@ void ShizukuEngine::PostDraw()
 	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mWidth, (float)mHeight);
 	mViewProjectionMatrix = Multiply(view, proj);
 	Vector3 cameraTranslate = mCamera.transform.translate;
+	Matrix4x4 billBoard = mCamera.GetBillboardMatrix();
 	mRenderRequests.RenderAllRequests(
 		mDX12Context.GetCommandList(),
 		mViewProjectionMatrix,
-		cameraTranslate
+		cameraTranslate,
+		billBoard
 	);
 
 	mDX12Context.SetImGuiRenderTarget();

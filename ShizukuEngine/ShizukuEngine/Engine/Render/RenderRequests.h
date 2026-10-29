@@ -44,7 +44,8 @@ public:
 	void RenderAllRequests(
 		ComPtr<ID3D12GraphicsCommandList> commandList,
 		Matrix4x4 viewProjectionMatrix,
-		Vector3 cameraTranslate
+		Vector3 cameraTranslate,
+		Matrix4x4 billBoard
 		);
 
 	void DrawRequestsSubmission(DrawRequest drawRequest);
@@ -104,6 +105,7 @@ private://メンバ変数
 	ShadowPass mShadowPass;
 
 	Matrix4x4 mViewProjectionMatrix{};
+	Matrix4x4 mBillBoard{};
 	Matrix4x4 mOrtho{};
 	Matrix4x4* mMappedBoneMatrices{};
 	Vector3 mCameraTranslate{};

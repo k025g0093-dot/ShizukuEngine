@@ -46,7 +46,9 @@ void RenderRequests::DrawRequestsSubmission(DrawRequest drawRequest) {
 void RenderRequests::RenderAllRequests(
 	ComPtr<ID3D12GraphicsCommandList> commandList,
 	Matrix4x4 viewProjectionMatrix,
-	Vector3 cameraTranslate
+	Vector3 cameraTranslate,
+	Matrix4x4 billBoard
+
 ){
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 	// 3Dリクエストと2Dリクエストを分離
@@ -56,6 +58,7 @@ void RenderRequests::RenderAllRequests(
 
 	mViewProjectionMatrix = viewProjectionMatrix;
 	mCameraTranslate = cameraTranslate;
+	mBillBoard = billBoard;
 
 	for (auto& req : mDrawRequests) {
 		if (req.isSprit) {
@@ -152,8 +155,13 @@ void RenderRequests::Render3DTarget(
 		if (std::abs(safeScale.y) < minScale) safeScale.y = (safeScale.y >= 0.0f) ? minScale : -minScale;
 		if (std::abs(safeScale.z) < minScale) safeScale.z = (safeScale.z >= 0.0f) ? minScale : -minScale;
 
-		mInstanceData[i].World= MakeAffineMatrix(safeScale,safeRot,safePos);
-		mInstanceData[i].WVP= Multiply(mInstanceData[i].World, mViewProjectionMatrix);
+		if (request.isParticle) {
+			mInstanceData[i].World = Multiply(Multiply(MakeScaleMatrix(safeScale), mBillBoard), MakeTranslateMatrix(safePos));
+		}
+		else {
+			mInstanceData[i].World = MakeAffineMatrix(safeScale, safeRot, safePos);
+		}
+		mInstanceData[i].WVP = Multiply(mInstanceData[i].World, mViewProjectionMatrix);
 		mInstanceData[i].Color = request.color;
 	}
 
@@ -167,9 +175,6 @@ void RenderRequests::Render3DTarget(
 	int sStart = 0;
 	while (sStart < (int)sortedRequests.size()) {
 		const DrawRequest& head = sortedRequests[sStart];
-
-		//パーティクルの場合早期リターン
-		//if (head.isParticle)return;
 
 		int count = 1;
 		while (sStart + count < (int)sortedRequests.size()) {

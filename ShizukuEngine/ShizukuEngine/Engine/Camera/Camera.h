@@ -1,5 +1,6 @@
 #pragma once
 #include "Math/Vector.h"
+#include <numbers>
 
 class Camera {
 public:
@@ -12,7 +13,7 @@ public:
     }
 
     Matrix4x4 GetViewMatrix() {
-        Matrix4x4 cameraMatrix = MakeAffineMatrix(
+         cameraMatrix = MakeAffineMatrix(
             transform.scale, transform.rotate, transform.translate);
         return Inverse(cameraMatrix);
     }
@@ -22,12 +23,23 @@ public:
     }
 
     Matrix4x4 GetViewProjectionMatrix(float width, float height) {
-        Matrix4x4 cameraMatrix = MakeAffineMatrix(
+         cameraMatrix = MakeAffineMatrix(
             transform.scale, transform.rotate, transform.translate);
         Matrix4x4 viewMatrix = Inverse(cameraMatrix);
         Matrix4x4 projMatrix = MakePerspectiveFovMatrix(
             0.45f, width / height, 0.1f, 100.0f);
         return Multiply(viewMatrix, projMatrix);
+    }
+
+    Matrix4x4 GetBillboardMatrix() {
+
+        billboardMatrix = Multiply(backToFrontMatrix, cameraMatrix);
+
+        billboardMatrix.m[3][0] = 0.0f;
+        billboardMatrix.m[3][1] = 0.0f;
+        billboardMatrix.m[3][2] = 0.0f;
+
+        return billboardMatrix;
     }
 
     float GetNearPlane() const { return mNearPlane; }
@@ -39,6 +51,12 @@ public:
     TransformData transform;
 
 private:
+
+    //Y軸に回転をさせる
+    Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
+    Matrix4x4 billboardMatrix{};
+
+    Matrix4x4 cameraMatrix{};
     float mNearPlane;
     float mFarPlane;
 };
