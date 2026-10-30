@@ -38,6 +38,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//モデルを回して立体感を確認する用
 	float modelRotateY = 0.0f;
 
+	Emitter emitter{};
+	emitter.position = { 0.0f, 2.0f, 0.0f };
+	emitter.count = 10;
+	emitter.velocityRange = { 1.0f, 1.0f, 1.0f };
+	emitter.frequency = 0.5f;
+	engine->CreateEmitter(emitter, particle);
+
 	MSG msg{};
 	while (msg.message != WM_QUIT) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -69,9 +76,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 				{ 1.0f, 1.0f, 1.0f, 1.0f }
 			);
 
-			for (int i = 0; i < 100; i++) {
-				engine->DrawModelParticle(particle,{ pos.x - 3.0f + 0.1f * i, pos.y + 0.1f * i, pos.z - 1.5f * i }, { 0,0,0 }, { 1,1,1 }, { 1,1,1,1 });
-			}
+
 
 			//---------- 今までの図形（モデルと重ならないよう横にずらす） ----------
 			for (int i = 0; i < 10; i++) {

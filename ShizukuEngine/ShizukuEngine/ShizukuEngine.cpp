@@ -80,7 +80,26 @@ int ShizukuEngine::LoadModel(const std::string& filePath) {
 	return mModelManager.Load(filePath);
 }
 
-void ShizukuEngine::Update() {}
+int ShizukuEngine::CreateEmitter(const Emitter& emitter, int modelIndex) {
+
+	auto particleEmitter = std::make_unique<ParticleEmitter>();
+	particleEmitter->CreateEmitter(emitter);
+
+	mEmitters.push_back({ std::move(particleEmitter),modelIndex });
+	return static_cast<int>(mEmitters.size()) - 1;
+
+}
+
+void ShizukuEngine::Update() {
+
+	mClock.Update();
+	const float deltaTime = mClock.GetDeltaTime();
+
+	for (EmitterSlot& slot : mEmitters) {
+		slot.emitter->Update(deltaTime);
+	}
+
+}
 
 //開放処理
 ShizukuEngine::~ShizukuEngine() {}
@@ -95,6 +114,7 @@ void ShizukuEngine::PreDraw()
 void ShizukuEngine::PostDraw() 
 {
 
+	DrawEmitter();
 
 	//ライトのGUI（ImGuiのフレーム中に呼ぶ）
 	mLightWindow.update(&mLightManager);
@@ -130,6 +150,8 @@ void ShizukuEngine::PostDraw()
 
 }
 
+#pragma region 三角形描画関数
+
 void ShizukuEngine::DrawTriangle
 (
 	const Vector3& pos,
@@ -152,7 +174,9 @@ void ShizukuEngine::DrawTriangle
 	req.isMesh = false;//メッシュかの確認
 	mRenderRequests.DrawRequestsSubmission(req);
 }
+#pragma endregion
 
+#pragma region 球体描画関数
 
 void ShizukuEngine::DrawSphere
 (
@@ -177,7 +201,9 @@ void ShizukuEngine::DrawSphere
 	req.isMesh = false;//メッシュかの確認
 	mRenderRequests.DrawRequestsSubmission(req);
 }
+#pragma endregion
 
+#pragma region 画像描画関数
 
 void ShizukuEngine::DrawSprite
 (
@@ -204,6 +230,10 @@ void ShizukuEngine::DrawSprite
 	req.isSprit = true;
 	mRenderRequests.DrawRequestsSubmission(req);
 }
+#pragma endregion
+
+#pragma region 3Dモデル描画関数
+
 
 void ShizukuEngine::DrawModel
 (
@@ -232,6 +262,9 @@ void ShizukuEngine::DrawModel
 	}
 	mRenderRequests.DrawRequestsSubmission(req);
 }
+#pragma endregion
+
+#pragma region パーティクル用モデル描画関数
 
 
 void ShizukuEngine::DrawModelParticle
@@ -262,3 +295,26 @@ void ShizukuEngine::DrawModelParticle
 	}
 	mRenderRequests.DrawRequestsSubmission(req);
 }
+#pragma endregion
+
+#pragma region パーティクル用モデル描画関数
+
+void ShizukuEngine::DrawEmitter() 
+{
+
+	for (const EmitterSlot& slot : mEmitters) {
+		for (const Particle& particle : slot.emitter->GetParticles()) {
+
+			DrawModelParticle(
+
+				slot.modelIndex,
+				particle.position,
+				particle.rotate,
+				particle.scale,
+				particle.color
+
+			);
+		}
+	}
+}
+#pragma endregion

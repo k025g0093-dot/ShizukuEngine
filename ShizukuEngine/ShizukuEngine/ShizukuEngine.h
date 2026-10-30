@@ -22,6 +22,9 @@
 #include "Model/Sprite/Sprite.h"
 #include "Model/Primitive/Sphere.h"
 
+#include "Particle/ParticleEmitter.h"
+#include "DeltaTaime/Clock.h"
+
 //ComPtr地獄だっきゃくのために必要
 using Microsoft::WRL::ComPtr;
 using namespace std;
@@ -81,17 +84,24 @@ public:
 	//--------------------------------------------------------------
 	//モデルの描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）テクスチャは宣言をしなくても平気です
 	//--------------------------------------------------------------
-	void DrawModel(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx =-1);
+	void DrawModel(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx = -1);
 
 	//--------------------------------------------------------------
 	//モデルの描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）テクスチャは宣言をしなくても平気です
 	//--------------------------------------------------------------
-	void DrawModelParticle(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx =-1);
+	void DrawModelParticle(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx = -1);
+
+	//--------------------------------------------------------------
+	//エミッターを作って番号を返す
+	//--------------------------------------------------------------
+	int CreateEmitter(const Emitter& emitter, int modelIndex);
 
 private://ヘルパー関数など内部関数がメイン
 
 	//ヘルパー関数
 	const Matrix4x4& GetViewProjectionMatrix() const { return mViewProjectionMatrix; }
+
+	void DrawEmitter();
 
 
 
@@ -118,6 +128,15 @@ private://各種変数などの初期化
 	std::unique_ptr<TriangleModel> mTriangleModel;
 	std::unique_ptr<Sphere> mSphereModel;
 	std::unique_ptr<Sprite> mSprite;
+
+	struct EmitterSlot {
+		std::unique_ptr<ParticleEmitter> emitter;
+		int modelIndex = -1;//初期値として何もない場合は出さない
+	};
+	std::vector<EmitterSlot>mEmitters;
+
+	//デルタタイマーを取得するため
+	Clock mClock;
 
 	Matrix4x4 mViewProjectionMatrix;
 	int mHeight;
