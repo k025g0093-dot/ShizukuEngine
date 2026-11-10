@@ -208,9 +208,9 @@ void ShizukuEngine::PostDraw()
 	mModelWindow.update(&mModelManager);
 	mContentBrowser.update(&mTextureManager);
 
-	//for (size_t i = 0; i < mEmitters.size();i++) {
-	//	mImGuiParticleEmitter.Update(mEmitters[i].modelIndex,mEmitters[i].emitter.get());
-	//}
+	for (size_t i = 0; i < mEmitters.size();i++) {
+		mImGuiParticleEmitter.Update(mEmitters[i].modelIndex,mEmitters[i].emitter.get());
+	}
 
 	mViewportWindow.update(&mRenderTexture,&mEntityManager,&mContentBrowser);
 	mPlayViewportWindow.update(&mRenderTexture);
