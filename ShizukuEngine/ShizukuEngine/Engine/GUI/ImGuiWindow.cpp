@@ -429,9 +429,40 @@ void ImGuiPlayViewportWindow::update(RenderTexture* RenderTexture) {
 }
 
 
-void ImGuiParticleEitter::update(ParticleEmitter* particleEmitter) {
+void ImGuiParticleEmitter::Update(
+	int model,
+	ParticleEmitter* particleEmitter
+) {
 
+	if (begin("エミッター")) {
 
+		if (ImGui::CollapsingHeader("エミッター")) {
+
+			Emitter emitter = particleEmitter->GetEmitter();
+			bool changed = false;
+			changed |= ImGui::DragFloat3("位置", &emitter.position.x, 0.1f);
+			changed |= ImGui::DragScalar("発生数", ImGuiDataType_U32, &emitter.count, 1.0f);
+			changed |= ImGui::DragFloat3("広がる幅", &emitter.velocityRange.x, 0.01f, 0.0f, 10.0f);
+			changed |= ImGui::DragFloat("発生区間", &emitter.frequency, 0.01f, 0.0f, 10.0f);
+			changed |= ImGui::ColorEdit4("色", &emitter.color.x);
+
+			ImGui::Dummy(ImVec2(0.0f, 6.0f));
+			ImGui::Separator();
+			ImGui::Dummy(ImVec2(0.0f, 6.0f));
+
+			AccelerationField accelField = particleEmitter->GetField();
+			changed |= ImGui::DragFloat3("加速幅", &accelField.acceleration.x, 0.01f, 0.0f, 10.0f);
+			changed |= ImGui::DragFloat3("AABBのMIN", &accelField.area.min.x, 0.01f, -10.0f, 10.0f);
+			changed |= ImGui::DragFloat3("AABBのMAX", &accelField.area.max.x, 0.01f, -10.0f, 10.0f);
+
+			if (changed) {
+				particleEmitter->SetEmitter(emitter);
+				particleEmitter->SetField(accelField);
+			}
+
+		}
+	}
+	end();
 }
 
 #endif // DEBUG

@@ -52,6 +52,18 @@ public:
 	void Update(float timer);
 
 	const std::list<Particle>& GetParticles() const { return particles; }
+	
+	const Emitter &GetEmitter() const { return mEmitter; }
+
+	const AccelerationField& GetField()const { return mAccelerationField; }
+
+	void SetEmitter(Emitter emitter) {
+		mEmitter = emitter;
+	}
+
+	void SetField(AccelerationField field) {
+		mAccelerationField = field;
+	}
 
 private://プライベート関数
 
@@ -64,6 +76,6 @@ private://プライベート変数
 	std::list<Particle>particles;
 	std::mt19937 mRandomEngine;
 	Emitter mEmitter;
-	AccelerationField accelerationField;
+	AccelerationField mAccelerationField;
 };
 
