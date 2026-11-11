@@ -74,8 +74,8 @@ void ParticleEmitter::Update(float timer) {
 			continue;
 		}
 
-		if(IsAABBToPointCollision(accelerationField.area,particleIterator->position)) {
-			particleIterator->velocity += accelerationField.acceleration * timer;
+		if(IsAABBToPointCollision(mAccelerationField.area,particleIterator->position)) {
+			particleIterator->velocity += mAccelerationField.acceleration * timer;
 		}
 
 		particleIterator->position += particleIterator->velocity*timer;
@@ -100,10 +100,10 @@ void ParticleEmitter::CreateEmitter(const Emitter& emitter,Vector4 corol,bool is
 
 void ParticleEmitter::SetAccelerationField(const AccelerationField& field) {
 
-	accelerationField = field;
-	accelerationField.acceleration = { field.acceleration.x,field.acceleration.y,field.acceleration.z };
-	accelerationField.area.min = { field.area.min.x, field.area.min.y, field.area.min.z };
-	accelerationField.area.max = { field.area.max.x, field.area.max.y, field.area.max.z };
+	mAccelerationField = field;
+	mAccelerationField.acceleration = { field.acceleration.x,field.acceleration.y,field.acceleration.z };
+	mAccelerationField.area.min = { field.area.min.x, field.area.min.y, field.area.min.z };
+	mAccelerationField.area.max = { field.area.max.x, field.area.max.y, field.area.max.z };
 }
 
 

@@ -42,7 +42,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	int skyDome = engine->LoadModel("resources/skyDome/skyDome.fbx");
 
 	Emitter emitter{};
-	emitter.position = { 0.0f, -2.0f, 0.0f };
+	emitter.position = { 0.0f, 0.0f, 0.0f };
 	emitter.count = 1;
 	emitter.velocityRange = { 0.5f, 2.0f, 0.5f };
 	emitter.frequency = 0.2f;
@@ -105,7 +105,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 				skinnedModel2,
 				anime2,
 				{ -2.0f, -0.5f, 1.0f },
-				{ 0.0f, --modelRotateY, 0.0f },
+				{ 0.0f, modelRotateY, 0.0f },
 				{ 1.0f, 1.0f, 1.0f },
 				{ 1.0f, 1.0f, 1.0f, 1.0f }
 			);

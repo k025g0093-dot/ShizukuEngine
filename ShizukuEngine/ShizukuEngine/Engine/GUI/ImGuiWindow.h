@@ -125,10 +125,10 @@ public:
 	void SetObjectsIndex(int index) { selectedIndex = index; }
 };
 
-class ImGuiParticleEitter :public ImGuiUIWindow
+class ImGuiParticleEmitter :public ImGuiUIWindow
 {
 public:
-    void update(ParticleEmitter* particleEmitter);
+    void Update(int model,ParticleEmitter* particleEmitter);
 };
 
 #endif // USE_IMGUI

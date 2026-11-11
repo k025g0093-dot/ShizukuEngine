@@ -179,6 +179,7 @@ private://各種変数などの初期化
 	ImGuiPlayViewportWindow mPlayViewportWindow{};//プレイビューポート用のGUI（ゲーム実行確認）
 	ImGuiContentBrowser mContentBrowser;
 	ImGuiDebugWindow mDebugWindow{};//デバック情報を載せたGUI
+	ImGuiParticleEmitter mImGuiParticleEmitter{};
 
 #endif // USE_IMGUI
 
