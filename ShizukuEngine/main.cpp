@@ -25,7 +25,7 @@ float GetProcessMemoryMB() {
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
-	ShizukuEngine* engine = new ShizukuEngine(kClineWidth, kClineHeight, L"ShizukuEngine");
+	ShizukuEngine* engine = new ShizukuEngine(kClineWidth, kClineHeight, L"LE2B_29_ヤマト_ユウヤ");
 
 	//---------- 読み込み ----------
 	int tex = engine->LoadTexture("resources/uvChecker.png");
