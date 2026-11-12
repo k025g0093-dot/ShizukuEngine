@@ -31,11 +31,14 @@ struct Emitter
 };
 
 struct AccelerationField {
-
 	Vector3 acceleration;//加速度
-
 	AABB area;//加速度がかかる範囲
+};
 
+struct PerView
+{
+	Matrix4x4 viewProjection;
+	Matrix4x4 billboardMatrix;
 };
 
 class ParticleEmitter

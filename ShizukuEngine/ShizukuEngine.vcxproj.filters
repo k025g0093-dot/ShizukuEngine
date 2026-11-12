@@ -216,6 +216,9 @@
     <ClCompile Include="ShizukuEngine\Engine\GUI\ImGuiContentBrowser.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\ComputePipeline.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -251,7 +254,7 @@
     <ClInclude Include="ShizukuEngine\Engine\Math\Vector4.h">
       <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Engine\DirectX\DXC.h">
+    <ClInclude Include="ShizukuEngine\Engine\DXC.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\DXC</Filter>
     </ClInclude>
     <ClInclude Include="ShizukuEngine\Engine\DirectX\PSO.h">
@@ -365,6 +368,9 @@
     <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiContentBrowser.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\ComputePipeline.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editoroconfig">
@@ -402,5 +408,6 @@
     <FxCompile Include="shaders\SkinnedObject3d.VS.hlsl" />
     <FxCompile Include="shaders\Particle.VS.hlsl" />
     <FxCompile Include="shaders\Particle.PS.hlsl" />
+    <FxCompile Include="shaders\InitializeParticle.CS.hlsl" />
   </ItemGroup>
 </Project>

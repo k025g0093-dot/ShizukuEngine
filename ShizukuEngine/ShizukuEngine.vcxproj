@@ -145,6 +145,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ShizukuEngine\Engine\DirectX\ComputePipeline.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\GUI\ImGuiContentBrowser.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\Animator.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\Animation.cpp" />
@@ -187,6 +188,7 @@
     <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\SkinnedModel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\ComputePipeline.h" />
     <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiContentBrowser.h" />
     <ClInclude Include="ShizukuEngine\Engine\Model\3DAnimation\Animator.h" />
     <ClInclude Include="ShizukuEngine\Engine\Model\3DAnimation\Animation.h" />
@@ -208,7 +210,7 @@
     <ClInclude Include="ShizukuEngine\Engine\Core\ConvertString.h" />
     <ClInclude Include="ShizukuEngine\Engine\DirectX\DebugLayer.h" />
     <ClInclude Include="ShizukuEngine\Engine\DirectX\DX12Context.h" />
-    <ClInclude Include="ShizukuEngine\Engine\DirectX\DXC.h" />
+    <ClInclude Include="ShizukuEngine\Engine\DXC.h" />
     <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiManager.h" />
     <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiWindow.h" />
     <ClInclude Include="ShizukuEngine\Engine\Core\Input.h" />
@@ -259,6 +261,17 @@
     <ResourceCompile Include="ShizukuEngine.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="shaders\InitializeParticle.CS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Development|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="shaders\Line.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
