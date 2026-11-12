@@ -11,31 +11,26 @@ ConstantBuffer<DrawInfo> gDrawInfo : register(b1);
 
 struct VertexShaderInput
 {
+
     float4 position : POSITION;
+
     float2 texcoord : TEXCOORD;
+
     float3 normal : NORMAL0;
+
     float3 tangent : TANGENT0;
 };
-
-StructuredBuffer<Particle> gParticle : register(t0);
-ConstantBuffer<PerView> gPerView : register(b0);
 
 VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID)
 {
     InstanceData instance = gInstances[gDrawInfo.baseInstance + instanceId];
       
-    Particle particle = gParticle[instanceId];
     VertexShaderOutput output;
-    
-    float4x4 worldMatrix = gPerView.billboardMatrix; //wolrdMatrixの作成
-    
-    worldMatrix[0] *= particle.scale.x;
-    worldMatrix[1] *= particle.scale.y;
-    worldMatrix[2] *= particle.scale.z;
-    worldMatrix[3].xyz *= particle.translate;
-    
-    output.position = mul(input.position, mul(worldMatrix, gPerView.viewProjection));
+    output.position = mul(input.position, instance.WVP);
+    output.normal = normalize(mul(input.normal, (float3x3) instance.World));
     output.texcoord = input.texcoord;
+    output.tangent = normalize(mul(input.tangent, (float3x3) instance.World));
+    output.worldPosition = mul(input.position, instance.World).xyz;
     output.color = instance.Color;
     return output;
 }

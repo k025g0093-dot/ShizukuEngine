@@ -409,5 +409,7 @@
     <FxCompile Include="shaders\Particle.VS.hlsl" />
     <FxCompile Include="shaders\Particle.PS.hlsl" />
     <FxCompile Include="shaders\InitializeParticle.CS.hlsl" />
+    <FxCompile Include="shaders\GPUParticle.VS.hlsl" />
+    <FxCompile Include="shaders\GPUParticle.PS.hlsl" />
   </ItemGroup>
 </Project>
