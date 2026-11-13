@@ -31,7 +31,7 @@ ComPtr<ID3D12PipelineState> CreateGPUPipelineStateDesc(
 	computePipelineStateDesc.pRootSignature = rootSignature.Get();
 	ComPtr<ID3D12PipelineState> computePipelineState = nullptr;
 	hr = device->CreateComputePipelineState(&computePipelineStateDesc, IID_PPV_ARGS(&computePipelineState));
-	assert(hr);
+	assert(SUCCEEDED(hr));
 	return computePipelineState;
 
 }

@@ -2,7 +2,7 @@
 
 RWStructuredBuffer<Particle> gParticles : register(u0);
 
-static const int kMaxParticles = 100000001;
+static const int kMaxParticles = 1024;
 
 [numthreads(1024, 1, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )

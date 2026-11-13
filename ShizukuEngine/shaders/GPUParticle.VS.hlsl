@@ -1,14 +1,4 @@
 #include "Particle.hlsli"
-
-StructuredBuffer<InstanceData> gInstances : register(t2);
-
-struct DrawInfo
-{
-    uint baseInstance;
-};
-
-ConstantBuffer<DrawInfo> gDrawInfo : register(b1);
-
 struct VertexShaderInput
 {
     float4 position : POSITION;
@@ -22,7 +12,6 @@ ConstantBuffer<PerView> gPerView : register(b0);
 
 VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID)
 {
-    InstanceData instance = gInstances[gDrawInfo.baseInstance + instanceId];
       
     Particle particle = gParticle[instanceId];
     VertexShaderOutput output;
@@ -36,6 +25,6 @@ VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID
     
     output.position = mul(input.position, mul(worldMatrix, gPerView.viewProjection));
     output.texcoord = input.texcoord;
-    output.color = instance.Color;
+    output.color = particle.color;
     return output;
 }

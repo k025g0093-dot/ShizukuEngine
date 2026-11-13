@@ -22,9 +22,7 @@ struct PixelShaderOutput
 };
 
 Texture2D<float32_t4> gTexture : register(t0);
-Texture2D<float32_t4> gNormalTexture : register(t1);
 SamplerState gSampler : register(s0);
-ConstantBuffer<Camera> gCamera : register(b2);
 
 PixelShaderOutput main(VertexShaderOutput input)
 {
@@ -38,11 +36,7 @@ PixelShaderOutput main(VertexShaderOutput input)
       output.color = input.color * textureColor;
       output.color.a = input.color.a * textureColor.a;
 
-
-    if (output.color.a <= 0.0f)
-    {
-        discard;
-    }
+    if (output.color.a <= 0.0f) { discard;}
     
       return output;
 }
