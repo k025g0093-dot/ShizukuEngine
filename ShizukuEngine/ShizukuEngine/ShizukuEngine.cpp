@@ -227,8 +227,7 @@ void ShizukuEngine::PostDraw()
 	mPlayViewportWindow.update(&mRenderTexture);
 
 	DebugStats stats{};
-	//stats.drawRequestCount = mRenderRequests.GetLastRequestCount();
-	//stats.drawCallCount = mRenderRequests.GetLastDrawCallCount();
+
 	stats.textureCount = mTextureManager.GetTextureCount();
 	stats.modelCount = mModelManager.GetModelCount();
 	stats.lightCount = mLightManager.GetActiveLightCount();

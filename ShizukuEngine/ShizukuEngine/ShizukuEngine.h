@@ -212,6 +212,7 @@ private://各種変数などの初期化
 	Clock mClock;
 
 	Matrix4x4 mViewProjectionMatrix;
+	Vector3 mShadowCenter{};
 	int mHeight;
 	int mWidth;
 };

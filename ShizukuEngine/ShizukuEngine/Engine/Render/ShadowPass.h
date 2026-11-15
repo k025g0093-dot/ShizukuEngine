@@ -20,7 +20,7 @@ public:
 
 	void End(ID3D12GraphicsCommandList* cmd);
 
-	void Update(const LightData& light);
+	void Update(const LightData& light,Vector3 shadowCenter);
 
 	void BindForMainPass(ID3D12GraphicsCommandList* cmd);
 

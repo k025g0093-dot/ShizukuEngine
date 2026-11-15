@@ -121,5 +121,4 @@ private://メンバ変数
 	Matrix4x4* mMappedBoneMatrices{};
 	Vector3 mCameraTranslate{};
 
-
 };

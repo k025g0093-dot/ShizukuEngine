@@ -8,7 +8,7 @@ class TextureManager;
 class ShadowMapBuffer
 {
 public:
-    static constexpr UINT kShadowMapSize = 1024;
+    static constexpr UINT kShadowMapSize = 2048;
     static ShadowMapBuffer* GetInstance();
 
     bool Initialize(ID3D12Device* device, TextureManager* textureManager);

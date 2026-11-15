@@ -189,7 +189,7 @@ void RenderRequests::Render3DTarget(
 	}
 
 
-	mShadowPass.Update(mLightManager->GetLight(0));
+	mShadowPass.Update(mLightManager->GetLight(0), mCameraTranslate);
 	mShadowPass.Begin(commandList.Get(), rootSignature.Get());
 	//インスタンスバッファーへのセット
 	commandList->SetGraphicsRootShaderResourceView(
@@ -203,9 +203,9 @@ void RenderRequests::Render3DTarget(
 		while (sStart + count < (int)sortedRequests.size()) {
 			const DrawRequest& next = sortedRequests[sStart + count];
 			if (next.model != head.model ||
-				next.textureIndex != head.textureIndex || 
-				next.renderOrder != head.renderOrder||
-				next.isSkinnedModel != head.isSkinnedModel||
+				next.textureIndex != head.textureIndex ||
+				next.renderOrder != head.renderOrder ||
+				next.isSkinnedModel != head.isSkinnedModel ||
 				next.boneSlot != head.boneSlot
 				) break;
 			count++;
@@ -298,8 +298,8 @@ void RenderRequests::Render3DTarget(
 			UINT startIndex = (UINT)(start);
 			commandList->SetGraphicsRoot32BitConstant(5, startIndex, 0);
 			commandList->SetGraphicsRootConstantBufferView(
-				10,mSkinnedInstanceBuffer->GetGPUVirtualAddress()+
-				head.boneSlot*sizeof(Matrix4x4)*kMaxBones);
+				10, mSkinnedInstanceBuffer->GetGPUVirtualAddress() +
+				head.boneSlot * sizeof(Matrix4x4) * kMaxBones);
 			BindTexture(commandList.Get(), head.textureIndex);
 			head.model->Draw(
 				commandList.Get(),
@@ -494,7 +494,7 @@ void RenderRequests::BindTexture(ID3D12GraphicsCommandList* commandList, int tex
 void RenderRequests::SetBoneMatrices(const std::vector<Matrix4x4>& matrix, int slot) {
 	if (slot < 0 || mMaxSkinnedModelCount < slot) { return; }
 
-	std::memcpy(mMappedBoneMatrices + slot * kMaxBones, matrix.data(), sizeof(Matrix4x4)*matrix.size());
+	std::memcpy(mMappedBoneMatrices + slot * kMaxBones, matrix.data(), sizeof(Matrix4x4) * matrix.size());
 }
 
 void RenderRequests::EnsureSkinnedCapacity(int count) {
