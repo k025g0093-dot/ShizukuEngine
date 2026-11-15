@@ -449,7 +449,7 @@ ComPtr<ID3D12PipelineState> CreatePipelineStateDesc(
 ComPtr<ID3D12PipelineState> CreateShadowPipelineState(
 	ID3D12Device* device,
 	ComPtr<ID3D12RootSignature>& rootSignature,
-	HRESULT& hr
+	HRESULT& hr, PipelineType type
 ) {
 	// DXCコンパイラの初期化
 	IDxcUtils* dxcUtils = nullptr;
@@ -458,12 +458,32 @@ ComPtr<ID3D12PipelineState> CreateShadowPipelineState(
 	DxcCompilerInclude(hr, dxcUtils, dxcCompiler, includeHandler);
 
 	// 頂点シェーダーのみコンパイル（深度だけでいいのでピクセルシェーダーは不要）
-	IDxcBlob* vertexShaderBlob = CompileShader(
-		L"shaders/shadow.VS.hlsl", L"vs_6_0",
-		dxcUtils, dxcCompiler, includeHandler);
 
+	IDxcBlob* vertexShaderBlob{};
+
+	switch (type)
+	{
+	case PipelineType::k3D:
+		vertexShaderBlob = CompileShader(
+			L"shaders/shadow.VS.hlsl", L"vs_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+		break;
+
+	case PipelineType::kSkinned3D:
+		vertexShaderBlob = CompileShader(
+			L"shaders/SkinnedShadow.VS.hlsl", L"vs_6_0",
+			dxcUtils, dxcCompiler, includeHandler);
+		break;
+
+	default://見つからなかった場合
+		assert(vertexShaderBlob);
+		break;
+	}
+	
 	// 各設定の生成（既存のヘルパーを流用）
-	D3D12_INPUT_LAYOUT_DESC inputLayout = CreateLayout();
+	D3D12_INPUT_LAYOUT_DESC inputLayout =
+		(type == PipelineType::kSkinned3D) ? CreateSkinnedLayout() : CreateLayout();
+
 	D3D12_BLEND_DESC blendDesc = CreateBlendState(kBlendModeNone);
 	D3D12_RASTERIZER_DESC rasterizerDesc = CreateRasterizerState(PipelineType::k3D);
 

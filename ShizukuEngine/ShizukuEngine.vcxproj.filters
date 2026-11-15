@@ -260,7 +260,7 @@
     <ClInclude Include="ShizukuEngine\Engine\Math\Vector4.h">
       <Filter>ソース ファイル\ShizukuEngine\数学ライブラリ</Filter>
     </ClInclude>
-    <ClInclude Include="ShizukuEngine\Engine\DXC.h">
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\DXC.h">
       <Filter>ソース ファイル\ShizukuEngine\各種機能\DXC</Filter>
     </ClInclude>
     <ClInclude Include="ShizukuEngine\Engine\DirectX\PSO.h">
@@ -426,5 +426,6 @@
     <FxCompile Include="shaders\InitializeParticle.CS.hlsl" />
     <FxCompile Include="shaders\GPUParticle.VS.hlsl" />
     <FxCompile Include="shaders\GPUParticle.PS.hlsl" />
+    <FxCompile Include="shaders\SkinnedShadow.VS.hlsl" />
   </ItemGroup>
 </Project>
