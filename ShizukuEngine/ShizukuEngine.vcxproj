@@ -145,6 +145,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ShizukuEngine\Engine\Particle\GPUParticleManager.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\DirectX\ComputePipeline.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\GUI\ImGuiContentBrowser.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\Animator.cpp" />
@@ -189,6 +190,7 @@
     <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\SkinnedModel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ShizukuEngine\Engine\Particle\GPUParticleManager.h" />
     <ClInclude Include="ShizukuEngine\Engine\DirectX\ComputePipeline.h" />
     <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiContentBrowser.h" />
     <ClInclude Include="ShizukuEngine\Engine\Model\3DAnimation\Animator.h" />
