@@ -145,7 +145,7 @@ public:
 	//--------------------------------------------------------------
 	void DrawModelParticle(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx = -1);
 
-
+	Camera& GetCamera() { return mCamera; }
 
 private://ヘルパー関数など内部関数がメイン
 
