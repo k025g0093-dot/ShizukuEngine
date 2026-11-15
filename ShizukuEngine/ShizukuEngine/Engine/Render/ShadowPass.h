@@ -24,10 +24,13 @@ public:
 
 	void BindForMainPass(ID3D12GraphicsCommandList* cmd);
 
+	void SetShadowPipe(ID3D12GraphicsCommandList* cmd,bool isSkinned);
+
 private:
 
 	//shadow.VSに送るためのパイプ設定だったり
 	ComPtr<ID3D12PipelineState> mShadowPipelineState;
+	ComPtr<ID3D12PipelineState> mSkinnedShadowPipelineState;
 	ComPtr<ID3D12Resource> mPLightVPResource;
 
 	HRESULT mHr = S_OK;

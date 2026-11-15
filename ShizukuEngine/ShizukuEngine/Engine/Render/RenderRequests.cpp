@@ -202,16 +202,19 @@ void RenderRequests::Render3DTarget(
 		int count = 1;
 		while (sStart + count < (int)sortedRequests.size()) {
 			const DrawRequest& next = sortedRequests[sStart + count];
-			if (next.model != head.model || next.textureIndex != head.textureIndex || next.renderOrder != head.renderOrder) break;
+			if (next.model != head.model ||
+				next.textureIndex != head.textureIndex || 
+				next.renderOrder != head.renderOrder||
+				next.isSkinnedModel != head.isSkinnedModel||
+				next.boneSlot != head.boneSlot
+				) break;
 			count++;
 		}
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		if (head.model) {
+			mShadowPass.SetShadowPipe(commandList.Get(), head.isSkinnedModel);
 			commandList->SetGraphicsRoot32BitConstant(5, sStart, 0);
 			head.model->Draw(commandList.Get(), count, sStart);
-		}
-		else {
-			return;
 		}
 		sStart += count;
 	}

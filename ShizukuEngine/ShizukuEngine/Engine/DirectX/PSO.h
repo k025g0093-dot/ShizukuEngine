@@ -57,7 +57,7 @@ ComPtr<ID3D12RootSignature> CreateRootSignature(
 ComPtr<ID3D12PipelineState> CreateShadowPipelineState(
     ID3D12Device* device,
     ComPtr<ID3D12RootSignature>& rootSignature,
-    HRESULT& hr
+    HRESULT& hr, PipelineType type
 );
 
 

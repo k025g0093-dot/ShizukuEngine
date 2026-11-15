@@ -215,7 +215,7 @@
     <ClInclude Include="ShizukuEngine\Engine\Core\ConvertString.h" />
     <ClInclude Include="ShizukuEngine\Engine\DirectX\DebugLayer.h" />
     <ClInclude Include="ShizukuEngine\Engine\DirectX\DX12Context.h" />
-    <ClInclude Include="ShizukuEngine\Engine\DXC.h" />
+    <ClInclude Include="ShizukuEngine\Engine\DirectX\DXC.h" />
     <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiManager.h" />
     <ClInclude Include="ShizukuEngine\Engine\GUI\ImGuiWindow.h" />
     <ClInclude Include="ShizukuEngine\Engine\Core\Input.h" />
@@ -266,6 +266,14 @@
     <ResourceCompile Include="ShizukuEngine.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="shaders\SkinnedShadow.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="shaders\GPUParticle.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

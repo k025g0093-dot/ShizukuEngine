@@ -10,7 +10,11 @@ bool ShadowPass::Initialize(
 	//初期化をして
 	mShadowMapBuffer->Initialize(device, textureManager);
 	mShadowPipelineState=
-		CreateShadowPipelineState(device, rootSig, mHr);
+		CreateShadowPipelineState(device, rootSig, mHr,PipelineType::k3D);
+
+	mSkinnedShadowPipelineState=
+		CreateShadowPipelineState(device, rootSig, mHr, PipelineType::kSkinned3D);
+
 
 	mPLightVPResource = CreateBufferResource(device, Align256(sizeof(Matrix4x4)));
 	mPLightVPResource->Map(0, nullptr, reinterpret_cast<void**>(&mMappedLightVP));
@@ -70,4 +74,16 @@ void ShadowPass::Update(const LightData& light)
 void ShadowPass::BindForMainPass(ID3D12GraphicsCommandList* cmd) {
 	cmd->SetGraphicsRootDescriptorTable(9, mShadowMapBuffer->GetSrvGpuHandle());
 	cmd->SetGraphicsRootConstantBufferView(8, mPLightVPResource->GetGPUVirtualAddress());
+}
+
+void ShadowPass::SetShadowPipe(
+	ID3D12GraphicsCommandList* cmd,
+	bool isSkinned
+) {
+	if (isSkinned) {
+		cmd->SetPipelineState(mSkinnedShadowPipelineState.Get());
+	}
+	else {
+		cmd->SetPipelineState(mShadowPipelineState.Get());
+	}
 }
