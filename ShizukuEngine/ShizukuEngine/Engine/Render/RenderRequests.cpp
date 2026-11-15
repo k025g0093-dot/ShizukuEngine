@@ -213,6 +213,9 @@ void RenderRequests::Render3DTarget(
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		if (head.model) {
 			mShadowPass.SetShadowPipe(commandList.Get(), head.isSkinnedModel);
+			commandList->SetGraphicsRootConstantBufferView(
+				10, mSkinnedInstanceBuffer->GetGPUVirtualAddress() +
+				head.boneSlot * sizeof(Matrix4x4) * kMaxBones);
 			commandList->SetGraphicsRoot32BitConstant(5, sStart, 0);
 			head.model->Draw(commandList.Get(), count, sStart);
 		}
