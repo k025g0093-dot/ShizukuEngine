@@ -1,13 +1,13 @@
-name: Debelop
+name: Master
 on:
   push:
     branches:
-      - debelop
+      - Master
 
 env:
   SOLUTION_FILE_PATH: ShizukuEngine.slnx
 
-  CONFIGURATION: Development
+  CONFIGURATION: Master
 
 jobs:
   build:
