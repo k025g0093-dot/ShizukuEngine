@@ -1,6 +1,8 @@
 #include "ImGuiContentBrowser.h"
 #include "../TextureManager/TextureManager.h"
 
+#ifdef USE_IMGUI
+
 static const std::filesystem::path sAssetsPath = "resources";
 
 ImGuiContentBrowser::ImGuiContentBrowser()
@@ -114,3 +116,4 @@ void ImGuiContentBrowser::update(TextureManager* TextureManager) {
 	end();
 }
 
+#endif // USE_IMGUI
