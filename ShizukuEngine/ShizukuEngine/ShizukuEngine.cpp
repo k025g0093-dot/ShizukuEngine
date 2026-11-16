@@ -188,8 +188,6 @@ void ShizukuEngine::Update() {
 	for (auto& animator : mAnimator){
 		animator->UpdateAnimation(deltaTime);
 	}
-
-
 }
 
 //開放処理
