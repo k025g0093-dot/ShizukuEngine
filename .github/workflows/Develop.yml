@@ -17,6 +17,7 @@ jobs:
      - name: Checkout
        uses: actions/checkout@v6
 
+    #Windows SDK 10.0.28000のインストールを追加
      - name: Install Windows SDK 10.0.28000
        shell: pwsh
        run: |
