@@ -251,7 +251,7 @@
     <ClInclude Include="ShizukuEngine\Engine\Model\3DAnimation\SkinnedModel.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".editoroconfig" />
+    <None Include=".editorconfig" />
     <None Include="shaders\Light.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
