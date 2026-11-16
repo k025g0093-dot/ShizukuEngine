@@ -388,9 +388,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".editoroconfig">
-      <Filter>.editoroconfigの設定ファイルがある</Filter>
-    </None>
     <None Include="shaders\Light.hlsli">
       <Filter>hlsl</Filter>
     </None>
@@ -398,6 +395,7 @@
       <Filter>hlsl</Filter>
     </None>
     <None Include="shaders\Particle.hlsli" />
+    <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ShizukuEngine.rc">
