@@ -193,7 +193,6 @@ void ShizukuEngine::Update() {
 //開放処理
 ShizukuEngine::~ShizukuEngine() {}
 
-
 void ShizukuEngine::PreDraw() 
 {
 	mDX12Context.PreDraw();
