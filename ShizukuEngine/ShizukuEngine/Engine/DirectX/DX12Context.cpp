@@ -88,9 +88,9 @@ void DX12Context::CreateCommandObjects(
 	);
 	assert(SUCCEEDED(hr));
 
-	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 4, false);//GUIマルチビューポートで使用するため
+	rtvDescriptorHeap = CreateDescriptorHeap(mDevice.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 4, false);//GUIマルチビューポートで使用するため
 
-	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	srvDescriptorHeap = CreateDescriptorHeap(mDevice.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 
 
 	hr = (swapChin->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0])));
@@ -121,7 +121,6 @@ void DX12Context::CreateCommandObjects(
 		mDevice->CreateRenderTargetView(swapChainResources[i].Get(), &imGuiRtvDesc, mImGuiRtvHandles[i]);
 	}
 	InitFenceEvent();
-
 
 }
 
@@ -211,25 +210,6 @@ void DX12Context::InitFenceEvent() {
 }
 
 
-//ディスクリプタヒープの作成今後使用するために今のうちに作成
-ComPtr<ID3D12DescriptorHeap> DX12Context::CreateDescriptorHeap(
-	D3D12_DESCRIPTOR_HEAP_TYPE heapType,
-	uint32_t numDescriptors,
-	bool shaderVisible
-) {
-
-	ComPtr<ID3D12DescriptorHeap> descriptorHeap;
-	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
-	descriptorHeapDesc.Type = heapType;
-	descriptorHeapDesc.NumDescriptors = numDescriptors;
-	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
-	HRESULT hr = mDevice->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(descriptorHeap.GetAddressOf()));
-	assert(SUCCEEDED(hr));
-
-	return descriptorHeap;
-}
-
 ID3D12Resource* DX12Context::CreateDepthStencilTextureResource() {
 
 	D3D12_RESOURCE_DESC depthResourceDesc{};
@@ -262,6 +242,7 @@ ID3D12Resource* DX12Context::CreateDepthStencilTextureResource() {
 	assert(SUCCEEDED(hr));
 
 	dsvDescriptorHeap = CreateDescriptorHeap(
+		mDevice.Get(),
 		D3D12_DESCRIPTOR_HEAP_TYPE_DSV,
 		1,
 		false
@@ -309,3 +290,5 @@ void DX12Context::SetMainRenderTarget() {
 
 
 }
+
+

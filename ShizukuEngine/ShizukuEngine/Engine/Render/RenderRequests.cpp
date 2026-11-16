@@ -1,4 +1,5 @@
 #include "RenderRequests.h"
+#include "RenderTexture.h"
 #include "TextureManager/TextureManager.h"
 #include "Light/LightManager.h"
 #include"DirectX/DX12Context.h"
@@ -7,13 +8,15 @@ void RenderRequests::InitRender(
 	ComPtr<ID3D12Device> device,
 	TextureManager* textureManager,
 	LightManager* lightManager,
-	DX12Context* dX12Context
+	DX12Context* dX12Context,
+	RenderTexture* renderTexture
 ) {
 
 	mDevice = device.Get();
 	mTextureManager = textureManager;
 	mLightManager = lightManager;
 	mDX12Context = dX12Context;
+	mRenderTexture = renderTexture;
 
 	HRESULT hr;
 	//ルートシグネチャを作成
@@ -28,10 +31,11 @@ void RenderRequests::InitRender(
 	}
 	mShadowPass.Initialize(device.Get(), mTextureManager, rootSignature);
 
-	mSkinnedInstanceBuffer = CreateBufferResource(mDevice, sizeof(Matrix4x4) * kMaxBones);
+	mSkinnedInstanceBuffer = CreateBufferResource(mDevice, sizeof(Matrix4x4) * kMaxBones * mMaxDrawCount);
 	mSkinnedInstanceBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mMappedBoneMatrices));
-	
-	for (int i = 0; i < kMaxBones; i++) {
+
+
+	for (int i = 0; i < kMaxBones * mMaxDrawCount; i++) {
 		mMappedBoneMatrices[i] = MakeIdentity4x4();
 	}
 
@@ -49,7 +53,20 @@ void RenderRequests::RenderAllRequests(
 	Vector3 cameraTranslate,
 	Matrix4x4 billBoard
 
-){
+) {
+
+	//レンダーをシーンに切り替える
+
+#ifdef USE_IMGUI
+	mRenderTexture->TransitionToRenderTarget(commandList.Get());
+
+	mRenderTexture->SetSceneRenderTarget(
+		commandList.Get());
+
+	mRenderTexture->ClearSceneRenderTarget(
+		commandList.Get());
+
+#endif//USE_IMGUI
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 	// 3Dリクエストと2Dリクエストを分離
 	// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -88,6 +105,12 @@ void RenderRequests::RenderAllRequests(
 	if (!request2D.empty()) {//から出ない場合は実行をする
 		Render2DTarget(request2D, commandList, (int)request3D.size());
 	}
+
+
+#ifdef USE_IMGUI
+	mRenderTexture->TransitionToSrv(commandList.Get());
+#endif//USE_IMGUI
+
 	//たまったリストをクリアする
 	mDrawRequests.clear();
 }
@@ -122,7 +145,7 @@ void RenderRequests::Render3DTarget(
 			//バッチ化処理
 			if (a.model != b.model)return a.model < b.model;
 			if (a.textureIndex != b.textureIndex)return a.textureIndex < b.textureIndex;
-			
+
 
 			return false;
 		}
@@ -166,7 +189,7 @@ void RenderRequests::Render3DTarget(
 	}
 
 
-	mShadowPass.Update(mLightManager->GetLight(0));
+	mShadowPass.Update(mLightManager->GetLight(0), mCameraTranslate);
 	mShadowPass.Begin(commandList.Get(), rootSignature.Get());
 	//インスタンスバッファーへのセット
 	commandList->SetGraphicsRootShaderResourceView(
@@ -179,11 +202,20 @@ void RenderRequests::Render3DTarget(
 		int count = 1;
 		while (sStart + count < (int)sortedRequests.size()) {
 			const DrawRequest& next = sortedRequests[sStart + count];
-			if (next.model != head.model || next.textureIndex != head.textureIndex || next.renderOrder != head.renderOrder) break;
+			if (next.model != head.model ||
+				next.textureIndex != head.textureIndex ||
+				next.renderOrder != head.renderOrder ||
+				next.isSkinnedModel != head.isSkinnedModel ||
+				next.boneSlot != head.boneSlot
+				) break;
 			count++;
 		}
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		if (head.model) {
+			mShadowPass.SetShadowPipe(commandList.Get(), head.isSkinnedModel);
+			commandList->SetGraphicsRootConstantBufferView(
+				10, mSkinnedInstanceBuffer->GetGPUVirtualAddress() +
+				head.boneSlot * sizeof(Matrix4x4) * kMaxBones);
 			commandList->SetGraphicsRoot32BitConstant(5, sStart, 0);
 			head.model->Draw(commandList.Get(), count, sStart);
 		}
@@ -191,8 +223,14 @@ void RenderRequests::Render3DTarget(
 	}
 
 	mShadowPass.End(commandList.Get());
-	
+
+
+#ifdef USE_IMGUI
+	mRenderTexture->SetSceneRenderTarget(
+		commandList.Get());
+#else
 	mDX12Context->SetMainRenderTarget();
+#endif//USE_IMGUI
 
 	//ルートシグネチャの設定
 	commandList->SetGraphicsRootSignature(rootSignature.Get());
@@ -213,9 +251,16 @@ void RenderRequests::Render3DTarget(
 		DrawRequest& head = sortedRequests[start];
 
 		//パーティクルかの確認をしてブレンドモードを選択
-		ID3D12PipelineState* pipelineState = head.isParticle ?
-			pipelineStateParticle3D[head.blendMode].Get() :
-			pipelineState3D[head.blendMode].Get();
+		ID3D12PipelineState* pipelineState{};
+		if (head.isParticle) {
+			pipelineState = pipelineStateParticle3D[head.blendMode].Get();
+		}
+		else if (head.isSkinnedModel) {
+			pipelineState = pipelineStateSkinned3D[head.blendMode].Get();
+		}
+		else {
+			pipelineState = pipelineState3D[head.blendMode].Get();
+		}
 
 		//パイプが前回と違う場合切り替えを行う
 		if (pipelineState != currentPipelineState) {
@@ -234,7 +279,8 @@ void RenderRequests::Render3DTarget(
 				next.textureIndex != head.textureIndex ||
 				next.renderOrder != head.renderOrder ||
 				next.blendMode != head.blendMode ||
-				next.isParticle!=head.isParticle
+				next.isParticle != head.isParticle ||
+				next.isSkinnedModel != head.isSkinnedModel
 				) {
 				break;
 			}
@@ -248,7 +294,20 @@ void RenderRequests::Render3DTarget(
 		commandList->SetGraphicsRootShaderResourceView(
 			1, mInstanceBuffer->GetGPUVirtualAddress());
 
-		if (head.model) {
+		if (head.isSkinnedModel) {
+			UINT startIndex = (UINT)(start);
+			commandList->SetGraphicsRoot32BitConstant(5, startIndex, 0);
+			commandList->SetGraphicsRootConstantBufferView(
+				10, mSkinnedInstanceBuffer->GetGPUVirtualAddress() +
+				head.boneSlot * sizeof(Matrix4x4) * kMaxBones);
+			BindTexture(commandList.Get(), head.textureIndex);
+			head.model->Draw(
+				commandList.Get(),
+				(UINT)(count),
+				startIndex
+			);
+		}
+		else if (head.model) {
 			//スタートのインデックスにインスタンス「スタート」のインデックスを渡す
 			UINT startIndex = (UINT)(start);
 			commandList->SetGraphicsRoot32BitConstant(5, startIndex, 0);
@@ -327,16 +386,16 @@ void RenderRequests::Render2DTarget(
 		if (std::abs(safeScale.y) < minScale) safeScale.y = (safeScale.y >= 0.0f) ? minScale : -minScale;
 		if (std::abs(safeScale.z) < minScale) safeScale.z = (safeScale.z >= 0.0f) ? minScale : -minScale;
 
-		
+
 		mInstanceData[instanceOffset + i].World = MakeAffineMatrix(
 			request.scale,
 			request.rot,
 			request.pos
 		);
 
-		mInstanceData[instanceOffset +i].WVP = Multiply(mInstanceData[instanceOffset +i].World, mOrtho);
+		mInstanceData[instanceOffset + i].WVP = Multiply(mInstanceData[instanceOffset + i].World, mOrtho);
 
-		mInstanceData[instanceOffset+i].Color = request.color;
+		mInstanceData[instanceOffset + i].Color = request.color;
 	}
 
 	//今セットしているブレンドモード
@@ -363,7 +422,7 @@ void RenderRequests::Render2DTarget(
 			//同じモデルをまとめて処理するために行う
 			if (next.model != head.model ||
 				next.textureIndex != head.textureIndex ||
-				next.renderOrder != head.renderOrder||
+				next.renderOrder != head.renderOrder ||
 				next.blendMode != head.blendMode
 				) {
 				break;
@@ -379,7 +438,7 @@ void RenderRequests::Render2DTarget(
 
 		if (head.model) {
 			//スタートのインデックスにインスタンス「スタート」のインデックスを渡す
-			UINT startIndex = (UINT)(instanceOffset +start);
+			UINT startIndex = (UINT)(instanceOffset + start);
 			commandList->SetGraphicsRoot32BitConstant(5, startIndex, 0);
 			BindTexture(commandList.Get(), head.textureIndex);
 			head.model->Draw(
@@ -415,9 +474,9 @@ void RenderRequests::CreateInstanceBuffer(int DrawCount) {
 	);
 }
 
-void RenderRequests::CreateOrthographicMatrix(int width,int height) {
+void RenderRequests::CreateOrthographicMatrix(int width, int height) {
 	// 正射影行列を構築（画面座標系）
-		mOrtho = MakeOrthographicMatrix(
+	mOrtho = MakeOrthographicMatrix(
 		0.0f, 0.0f,
 		static_cast<float>(width), static_cast<float>(height),
 		0.1f, 100.0f
@@ -430,4 +489,31 @@ void RenderRequests::BindTexture(ID3D12GraphicsCommandList* commandList, int tex
 		textureIndex = 0;
 	}
 	commandList->SetGraphicsRootDescriptorTable(2, mTextureManager->GetGPUHandle(textureIndex));
+}
+
+void RenderRequests::SetBoneMatrices(const std::vector<Matrix4x4>& matrix, int slot) {
+	if (slot < 0 || mMaxSkinnedModelCount < slot) { return; }
+
+	std::memcpy(mMappedBoneMatrices + slot * kMaxBones, matrix.data(), sizeof(Matrix4x4) * matrix.size());
+}
+
+void RenderRequests::EnsureSkinnedCapacity(int count) {
+
+	int maxSkinnedModelCount = mMaxSkinnedModelCount;
+	while (count > size_t(maxSkinnedModelCount)) {
+		maxSkinnedModelCount = maxSkinnedModelCount * 2;
+	}
+	if (maxSkinnedModelCount > mMaxSkinnedModelCount) {
+		mSkinnedInstanceBuffer = CreateBufferResource(mDevice, sizeof(Matrix4x4) * kMaxBones * maxSkinnedModelCount);
+		mSkinnedInstanceBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mMappedBoneMatrices));
+
+
+		for (int i = 0; i < kMaxBones * maxSkinnedModelCount; i++) {
+			mMappedBoneMatrices[i] = MakeIdentity4x4();
+		}
+
+		mMaxSkinnedModelCount = maxSkinnedModelCount;
+	}
+
+
 }

@@ -30,8 +30,8 @@ bool ShadowMapBuffer::Initialize(
 
     D3D12_RESOURCE_DESC resDesc{};
     resDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-    resDesc.Width = 1024;
-    resDesc.Height = 1024;
+    resDesc.Width = 2048;
+    resDesc.Height = 2048;
     resDesc.MipLevels = 1;
     resDesc.DepthOrArraySize = 1;
     resDesc.Format = DXGI_FORMAT_R32_TYPELESS;

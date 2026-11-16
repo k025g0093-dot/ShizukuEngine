@@ -2,10 +2,14 @@
 #include "Core/ConvertString.h"
 #include "Light/LightManager.h"
 #include "Camera/Camera.h"
+#include "Render/RenderTexture.h"
+#include "Entity/EntityManager.h"
 
 class ModelManager;
+class ImGuiContentBrowser;
+class ParticleEmitter;
+
 #ifdef USE_IMGUI
-#endif // USE_IMGUI
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -65,6 +69,9 @@ class ImGuiLightManagerWindow : public ImGuiUIWindow
 {
 public:
     void update(LightManager* lm);
+private:
+    int mNewLightType=0;
+
 };
 
 //カメラの位置・回転などをGUIで操作する
@@ -81,16 +88,32 @@ public:
     void update(ModelManager* modelManager);
 };
 
+//GUIで操作をするウィンドウ
 class ImGuiViewportWindow : public ImGuiUIWindow
 {
 public:
-    void update() override;
+    void update(
+        RenderTexture* RenderTexture,
+        EntityManager* entityManager,
+        ImGuiContentBrowser* imGuiContentBrowser);
+
+private:
+
+    ImGuiContentBrowser* mImGuiContentBrowser=nullptr;
+    EntityManager* mEntityManager = nullptr;
+	RenderTexture* mRenderTexture = nullptr;
+
 };
 
+//実際のゲーム画面用のウィンドウ
 class ImGuiPlayViewportWindow : public ImGuiUIWindow
 {
 public:
-    void update() override;
+    void update(RenderTexture* RenderTexture);
+private:
+
+    RenderTexture* mRenderTexture = nullptr;
+
 };
 
 class ImGuiZmoWindow : public ImGuiUIWindow
@@ -102,4 +125,11 @@ public:
 	void SetObjectsIndex(int index) { selectedIndex = index; }
 };
 
+class ImGuiParticleEmitter :public ImGuiUIWindow
+{
+public:
+    void Update(int model,ParticleEmitter* particleEmitter);
+};
+
+#endif // USE_IMGUI
 

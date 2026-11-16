@@ -3,6 +3,7 @@
 #include <d3d12.h>
 #include <array>
 #include <cstdint>
+#ifdef USE_IMGUI
 
 struct ImGui_ImplDX12_InitInfo;
 
@@ -70,3 +71,4 @@ private://メンバ変数
 
 	bool mIsInitialized = false;
 };
+#endif//USE_IMGUI

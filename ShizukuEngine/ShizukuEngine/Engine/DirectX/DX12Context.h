@@ -1,5 +1,6 @@
 #pragma once
 #include "AllInclude/AllD3D12Include.h"
+#include "DescriptorHeap.h"
 #include  <algorithm>
 
 #include "Core/LogSistem.h"
@@ -40,11 +41,7 @@ public:
 
 private://プライベート関数
 
-	ComPtr< ID3D12DescriptorHeap>CreateDescriptorHeap(
-		D3D12_DESCRIPTOR_HEAP_TYPE heapType,
-		uint32_t numDescriptors,
-		bool shaderVisible
-	);
+ 
 
 	void InitFenceEvent();
 

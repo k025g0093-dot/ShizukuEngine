@@ -10,7 +10,11 @@ bool ShadowPass::Initialize(
 	//初期化をして
 	mShadowMapBuffer->Initialize(device, textureManager);
 	mShadowPipelineState=
-		CreateShadowPipelineState(device, rootSig, mHr);
+		CreateShadowPipelineState(device, rootSig, mHr,PipelineType::k3D);
+
+	mSkinnedShadowPipelineState=
+		CreateShadowPipelineState(device, rootSig, mHr, PipelineType::kSkinned3D);
+
 
 	mPLightVPResource = CreateBufferResource(device, Align256(sizeof(Matrix4x4)));
 	mPLightVPResource->Map(0, nullptr, reinterpret_cast<void**>(&mMappedLightVP));
@@ -54,20 +58,32 @@ void ShadowPass::End(ID3D12GraphicsCommandList* cmd) {
 	mShadowMapBuffer->TransitionToSrv(cmd);
 }
 
-void ShadowPass::Update(const LightData& light)
+void ShadowPass::Update(const LightData& light,Vector3 shadowCenter)
 {
-	Vector3 lightDir = light.dirOrPos.Normalized();
-	Vector3 lightPos = lightDir * -50.0f;
+	Vector3 lightDir = light.direction.Normalized();
+	Vector3 lightPos = shadowCenter+ lightDir * -50.0f;
 
 	Vector3 up = { 0.0f, 1.0f, 0.0f };
 	if (std::abs(lightDir.Dot(up)) > 0.99f) up = { 0.0f, 0.0f, 1.0f };
 
-	Matrix4x4 view = MakeLookAtMatrix(lightPos, { 0,0,0 }, up);
-	Matrix4x4 proj = MakeOrthographicMatrix(-50.0f, 50.0f, 50.0f, -50.0f, 0.1f, 100.0f);
+	Matrix4x4 view = MakeLookAtMatrix(lightPos, shadowCenter, up);
+	Matrix4x4 proj = MakeOrthographicMatrix(-15.0f, 15.0f, 15.0f, -15.0f, 0.1f, 100.0f);
 	*mMappedLightVP = Multiply(view, proj);
 }
 
 void ShadowPass::BindForMainPass(ID3D12GraphicsCommandList* cmd) {
 	cmd->SetGraphicsRootDescriptorTable(9, mShadowMapBuffer->GetSrvGpuHandle());
 	cmd->SetGraphicsRootConstantBufferView(8, mPLightVPResource->GetGPUVirtualAddress());
+}
+
+void ShadowPass::SetShadowPipe(
+	ID3D12GraphicsCommandList* cmd,
+	bool isSkinned
+) {
+	if (isSkinned) {
+		cmd->SetPipelineState(mSkinnedShadowPipelineState.Get());
+	}
+	else {
+		cmd->SetPipelineState(mShadowPipelineState.Get());
+	}
 }

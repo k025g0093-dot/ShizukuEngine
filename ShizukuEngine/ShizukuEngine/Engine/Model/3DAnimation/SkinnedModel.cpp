@@ -5,7 +5,6 @@
 #pragma comment(lib,"assimp-vc145-mt")
 #include "AssimpGLMHelpersMath/GlmConvert.h"
 
-
 using namespace std;
 
 SkinnedModel::SkinnedModel() {}
@@ -28,7 +27,7 @@ const aiScene* SkinnedModel::Load(const std::string& filepath, Assimp::Importer&
 
 }
 
-bool SkinnedModel::LoadSkinnedModel(
+bool SkinnedModel::LoadSkinned(
 	ID3D12Device* device,
 	const std::string& filepath
 ) {
@@ -37,10 +36,9 @@ bool SkinnedModel::LoadSkinnedModel(
 	const aiScene* scene = Load(filepath, importer);
 	if (!scene || !scene->mRootNode)return false;
 	//スキン用の構造体を使用
-	std::vector<Vertex>vertices;
-	std::vector<uint32_t>indices;
-	ProcessMesh(*scene->mMeshes, scene);
-	CreateBuffers(device, vertices, indices);
+
+	ProcessNode(scene->mRootNode, scene);
+	CreateBuffers(device);
 	if (scene->mNumMeshes > 0) {
 		const unsigned int materialIndex = scene->mMeshes[0]->mMaterialIndex;
 		if (materialIndex < scene->mNumMaterials) {
@@ -56,7 +54,7 @@ bool SkinnedModel::LoadSkinnedModel(
 
 void SkinnedModel::Draw(
 	ID3D12GraphicsCommandList* cmdList,
-	UINT instanceCount, 
+	UINT instanceCount,
 	UINT startInstanceLocation) {
 
 	cmdList->IASetVertexBuffers(0, 1, &mVertexBufferView);
@@ -74,26 +72,51 @@ void SkinnedModel::SetVertexBoneDataToDefault(Vertex& vertex) {
 	}
 }
 
-void SkinnedModel::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
-	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-		Vertex vertex;
-		SetVertexBoneDataToDefault(vertex);
-		vertex.position = GlmConvert::GetGLMVec(mesh->mVertices[i]);
-		vertex.normal = GlmConvert::GetGLMVec(mesh->mNormals[i]);
 
-		if (mesh->mTextureCoords[0]) {
-			glm::vec2 vec;
-			vec.x = mesh->mTextureCoords[0][i].x;
-			vec.y = mesh->mTextureCoords[0][i].y;
-			vertex.texCoords = vec;
+
+
+void SkinnedModel::ProcessNode(aiNode* node, const aiScene* scene,
+	const glm::mat4& parentTransform)
+{
+	glm::mat4 nodeTransform = parentTransform * GlmConvert::ConvertMatrixToGLMFormat(node->mTransformation);
+
+	for (UINT i = 0; i < node->mNumMeshes; i++) {
+		unsigned int meshIndex = node->mMeshes[i];
+		if (meshIndex >= scene->mNumMeshes) continue;
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+		if (!mesh || !mesh->mVertices) continue;
+		UINT baseVertex = (UINT)mVertices.size();
+		for (UINT v = 0; v < mesh->mNumVertices; v++) {
+			Vertex vert{};
+			SetVertexBoneDataToDefault(vert);
+			glm::vec4 pos = glm::vec4(GlmConvert::GetGLMVec(mesh->mVertices[v]), 1.0f);
+			vert.position = { pos.x, pos.y, pos.z };
+			if (mesh->mTextureCoords[0]) {
+				vert.texCoords = { mesh->mTextureCoords[0][v].x,  mesh->mTextureCoords[0][v].y };
+			}
+			if (mesh->mNormals) {
+				glm::vec3 nm = glm::normalize(GlmConvert::GetGLMVec(mesh->mNormals[v]));
+				vert.normal = { nm.x, nm.y, nm.z };
+			}
+			if (mesh->mTangents) {
+				vert.tangent = { mesh->mTangents[v].x, mesh->mTangents[v].y, mesh->mTangents[v].z };
+			}
+
+			mVertices.push_back(vert);
 		}
-		else {
-			vertex.texCoords = glm::vec2(0.0f, 0.0f);
+		for (UINT f = 0; f < mesh->mNumFaces; f++) {
+			aiFace& face = mesh->mFaces[f];
+			for (UINT idx = 0; idx < face.mNumIndices; idx++)
+				mIndices.push_back(baseVertex + face.mIndices[idx]);
 		}
-		mVertices.push_back(vertex);
-		ExtractBoneWeightForVertices(mVertices, mesh, scene);
+		ExtractBoneWeightForVertices(mVertices, baseVertex, mesh, scene);
+
 	}
+	for (UINT i = 0; i < node->mNumChildren; i++)
+		if (node->mChildren[i])
+			ProcessNode(node->mChildren[i], scene, nodeTransform);
 }
+
 
 void SkinnedModel::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
 {
@@ -108,7 +131,10 @@ void SkinnedModel::SetVertexBoneData(Vertex& vertex, int boneID, float weight)
 	}
 }
 
-void SkinnedModel::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
+void SkinnedModel::ExtractBoneWeightForVertices(
+	std::vector<Vertex>& vertices,
+	UINT vertex,
+	aiMesh* mesh, const aiScene* scene)
 {
 	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++) {
 
@@ -134,25 +160,23 @@ void SkinnedModel::ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, a
 		for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex) {
 			int vertexId = weights[weightIndex].mVertexId;
 			float weight = weights[weightIndex].mWeight;
-			assert(vertexId <= vertices.size());
-			SetVertexBoneData(vertices[vertexId], boneID, weight);
+			assert(vertexId < vertices.size());
+			SetVertexBoneData(vertices[vertex + vertexId], boneID, weight);
 		}
 	}
 }
 
 void SkinnedModel::CreateBuffers(
-	ID3D12Device* device,
-	std::vector<Vertex>& vertices,
-	std::vector<uint32_t>& indices
+	ID3D12Device* device
 ) {
-	mVertexCount = (uint32_t)vertices.size();
-	mIndexCount = (uint32_t)indices.size();
+	mVertexCount = (uint32_t)mVertices.size();
+	mIndexCount = (uint32_t)mIndices.size();
 
 	//頂点バッファ
 	mPVertexResource = CreateBufferResource(device, sizeof(Vertex) * mVertexCount);
 	void* pData = nullptr;
 	mPVertexResource->Map(0, nullptr, &pData);
-	memcpy(pData, vertices.data(), sizeof(Vertex) * mVertexCount);
+	memcpy(pData, mVertices.data(), sizeof(Vertex) * mVertexCount);
 	mPVertexResource->Unmap(0, nullptr);
 
 	mVertexBufferView.BufferLocation = mPVertexResource->GetGPUVirtualAddress();
@@ -163,7 +187,7 @@ void SkinnedModel::CreateBuffers(
 	mPIndexResource = CreateBufferResource(device, sizeof(uint32_t) * mIndexCount);
 	uint32_t* idxData = nullptr;
 	mPIndexResource->Map(0, nullptr, reinterpret_cast<void**>(&idxData));
-	memcpy(idxData, indices.data(), sizeof(uint32_t) * mIndexCount);
+	memcpy(idxData, mIndices.data(), sizeof(uint32_t) * mIndexCount);
 	mPIndexResource->Unmap(0, nullptr);
 
 	mIndexBufferView.BufferLocation = mPIndexResource->GetGPUVirtualAddress();
@@ -181,6 +205,10 @@ void SkinnedModel::TexPath(const aiMaterial* mtl, const std::string& filepath) {
 	// 相対パスなら、モデルファイルがあるフォルダから見たパスにする
 	if (texPath.is_relative()) {
 		texPath = std::filesystem::path(filepath).parent_path() / texPath;
+	}
+	else {
+		//相対パスではない場合
+		texPath = std::filesystem::path(filepath).parent_path() / texPath.filename();
 	}
 	mTexturePath = texPath.lexically_normal().generic_string();
 }

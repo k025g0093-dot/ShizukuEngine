@@ -1,7 +1,13 @@
 #include "WinApp.h"
 #include <imgui_impl_win32.h>
 
+#ifdef USE_IMGUI
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+#endif // USE_IMGUI
+
+
 
 
 WinApp::WinApp() {};
@@ -14,9 +20,12 @@ LRESULT CALLBACK WindowProc(
 	LPARAM lparam
 ) {
 
+#ifdef USE_IMGUI
+
 	if (ImGui_ImplWin32_WndProcHandler(
 		hwnd, msg, wparam, lparam
 	))return true;
+#endif // USE_IMGUI
 
 	switch (msg)
 	{

@@ -36,9 +36,9 @@ Particle ParticleEmitter::MakeNewParticle(
 	}
 	else {
 		particle.color = {
-			distColor(randomEngine),
-			distColor(randomEngine),
-			distColor(randomEngine),
+			distColor(randomEngine) * emitter.color.r,
+			distColor(randomEngine) * emitter.color.g,
+			distColor(randomEngine) * emitter.color.b,
 			1.0f
 		};
 	}
@@ -58,7 +58,7 @@ void ParticleEmitter::Update(float timer) {
 
 		for (uint32_t count = 0; count < mEmitter.count; ++count) {
 			particles.push_back(
-				MakeNewParticle(mRandomEngine, mEmitter)
+				MakeNewParticle(mRandomEngine,mEmitter)
 			);
 		}
 		mEmitter.frequencyTime -= mEmitter.frequency;
@@ -74,8 +74,8 @@ void ParticleEmitter::Update(float timer) {
 			continue;
 		}
 
-		if(IsAABBToPointCollision(accelerationField.area,particleIterator->position)) {
-			particleIterator->velocity += accelerationField.acceleration * timer;
+		if(IsAABBToPointCollision(mAccelerationField.area,particleIterator->position)) {
+			particleIterator->velocity += mAccelerationField.acceleration * timer;
 		}
 
 		particleIterator->position += particleIterator->velocity*timer;
@@ -87,22 +87,23 @@ void ParticleEmitter::Update(float timer) {
 	}
 }
 
-void ParticleEmitter::CreateEmitter(const Emitter& emitter,bool isFixedColor) {
+void ParticleEmitter::CreateEmitter(const Emitter& emitter,Vector4 corol,bool isFixedColor) {
 	mEmitter = emitter;
+	mEmitter.color = corol;
 	mIsFixedColor = isFixedColor;
 	for (uint32_t count = 0; count < mEmitter.count; ++count) {
 		particles.push_back(
-			MakeNewParticle(mRandomEngine, mEmitter)
+			MakeNewParticle(mRandomEngine,mEmitter)
 		);
 	}
 }
 
 void ParticleEmitter::SetAccelerationField(const AccelerationField& field) {
 
-	accelerationField = field;
-	accelerationField.acceleration = { field.acceleration.x,field.acceleration.y,field.acceleration.z };
-	accelerationField.area.min = { field.area.min.x, field.area.min.y, field.area.min.z };
-	accelerationField.area.max = { field.area.max.x, field.area.max.y, field.area.max.z };
+	mAccelerationField = field;
+	mAccelerationField.acceleration = { field.acceleration.x,field.acceleration.y,field.acceleration.z };
+	mAccelerationField.area.min = { field.area.min.x, field.area.min.y, field.area.min.z };
+	mAccelerationField.area.max = { field.area.max.x, field.area.max.y, field.area.max.z };
 }
 
 

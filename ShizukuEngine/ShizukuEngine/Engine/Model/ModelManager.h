@@ -5,6 +5,7 @@
 #include <memory>
 #include <d3d12.h>
 #include "3DModel/MeshModel.h"
+#include "3DAnimation/SkinnedModel.h"
 
 //前方宣言
 class TextureManager;
@@ -19,11 +20,16 @@ public:
     //モデルを読み込んで番号を返す
     int Load(const std::string& filePath);
 
+    int LoadSkinnedModel(const std::string& filePath);
+
     //番号からモデルを借りる
     MeshModel* Get(int index) const;
 
+    SkinnedModel* GetSkinned(int index)const;
+
     //読み込み済みのモデルの数
     int GetModelCount() const { return static_cast<int>(mModels.size()); }
+
 
 private://メンバ変数
 
@@ -33,6 +39,9 @@ private://メンバ変数
 
     //読み込んだモデル
     std::vector<std::unique_ptr<MeshModel>> mModels;
+
+    //スキン付きモデル
+    std::vector<std::unique_ptr<SkinnedModel>> mSkinnedModel;
 
     //パス → 番号
     std::unordered_map<std::string, int> mPathToIndex;

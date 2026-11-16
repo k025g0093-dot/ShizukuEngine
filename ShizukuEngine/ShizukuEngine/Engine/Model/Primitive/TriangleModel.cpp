@@ -32,7 +32,7 @@ void TriangleModel::Initialization(ComPtr<ID3D12Device> device)
 	LightData* lightData = nullptr;
 	mPLightResource->Map(0, nullptr, reinterpret_cast<void**>(&lightData));
 	lightData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	lightData->dirOrPos = { 0.0f, -1.0f, 0.0f };
+	lightData->direction = { 0.0f, -1.0f, 0.0f };
 	lightData->intensity = 1.0f;
 	mPLightResource->Unmap(0, nullptr);
 

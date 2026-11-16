@@ -1,5 +1,7 @@
 #include "ImGuiWindow.h"
 #include "Model/ModelManager.h"
+#include "ImGuiContentBrowser.h"
+#include "Particle/ParticleEmitter.h"
 
 #include <psapi.h>
 #pragma comment(lib, "psapi.lib")
@@ -7,13 +9,12 @@
 #include <cmath>
 #include <cstring>
 
+#ifdef USE_IMGUI
 
 ImGuiUIWindow::ImGuiUIWindow() : show(true) {}
 ImGuiUIWindow::~ImGuiUIWindow() {}
-#ifdef USE_IMGUI
 static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
-#endif // DEBUG
 
 
 void ImGuiUIWindow::update() {
@@ -80,6 +81,8 @@ void ImGuiDebugWindow::Update(const DebugStats& stats) {
 	mHistoryOffset = (mHistoryOffset + 1) % kHistoryCount;
 
 	if (begin("デバッグ")) {
+
+
 		//---------- パフォーマンス ----------
 		if (ImGui::CollapsingHeader("パフォーマンス", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::Text("FPS : %.1f (%.2f ms)", io.Framerate, 1000.0f / io.Framerate);
@@ -122,10 +125,9 @@ void ImGuiLightManagerWindow::update(LightManager* lm) {
 
 		//メニューバー
 		if (ImGui::BeginMenuBar()) {
-			if (ImGui::BeginMenu("ファイル")) {
-				if (ImGui::MenuItem("保存")) {
-					//ここでいろいろなライトの保存の実装だったりを行います
-					//ModelManager::GetInstance()->SaveToFile();
+			if (ImGui::BeginMenu("ライトファイル")) {
+				if (ImGui::MenuItem("現在のライトの値を保存")) {
+					lm->SaveLightsToFile();
 				}
 				ImGui::EndMenu();
 			}
@@ -138,7 +140,7 @@ void ImGuiLightManagerWindow::update(LightManager* lm) {
 			LightData global = lm->GetLight(0);
 			bool changed = false;
 			changed |= ImGui::ColorEdit4("色", &global.color.x);
-			changed |= ImGui::DragFloat3("方向", &global.dirOrPos.x, 0.01f, -1.0f, 1.0f);
+			changed |= ImGui::DragFloat3("方向", &global.direction.x, 0.01f, -1.0f, 1.0f);
 			changed |= ImGui::DragFloat("強度", &global.intensity, 0.01f, 0.0f, 10.0f);
 			if (changed) lm->SetLight(0, global);
 		}
@@ -152,14 +154,30 @@ void ImGuiLightManagerWindow::update(LightManager* lm) {
 			if (!lm->IsLightActive(i)) continue;
 
 			ImGui::PushID(i);
-			std::string label = "ポイントライト " + std::to_string(i);
+			std::string label{};
+			if (lm->GetLight(i).type == 1)
+			{
+				label = "ポイントライト " + std::to_string(i);
+			}
+			else {
+				label = "スポットライト " + std::to_string(i);
+			}
 
 			if (ImGui::CollapsingHeader(label.c_str())) {
-				LightData point = lm->GetLight(i);
+				LightData light = lm->GetLight(i);
 				bool changed = false;
-				changed |= ImGui::ColorEdit4("色", &point.color.x);
-				changed |= ImGui::DragFloat3("位置", &point.dirOrPos.x, 0.1f);
-				changed |= ImGui::DragFloat("強度", &point.intensity, 0.01f, 0.0f, 10.0f);
+				changed |= ImGui::ColorEdit4("色", &light.color.x);
+				changed |= ImGui::DragFloat3("位置", &light.position.x, 0.1f);
+				changed |= ImGui::DragFloat("強度", &light.intensity, 0.01f, 0.0f, 10.0f);
+
+
+				if (lm->GetLight(i).type == 2) {
+					changed |= ImGui::DragFloat3("向き", &light.direction.x, 0.01f, -1.0f, 2.0f);
+					changed |= ImGui::DragFloat("範囲", &light.distance, 0.1f, 0.1f, 100.0f);
+					changed |= ImGui::DragFloat("減衰率", &light.decay, 0.01f, 0.0f, 10.0f);
+
+					changed |= ImGui::SliderAngle("スポットライト角度", &light.cosAngle, 1.0f, 89.0f);
+				}
 
 				if (ImGui::Button("ギズモで選択")) {
 					lm->SetSelectedLight(i);
@@ -172,27 +190,38 @@ void ImGuiLightManagerWindow::update(LightManager* lm) {
 				}
 
 				if (changed) {
-					point.type = 1;
-					lm->SetLight(i, point);
+					lm->SetLight(i, light);
 				}
+
 			}
 			ImGui::PopID();
 		}
 
 		ImGui::Dummy(ImVec2(0.0f, 8.0f));
 
-		// --- 追加ボタン ---
-		if (ImGui::Button("+ ポイントライト追加")) {
-			int newIndex = lm->AddLight();
-			if (newIndex == -1) {
-				ImGui::OpenPopup("LightFullPopup");
+		ImGui::Combo("ライトの追加", &mNewLightType, "ポイントライト\0スポットライト\0"); {
+
+			// --- 追加ボタン ---
+			if (ImGui::Button("+ ライト追加")) {
+
+				if (mNewLightType == 0) {
+					int newIndex = lm->AddPointLight();
+					if (newIndex == -1) {
+						ImGui::OpenPopup("LightFullPopup");
+					}
+				}
+				else {
+					int newIndex = lm->AddSpotLight();
+					if (newIndex == -1) {
+						ImGui::OpenPopup("LightFullPopup");
+					}
+				}
+			}
+			if (ImGui::BeginPopup("LightFullPopup")) {
+				ImGui::Text("これ以上ライトを追加できません（上限: %d）", lm->maxLight - 1);
+				ImGui::EndPopup();
 			}
 		}
-		if (ImGui::BeginPopup("LightFullPopup")) {
-			ImGui::Text("これ以上ライトを追加できません（上限: %d）", lm->maxLight - 1);
-			ImGui::EndPopup();
-		}
-
 
 	}
 	end();
@@ -288,3 +317,152 @@ void ImGuiModelWindow::update(ModelManager* modelManager) {
 	end();
 #endif // USE_IMGUI
 }
+
+void ImGuiViewportWindow::update(
+	RenderTexture* RenderTexture,
+	EntityManager* entityManager,
+	ImGuiContentBrowser* imGuiContentBrowser
+) {
+
+#ifdef USE_IMGUI
+
+	mEntityManager = entityManager;
+	mRenderTexture = RenderTexture;
+	mImGuiContentBrowser = imGuiContentBrowser;
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+
+	if (ImGui::Begin("デバックビューポート", nullptr,
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse |
+		ImGuiWindowFlags_NoBringToFrontOnFocus)) {
+
+		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+		ImVec2 imageScreenPos = ImGui::GetCursorScreenPos();
+
+		ImGui::Image(
+			(ImTextureID)mRenderTexture->GetSceneSrvGpuHandle().ptr,
+			viewportSize,
+			ImVec2(0, 0),
+			ImVec2(1, 1),
+			ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
+			ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
+		);
+
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+				const wchar_t* itemPath = (const wchar_t*)payload->Data;
+				auto contentBrowser = mImGuiContentBrowser;
+				//if(contentBrowser&&contentBrowser->onFileDorop)
+			}
+		}
+
+		const auto playState = mEntityManager->GetPlayState();
+		const char* stateLabel = playState == EntityManager::PlayState::editing ? "EDIT"
+			: playState == EntityManager::PlayState::playing ? "PLAY"
+			: "PAUSE";
+		ImGui::SetCursorScreenPos(ImVec2(imageScreenPos.x + 10.0f, imageScreenPos.y + 10.0f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.06f, 0.06f, 0.07f, 0.88f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 4.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 6.0f));
+		ImGui::BeginChild("##ViewportPlayControls", ImVec2(245.0f, 32.0f), ImGuiChildFlags_Borders);
+		ImGui::TextColored(
+			playState == EntityManager::PlayState::editing ? ImVec4(0.70f, 0.70f, 0.70f, 1.0f)
+			: ImVec4(0.35f, 0.85f, 0.45f, 1.0f),
+			"%s", stateLabel);
+		ImGui::SameLine();
+		if (ImGui::Button("Play##Viewport", ImVec2(50.0f, 0.0f))
+			&& playState == EntityManager::PlayState::editing) {
+		}
+		ImGui::SameLine();
+		if (ImGui::Button(playState == EntityManager::PlayState::paused
+			? "Resume##Viewport" : "Pause##Viewport", ImVec2(58.0f, 0.0f))
+			&& playState != EntityManager::PlayState::editing) {
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Stop##Viewport", ImVec2(48.0f, 0.0f))
+			&& playState != EntityManager::PlayState::editing) {
+		}
+		ImGui::EndChild();
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor();
+
+	}
+
+
+
+	ImGui::End();
+	ImGui::PopStyleVar(2);
+#endif
+}
+
+
+void ImGuiPlayViewportWindow::update(RenderTexture* RenderTexture) {
+
+#ifdef USE_IMGUI
+
+	mRenderTexture = RenderTexture;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+
+	if (ImGui::Begin("プレイビューポート", nullptr,
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoScrollWithMouse |
+		ImGuiWindowFlags_NoBringToFrontOnFocus)) {
+
+		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+
+		ImGui::Image(
+			(ImTextureID)mRenderTexture->GetSceneSrvGpuHandle().ptr,
+			viewportSize,
+			ImVec2(0, 0),
+			ImVec2(1, 1),
+			ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
+			ImVec4(0.0f, 0.0f, 0.0f, 0.0f)
+		);
+
+	}
+	ImGui::End();
+	ImGui::PopStyleVar(2);
+#endif
+}
+
+
+void ImGuiParticleEmitter::Update(
+	int model,
+	ParticleEmitter* particleEmitter
+) {
+
+	if (begin("エミッター")) {
+
+		if (ImGui::CollapsingHeader("エミッター")) {
+
+			Emitter emitter = particleEmitter->GetEmitter();
+			bool changed = false;
+			changed |= ImGui::DragFloat3("位置", &emitter.position.x, 0.1f);
+			changed |= ImGui::DragScalar("発生数", ImGuiDataType_U32, &emitter.count, 1.0f);
+			changed |= ImGui::DragFloat3("広がる幅", &emitter.velocityRange.x, 0.01f, 0.0f, 10.0f);
+			changed |= ImGui::DragFloat("発生区間", &emitter.frequency, 0.01f, 0.0f, 10.0f);
+			changed |= ImGui::ColorEdit4("色", &emitter.color.x);
+
+			ImGui::Dummy(ImVec2(0.0f, 6.0f));
+			ImGui::Separator();
+			ImGui::Dummy(ImVec2(0.0f, 6.0f));
+
+			AccelerationField accelField = particleEmitter->GetField();
+			changed |= ImGui::DragFloat3("加速幅", &accelField.acceleration.x, 0.01f, 0.0f, 10.0f);
+			changed |= ImGui::DragFloat3("AABBのMIN", &accelField.area.min.x, 0.01f, -10.0f, 10.0f);
+			changed |= ImGui::DragFloat3("AABBのMAX", &accelField.area.max.x, 0.01f, -10.0f, 10.0f);
+
+			if (changed) {
+				particleEmitter->SetEmitter(emitter);
+				particleEmitter->SetField(accelField);
+			}
+
+		}
+	}
+	end();
+}
+
+#endif // DEBUG

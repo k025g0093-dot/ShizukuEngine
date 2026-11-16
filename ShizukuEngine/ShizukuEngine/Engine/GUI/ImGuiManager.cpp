@@ -1,6 +1,8 @@
 #include "ImGuiManager.h"
 #include <cassert>
 #include <filesystem>
+#ifdef USE_IMGUI
+
 #include <imgui.h>
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx12.h>
@@ -141,3 +143,4 @@ void ImGuiManager::RenderPlatformWindows() {
 		ImGui::RenderPlatformWindowsDefault();
 	}
 }
+#endif // USE_IMGUI

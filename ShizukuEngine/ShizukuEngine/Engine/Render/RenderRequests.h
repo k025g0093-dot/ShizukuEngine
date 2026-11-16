@@ -22,13 +22,16 @@ struct DrawRequest {
 	bool isSprit = false;//スプライトかそうでないかの確認
 	bool is2D = false;
 	bool isParticle = false;//パーティクルかどうかの確認
+	bool isSkinnedModel = false;//3D
 	int lightId = -1;//ライトを付与する際のID
 	int renderOrder = 1;//レンダーのオーダー
+	int boneSlot = 0;
 };
 //前方宣言
 class TextureManager;
 class LightManager;
 class DX12Context;
+class RenderTexture;
 
 class RenderRequests {
 public:
@@ -37,7 +40,8 @@ public:
 		ComPtr<ID3D12Device> device,
 		TextureManager* textureManager,
 		LightManager* lightManager,
-		DX12Context* dX12Context
+		DX12Context* dX12Context,
+		RenderTexture* renderTexture
 	);
 
 	//描画レンダーリクエスト
@@ -53,6 +57,9 @@ public:
 	//正射影行列作成
 	void CreateOrthographicMatrix(int width, int height);
 
+	void SetBoneMatrices(const std::vector<Matrix4x4>&matrix,int slot);
+
+	void EnsureSkinnedCapacity(int count);
 
 
 private://ヘルパー関数など
@@ -76,12 +83,15 @@ private://ヘルパー関数など
 	//バッチのテクスチャをparam 2にセットする（範囲外は0番）
 	void BindTexture(ID3D12GraphicsCommandList* commandList, int textureIndex);
 
+
 private://メンバ変数
 
 	int mLastRequestCount = 0;   //前フレームの描画リクエスト数
 	int mLastDrawCallCount = 0;  //前フレームのドローコール数
 
 	int mMaxDrawCount = 128;
+	int mMaxSkinnedModelCount = 128;
+
 	ComPtr<ID3D12RootSignature>  rootSignature;//ルートシグネチャ
 	//ブレンドモードごとのPSO（添字にBlendModeを使う）
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState3D;//3D用
@@ -91,6 +101,7 @@ private://メンバ変数
 	TextureManager* mTextureManager = nullptr;
 	LightManager* mLightManager = nullptr;
 	DX12Context* mDX12Context = nullptr;
+	RenderTexture* mRenderTexture = nullptr;
 
 	std::vector<DrawRequest> mDrawRequests;//ドローリクエストの変数
 
@@ -109,6 +120,5 @@ private://メンバ変数
 	Matrix4x4 mOrtho{};
 	Matrix4x4* mMappedBoneMatrices{};
 	Vector3 mCameraTranslate{};
-
 
 };

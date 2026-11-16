@@ -6,18 +6,18 @@
 struct Material
 {
     float32_t4 color;
-      int enableLighting;
-      int enableNormalMap;
-      float2 padding;
+    int enableLighting;
+    int enableNormalMap;
+    float2 padding;
     float32_t4x4 uvTransform;
-      float shininess;
+    float shininess;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
 
 struct Camera
 {
-      float3 worldPosition;
+    float3 worldPosition;
 };
 
 struct PixelShaderOutput
@@ -38,115 +38,135 @@ static const uint LIGHT_COUNT = 8;
 
 PixelShaderOutput main(VertexShaderOutput input)
 {
-      PixelShaderOutput output;
+    PixelShaderOutput output;
 
-      float4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
+    float4 transformedUV = mul(float32_t4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
 
     float32_t4 textureColor;
-      if (gMaterial.enableLighting == -1)
-      {
-            textureColor = float32_t4(1.0f, 1.0f, 1.0f, 1.0f);
-      }
-      else
-      {
-            textureColor = gTexture.Sample(gSampler, transformedUV.xy);
-      }
+    if (gMaterial.enableLighting == -1)
+    {
+        textureColor = float32_t4(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+    else
+    {
+        textureColor = gTexture.Sample(gSampler, transformedUV.xy);
+    }
 
-      if (textureColor.a == 0.0f)
-      {
-            discard;
-      }
+    if (textureColor.a == 0.0f)
+    {
+        discard;
+    }
       
-      float3 normal = normalize(input.normal);
+    float3 normal = normalize(input.normal);
 
-      if (gMaterial.enableNormalMap != 0)
-      {
-            float3 tangent = normalize(input.tangent);
+    if (gMaterial.enableNormalMap != 0)
+    {
+        float3 tangent = normalize(input.tangent);
 
-            tangent = normalize(tangent - normal * dot(normal, tangent));
+        tangent = normalize(tangent - normal * dot(normal, tangent));
 
-            float3 bitangent = normalize(cross(normal, tangent));
+        float3 bitangent = normalize(cross(normal, tangent));
 
-            float3x3 TBN = float3x3(tangent, bitangent, normal);
+        float3x3 TBN = float3x3(tangent, bitangent, normal);
 
-            float3 sampledNormal = gNormalTexture.Sample(gSampler, transformedUV.xy).xyz;
-            sampledNormal = sampledNormal * 2.0f - 1.0f;
+        float3 sampledNormal = gNormalTexture.Sample(gSampler, transformedUV.xy).xyz;
+        sampledNormal = sampledNormal * 2.0f - 1.0f;
 
-            normal = normalize(mul(sampledNormal, TBN));
-      }
+        normal = normalize(mul(sampledNormal, TBN));
+    }
 
-      if (gMaterial.enableLighting != 0)
-      {
-            float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
-            float4 baseColor = gMaterial.color * textureColor; // ← float4のまま計算する（rgbを取り出さない）
+    if (gMaterial.enableLighting != 0)
+    {
+        float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
+        float4 baseColor = gMaterial.color * textureColor; // ← float4のまま計算する（rgbを取り出さない）
 
-            float4 finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f); // ← float4で初期化
+        float4 finalColor = float4(0.0f, 0.0f, 0.0f, 0.0f); // ← float4で初期化
 
             [loop]
-            for (uint i = 0; i < gActiveLightCount; i++)
-            {
-                  Light light = g_lights[i];
+        for (uint i = 0; i < gActiveLightCount; i++)
+        {
+            Light light = g_lights[i];
 
-                  if (light.intensity <= 0.0f)
-                        continue;
+            if (light.intensity <= 0.0f)
+                continue;
 
-                  float3 lightDir;
-                  float attenuation = 1.0f;
+            float3 lightDir;
+            float attenuation = 1.0f;
                   
-                  if (light.type == 0) // ポイントライト
-                  {
-                        lightDir = -normalize(light.dirOrPos); // ← マイナスを戻す
+            if (light.type == 0) // ポイントライト
+            {
+                lightDir = -normalize(light.direction); // ← マイナスを戻す
 
                        
-                  }
-                  else // ポイントライト（type == 1）
-                  {
-                        float3 toLight = light.dirOrPos - input.worldPosition;
-                        float dist = length(toLight);
-                        lightDir = normalize(toLight);
-
-                        float range = 20.0f;
-                        attenuation = saturate(1.0f - (dist * dist) / (range * range));
-                        attenuation *= attenuation;
-                  }
-
-                  float NdotL = dot(normal, lightDir);
-                  float halfLambert = pow(NdotL * 0.5f + 0.5f, 2.0f);
-
-                  float4 diffuse = baseColor * light.color * halfLambert * light.intensity * attenuation;
-
-                  float3 halfVector = normalize(lightDir + toEye);
-                  float NDotH = dot(normal, halfVector);
-                  float specularPow = pow(saturate(NDotH), 32.0f);
-                  float4 specular = light.color * light.intensity * specularPow * attenuation * float4(1.0f, 1.0f, 1.0f, 1.0f);
-
-                  finalColor += diffuse + specular;
             }
+            else if (light.type == 1)// ポイントライト（type == 1）
+            {
+                float3 toLight = light.position - input.worldPosition;
+                float dist = length(toLight);
+                lightDir = normalize(toLight);
 
-            float shadowFactor = 1.0f;
+                float range = light.distance;
+                attenuation = saturate(1.0f - (dist * dist) / (range * range));
+                attenuation *= attenuation;
+            }
+            else // スポットライト（type == 2）
+            {
+                        // スポットライトの方向を計算
+                float3 toLight = light.position - input.worldPosition;
+                float dist = length(toLight);
+                lightDir = normalize(toLight);
 
-            float4 posInLightSpace = mul(float4(input.worldPosition, 1.0f), gLightVP);
-            posInLightSpace.xyz /= posInLightSpace.w;
-            float2 shadowUV = float2(
+                        // スポットライトの減衰を計算
+                float range = max(light.distance, 0.0001f);
+                attenuation = saturate(1.0f - (dist * dist) / (range * range));
+                attenuation *= attenuation;
+                        
+                
+                float3 spotDirection = normalize(light.direction); // スポットライトの方向を正規化
+                float cosAngle = dot(normalize(-lightDir), spotDirection);
+                       
+                        // スポットライトの角度による減衰を計算
+                float falloffFactor = saturate((cosAngle - light.cosAngle) / max(light.cosFalloffStart - light.cosAngle, 0.0001f));
+                attenuation *= falloffFactor;
+            }
+            
+            float NdotL = dot(normal, lightDir);
+            float halfLambert = pow(NdotL * 0.5f + 0.5f, 2.0f);
+
+            float4 diffuse = baseColor * light.color * halfLambert * light.intensity * attenuation;
+
+            float3 halfVector = normalize(lightDir + toEye);
+            float NDotH = dot(normal, halfVector);
+            float specularPow = pow(saturate(NDotH), 32.0f);
+            float4 specular = light.color * light.intensity * specularPow * attenuation * float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+            finalColor += diffuse + specular;
+        }
+
+        float shadowFactor = 1.0f;
+
+        float4 posInLightSpace = mul(float4(input.worldPosition, 1.0f), gLightVP);
+        posInLightSpace.xyz /= posInLightSpace.w;
+        float2 shadowUV = float2(
                          (posInLightSpace.x + 1.0f) * 0.5f,
                           (1.0f - posInLightSpace.y) * 0.5f
                    );
             
-            float lit = shadowMap.SampleCmpLevelZero(gSampler1, shadowUV, posInLightSpace.z - 0.005f);
-            shadowFactor = lerp(0.5f, 1.0f, lit);
+        float lit = shadowMap.SampleCmpLevelZero(gSampler1, shadowUV, posInLightSpace.z - 0.005f);
+        shadowFactor = lerp(0.5f, 1.0f, lit);
             
-            output.color.rgb = finalColor.rgb * shadowFactor;
-            output.color.a = input.color.a * textureColor.a;
-      }
-      else
-      {
-            output.color = input.color * textureColor;
-      }
+        output.color.rgb = finalColor.rgb * shadowFactor;
+        output.color.a = input.color.a * textureColor.a;
+    }
+    else
+    {
+        output.color = input.color * textureColor;
+    }
       
-      if (output.color.a == 0.0f)
-      {
-            discard;
-      }
+    if (output.color.a == 0.0f)
+    {
+        discard;
+    }
 
-      return output;
+    return output;
 }

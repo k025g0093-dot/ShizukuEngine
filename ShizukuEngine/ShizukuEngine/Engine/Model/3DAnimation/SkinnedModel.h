@@ -43,7 +43,7 @@ public:
 	~SkinnedModel();
 
 	//ファイル取得を行うload関数
-	bool LoadSkinnedModel(ID3D12Device* device, const std::string& filepath);
+	bool LoadSkinned(ID3D12Device* device, const std::string& filepath);
 
 	void Draw(
 		ID3D12GraphicsCommandList* cmdList,
@@ -60,28 +60,39 @@ public:
 	void SetEnableLighting(bool enableLighting);
 	bool GetEnableLighting() const { return mEnableLighting; }
 
+	const std::string GetTexturePath() const { return  mTexturePath; }
+
+	//テクスチャーインデックスゲッター
+	const int GetTextureIndex()const { return mTextureIndex; }
+	//テクスチャーインデックスセッター
+	void SetTextureIndex(int textureIndex) {
+		mTextureIndex = textureIndex;
+	}
+
+	auto& GetBoneInFoMap() { return mBoneInfoMap; }
+	int& GetBoneCount() { return mBoneCounter; }
+
 private://関数
 
 	void SetVertexBoneDataToDefault(Vertex& vertex);
 
 	static const aiScene* Load(const std::string& filepath, Assimp::Importer& importer);
 
-	void ProcessMesh(aiMesh* mesh, const aiScene* scene);
+	void ProcessNode(aiNode* node, const aiScene* scene,
+		const glm::mat4 & parentTransform =glm::mat4(1.0f));
 
-	void ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
+	void ExtractBoneWeightForVertices(
+		std::vector<Vertex>& vertices,
+		UINT vertex,
+		aiMesh* mesh, const aiScene* scene);
 
 	void SetVertexBoneData(Vertex& vertex, int boneID, float weight);
-
-	auto& GetBoneInFoMap() { return mBoneInfoMap; }
-	int& GetBoneCount() { return mBoneCounter; }
 
 	//mColorなどの値をマテリアルのバッファに書き込む
 	void UpdateMaterial();
 
 	void CreateBuffers(
-		ID3D12Device* device,
-		std::vector<Vertex>& vertices,
-		std::vector<uint32_t>& indices);
+		ID3D12Device* device);
 
 private://メンバ変数
 

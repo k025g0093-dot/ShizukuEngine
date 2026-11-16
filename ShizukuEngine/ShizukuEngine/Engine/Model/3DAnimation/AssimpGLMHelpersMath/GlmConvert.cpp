@@ -14,6 +14,18 @@ glm::mat4 GlmConvert::ConvertMatrixToGLMFormat(const aiMatrix4x4& from){
 	return to;
 }
 
+Matrix4x4 GlmConvert::ConvertGLMtoMatrix(const glm::mat4& from) {
+
+	Matrix4x4 to{};
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			to.m[i][j] = from[i][j];
+		}
+	}
+	return to;
+}
+
+
 glm::vec3 GlmConvert::GetGLMVec(const aiVector3D& vec) {
 	return glm::vec3(vec.x, vec.y, vec.z);
 }

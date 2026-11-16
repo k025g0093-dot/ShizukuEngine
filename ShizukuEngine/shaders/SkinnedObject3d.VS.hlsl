@@ -18,7 +18,7 @@ struct DrawInfo
 };
 ConstantBuffer<DrawInfo> gDrawInfo : register(b1);
 
-static const int MAX_BONES = 100;
+static const int MAX_BONES = 200;
 static const int MAX_BONE_INFLUENCE = 4;
 
 struct BoneMatrices

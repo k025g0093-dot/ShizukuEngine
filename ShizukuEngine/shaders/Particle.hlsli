@@ -18,3 +18,20 @@ struct InstanceData
       row_major float4x4 World;
       float4 Color;
 };
+
+struct Particle
+{
+    float3 translate;
+    float3 scale;
+    float3 padding;
+    float3 velocity;
+    float4 color;
+    float lifeTime;
+    float currentTime;
+};
+
+struct PerView
+{
+    row_major float4x4 viewProjection;
+    row_major float4x4  billboardMatrix;
+};

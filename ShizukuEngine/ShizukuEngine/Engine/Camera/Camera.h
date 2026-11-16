@@ -6,14 +6,14 @@ class Camera {
 public:
     Camera() {
         transform.scale = { 1.0f, 1.0f,  1.0f };
-        transform.rotate = { 0.3f, 0.0f,  0.0f };
-        transform.translate = { 0.0f, 5.0f, -20.0f };
+        transform.rotate = { 0.9f, 0.0f,  0.0f };
+        transform.translate = { 0.0f, 30.0f, -20.0f };
         mNearPlane = 0.1f;
         mFarPlane = 10000.0f;
     }
 
     Matrix4x4 GetViewMatrix() {
-         cameraMatrix = MakeAffineMatrix(
+        cameraMatrix = MakeAffineMatrix(
             transform.scale, transform.rotate, transform.translate);
         return Inverse(cameraMatrix);
     }
@@ -23,7 +23,7 @@ public:
     }
 
     Matrix4x4 GetViewProjectionMatrix(float width, float height) {
-         cameraMatrix = MakeAffineMatrix(
+        cameraMatrix = MakeAffineMatrix(
             transform.scale, transform.rotate, transform.translate);
         Matrix4x4 viewMatrix = Inverse(cameraMatrix);
         Matrix4x4 projMatrix = MakePerspectiveFovMatrix(
@@ -45,12 +45,19 @@ public:
     float GetNearPlane() const { return mNearPlane; }
     float GetFarPlane() const { return mFarPlane; }
 
+    Vector3 GetPosition()const { return transform.translate; }
+
     void SetNearPlane(float n) { mNearPlane = n; }
     void SetFarPlane(float f) { mFarPlane = f; }
 
+    void SetCameraPos(Vector3 cameraPos) { transform.translate = cameraPos; }
+    void SetCameraRot(Vector3 cameraRot) { transform.rotate = cameraRot; }
+
     TransformData transform;
 
+
 private:
+
 
     //Y軸に回転をさせる
     Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);

@@ -4,7 +4,7 @@
 #include<assimp/quaternion.h>
 #include<assimp/vector3.h>
 #include<assimp/matrix4x4.h>
-
+#include "Math/Vector.h"
 
 class GlmConvert
 {
@@ -16,5 +16,6 @@ public:
 
 	static  glm::quat GetGLMQuat(const aiQuaternion& pOrientation);
 
+	static Matrix4x4 ConvertGLMtoMatrix(const glm::mat4& from);
 };
 
