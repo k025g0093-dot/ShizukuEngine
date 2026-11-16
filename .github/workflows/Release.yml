@@ -17,6 +17,11 @@ jobs:
      - name: Checkout
        uses: actions/checkout@v6
 
+     - name: Install Windows SDK 10.0.28000
+       shell: pwsh
+       run: |
+         winget install --id Microsoft.WindowsSDK.10.0.28000 --exact --silent --accept-package-agreements --accept-source-agreements
+
      - name: Add MSBuild to PATH 
        uses: microsoft/steup-msbuild@v3
        with:
