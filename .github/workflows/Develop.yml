@@ -19,7 +19,7 @@ jobs:
 
      - name: Install Windows SDK 10.0.28000
        shell: pwsh
-      run: |
+       run: |
          winget install --id Microsoft.WindowsSDK.10.0.28000 --exact --silent --accept-package-agreements --accept-source-agreements
 
       
