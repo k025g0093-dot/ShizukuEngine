@@ -1,8 +1,8 @@
-name: Debelop
+name: Develop
 on:
   push:
     branches:
-      - debelop
+      - develop
 
 env:
   SOLUTION_FILE_PATH: Assignment/ShizukuEngine/ShizukuEngine.slnx
