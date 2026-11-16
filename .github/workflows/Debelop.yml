@@ -1,0 +1,25 @@
+name: Debelop
+on:
+push:
+branches:
+-debelop
+
+env:
+SOLUTION_FILE_PATH: Assignment/ShizukuEngine/ShizukuEngine.slnx
+
+CONFIGURATION: debelop
+
+jobs:
+build:
+runs-on: windows-2025-vs2026
+steps:
+-name: Checkout
+use: actions/checkout@v6
+
+-name: Add MSBuild to PATH 
+uses: microsoft/steup-msbuild@v3
+with:
+msbuild-architecture: x64
+
+-name: Build
+run: msbuild ${{env.SOLUTION_FILE_PATH}}/p:Platform-x64,Configuration=${{env.CONFIGURATION}}
