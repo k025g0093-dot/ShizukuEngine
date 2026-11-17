@@ -60,7 +60,16 @@ ComPtr<ID3D12PipelineState> CreateShadowPipelineState(
     HRESULT& hr, PipelineType type
 );
 
+ComPtr<ID3D12RootSignature> CreateLineRootSignature(
+    ID3D12Device* device,
+    HRESULT& hr
+);
 
+ComPtr<ID3D12PipelineState> CreateLinePipelineState(
+    ID3D12Device* device,
+    ComPtr<ID3D12RootSignature>& rootSignature,
+    HRESULT& hr
+);
 
 D3D12_BLEND_DESC CreateBlendState(BlendMode blendMode);
 D3D12_RASTERIZER_DESC CreateRasterizerState(PipelineType type);
