@@ -46,6 +46,7 @@ void RenderRequests::InitRender(
 
 	/*ライン用パイプラインの作成*/
 	mLinePipelineState = CreateLinePipelineState(mDevice, mLineRootSignature, hr);
+	mLine = std::make_unique<Line>();/*Lineの宣言*/
 	mLine->Initialize(mDevice);
 
 }
