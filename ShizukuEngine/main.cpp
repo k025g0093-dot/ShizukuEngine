@@ -1,4 +1,4 @@
-﻿#include "ShizukuEngine/ShizukuEngine.h"
+#include "ShizukuEngine/ShizukuEngine.h"
 #include <Windows.h>
 #include <psapi.h>
 #include <array>
@@ -118,7 +118,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 				{ 1.0f, 1.0f, 1.0f },
 				{ 1.0f, 1.0f, 1.0f, 1.0f }
 			);
-
 
 			engine->PostDraw();
 

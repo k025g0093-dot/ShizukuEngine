@@ -32,6 +32,7 @@ class TextureManager;
 class LightManager;
 class DX12Context;
 class RenderTexture;
+class Line;
 
 class RenderRequests {
 public:
@@ -50,17 +51,22 @@ public:
 		Matrix4x4 viewProjectionMatrix,
 		Vector3 cameraTranslate,
 		Matrix4x4 billBoard
-		);
+	);
 
 	void DrawRequestsSubmission(DrawRequest drawRequest);
 
 	//正射影行列作成
 	void CreateOrthographicMatrix(int width, int height);
 
-	void SetBoneMatrices(const std::vector<Matrix4x4>&matrix,int slot);
+	void SetBoneMatrices(const std::vector<Matrix4x4>& matrix, int slot);
 
 	void EnsureSkinnedCapacity(int count);
 
+	void AddLine(
+		const Vector3& start,
+		const Vector3& end,
+		const Vector4& color
+	);
 
 private://ヘルパー関数など
 
@@ -73,7 +79,7 @@ private://ヘルパー関数など
 	//----------------------------------------
 	//2Dオブジェクトを対象とした描画リクエスト送信関数
 	//----------------------------------------
-	void Render2DTarget(const std::vector<DrawRequest>& requests2D, ComPtr<ID3D12GraphicsCommandList> commandList,int instanceOffset);
+	void Render2DTarget(const std::vector<DrawRequest>& requests2D, ComPtr<ID3D12GraphicsCommandList> commandList, int instanceOffset);
 
 	//----------------------------------------
 	//インスタンスバッファーを再作成する関数
@@ -93,11 +99,15 @@ private://メンバ変数
 	int mMaxSkinnedModelCount = 128;
 
 	ComPtr<ID3D12RootSignature>  rootSignature;//ルートシグネチャ
+	ComPtr<ID3D12RootSignature>  mLineRootSignature;//線用のルートシグネチャ
 	//ブレンドモードごとのPSO（添字にBlendModeを使う）
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState3D;//3D用
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineStateSkinned3D;//アニメーションモデル用
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineStateParticle3D;//パーティクル用
 	std::array<ComPtr<ID3D12PipelineState>, kCountOfBlendMode> pipelineState2D;//2D用
+	ComPtr<ID3D12PipelineState> mLinePipelineState;//線用のPSO
+
+	/*マネージャーなど*/
 	TextureManager* mTextureManager = nullptr;
 	LightManager* mLightManager = nullptr;
 	DX12Context* mDX12Context = nullptr;
@@ -114,6 +124,7 @@ private://メンバ変数
 
 	InstanceData* mInstanceData = nullptr;
 	ShadowPass mShadowPass;
+	std::unique_ptr<Line>mLine;
 
 	Matrix4x4 mViewProjectionMatrix{};
 	Matrix4x4 mBillBoard{};
