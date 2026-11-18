@@ -18,6 +18,7 @@ const aiScene* SkinnedModel::Load(const std::string& filepath, Assimp::Importer&
 		aiProcess_ImproveCacheLocality |
 		aiProcess_SortByPType |
 		aiProcess_LimitBoneWeights |
+		aiProcess_JoinIdenticalVertices |
 		aiProcess_ConvertToLeftHanded);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
