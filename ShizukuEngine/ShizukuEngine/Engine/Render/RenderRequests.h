@@ -124,7 +124,7 @@ private://メンバ変数
 
 	InstanceData* mInstanceData = nullptr;
 	ShadowPass mShadowPass;
-	Line* mLine=nullptr;
+	std::unique_ptr<Line>mLine;
 
 	Matrix4x4 mViewProjectionMatrix{};
 	Matrix4x4 mBillBoard{};

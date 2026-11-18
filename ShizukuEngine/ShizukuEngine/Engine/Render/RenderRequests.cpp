@@ -23,7 +23,8 @@ void RenderRequests::InitRender(
 	HRESULT hr;
 	//ルートシグネチャを作成
 	rootSignature = CreateRootSignature(mDevice, hr);
-	//PSOの作成
+
+	/*各PSOの作成*/
 	for (int i = 0; i < kCountOfBlendMode; i++) {
 		const BlendMode blendMode = static_cast<BlendMode>(i);
 		pipelineState3D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k3D, blendMode);
@@ -43,10 +44,8 @@ void RenderRequests::InitRender(
 
 	CreateInstanceBuffer(mMaxDrawCount);
 
-	mLine = new Line();
-
+	/*ライン用パイプラインの作成*/
 	mLinePipelineState = CreateLinePipelineState(mDevice, mLineRootSignature, hr);
-
 	mLine->Initialize(mDevice);
 
 }
