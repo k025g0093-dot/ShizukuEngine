@@ -14,24 +14,24 @@ public:
 		memcpy(mKeysPrev, mKeysCurr, 256);
 		GetKeyboardState(mKeysCurr);
 
-		if (GetKeyDown(VK_CONTROL)) {
-			mIsCursorFree = (!mIsCursorFree) ? true : false;
+		//if (GetKeyDown(VK_CONTROL)) {
+		//	mIsCursorFree = (!mIsCursorFree) ? true : false;
 
-			(!mIsCursorFree) ? HideCursor() : ShowCursorAgain();
+		//	(!mIsCursorFree) ? HideCursor() : ShowCursorAgain();
 
-			mMouseDeltaX = 0;
-			mMouseDeltaY = 0;
-		}
+		//	mMouseDeltaX = 0;
+		//	mMouseDeltaY = 0;
+		//}
 
-		if (!mIsCursorFree) {
-			// --- マウス ---
-			GetCursorPos(&mPoint);
+		//if (!mIsCursorFree) {
+		//	// --- マウス ---
+		//	GetCursorPos(&mPoint);
 
-			mMouseDeltaX = mPoint.x - mMouseX;
-			mMouseDeltaY = mPoint.y - mMouseY;
+		//	mMouseDeltaX = mPoint.x - mMouseX;
+		//	mMouseDeltaY = mPoint.y - mMouseY;
 
-			RecenterCursor();
-		}
+		//	RecenterCursor();
+		//}
 
 		// --- ゲームパッド (追加) ---
 		mPadPrev = mPadCurr; // 前フレームの状態を保存
