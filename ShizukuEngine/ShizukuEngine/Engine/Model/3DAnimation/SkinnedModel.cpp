@@ -50,6 +50,9 @@ bool SkinnedModel::LoadSkinned(
 			TexPath(scene->mMaterials[materialIndex], filepath);
 		}
 	}
+
+	mLocaOBBBones = CreateBoneOBBs(*this);
+
 	mPMaterialResource = CreateBufferResource(device, Align256(sizeof(Material)));
 	UpdateMaterial();
 

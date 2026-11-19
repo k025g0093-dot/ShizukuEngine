@@ -111,7 +111,11 @@ private://メンバ変数
 	//マテリアル
 	ComPtr<ID3D12Resource>   mPMaterialResource;
 
+	/*ローカルのOBB*/
 	OBB mLocalOBB;
+
+	/*ボーンが増やせるように*/
+	std::vector<OBB> mLocaOBBBones;
 
 	int mTextureIndex = -1;
 
