@@ -106,6 +106,11 @@ public:
 	// 色の固定ができますデフォルトはランダムが指定されています
 	//--------------------------------------------------------------
 	int CreateGPUEmitter(const Emitter& emitter, int modelIndex,Vector4 color ={1.0f,1.0f,1.0f,1.0f}, bool isFixedColor = false);
+	
+	//--------------------------------------------------------------
+	//アニメーションモデルのコリジョンの作成関数
+	//--------------------------------------------------------------
+	void CreateCollision(int modelIndex, int boneSlot,const Vector3& pos, const Vector3& rot, const Vector3& scale);
 
 
 

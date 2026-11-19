@@ -62,4 +62,28 @@ void Animator::CalculateBoneTransform(
 	}
 }
 
+OBB Animator::UpdateOBBAnimator(
+	const OBB& obb,
+	Matrix4x4 worldMatrix
+) {
+	OBB result{};
+	result.center = TransformMatrix(obb.center, worldMatrix);
 
+	const float sizes[3] = { obb.size.x,obb.size.y, obb.size.z };
+
+	float scaled[3]{};
+	for (int i = 0; i < 3; i++) {
+		const Vector3& d = obb.orientations[i];
+		const Vector3 axis = {
+			d.x * worldMatrix.m[0][0] + d.y * worldMatrix.m[1][0] + d.z * worldMatrix.m[2][0],
+			d.x * worldMatrix.m[0][1] + d.y * worldMatrix.m[1][1] + d.z * worldMatrix.m[2][1],
+			d.x * worldMatrix.m[0][2] + d.y * worldMatrix.m[1][2] + d.z * worldMatrix.m[2][2],
+		};
+		const float length = axis.Length();
+		result.orientations[i] = axis.Normalized();
+		scaled[i] = sizes[i] * length;
+	}
+
+	result.size = { scaled[0],scaled[1] ,scaled[2] };
+	return result;
+}

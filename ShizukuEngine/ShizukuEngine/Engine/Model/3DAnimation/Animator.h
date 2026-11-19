@@ -24,12 +24,16 @@ public:
 		return matrix;
 	}
 
+	Matrix4x4 GetBoneWorldMatrix(int boneIndex,const Matrix4x4 worldMatrix);
+
 private:
 	
-	void UpdateOBBAnimator(const std::vector<OBB>& boneObb,Matrix4x4 worldMatrix, std::vector<OBB>&resultObb);
+	OBB UpdateOBBAnimator(const OBB& obb,Matrix4x4 worldMatrix);
 
 private:
 	std::vector<Matrix4x4> matrix;
+	Matrix4x4 mWorldMatrix;
+
 	std::vector<glm::mat4>mFinalBoneMatrices;
 	std::vector<glm::mat4>mGlobalBoneMatrices;
 	Animation* mCurrentAnimation;
