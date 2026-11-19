@@ -3,7 +3,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include "Model/Model.h"
+#include "Collision/Sapaes.h"
 # include <map>
+
 //assimpの前方宣言
 namespace Assimp {
 	class Importer; // Importer クラス
@@ -69,8 +71,10 @@ public:
 		mTextureIndex = textureIndex;
 	}
 
-	auto& GetBoneInFoMap() { return mBoneInfoMap; }
-	int& GetBoneCount() { return mBoneCounter; }
+	const auto& GetBoneInFoMap() const{ return mBoneInfoMap; }
+	const int& GetBoneCount() const { return mBoneCounter; }
+	
+	const std::vector<Vertex> GetVertices()const { return mVertices; }
 
 private://関数
 
@@ -106,6 +110,8 @@ private://メンバ変数
 
 	//マテリアル
 	ComPtr<ID3D12Resource>   mPMaterialResource;
+
+	OBB mLocalOBB;
 
 	int mTextureIndex = -1;
 
