@@ -3,6 +3,7 @@
 #include "TextureManager/TextureManager.h"
 #include "Light/LightManager.h"
 #include"DirectX/DX12Context.h"
+#include "Model/Primitive/Line.h"
 
 void RenderRequests::InitRender(
 	ComPtr<ID3D12Device> device,
@@ -18,10 +19,12 @@ void RenderRequests::InitRender(
 	mDX12Context = dX12Context;
 	mRenderTexture = renderTexture;
 
+
 	HRESULT hr;
 	//ルートシグネチャを作成
 	rootSignature = CreateRootSignature(mDevice, hr);
-	//PSOの作成
+
+	/*各PSOの作成*/
 	for (int i = 0; i < kCountOfBlendMode; i++) {
 		const BlendMode blendMode = static_cast<BlendMode>(i);
 		pipelineState3D[blendMode] = CreatePipelineStateDesc(mDevice, rootSignature, hr, PipelineType::k3D, blendMode);
@@ -40,6 +43,12 @@ void RenderRequests::InitRender(
 	}
 
 	CreateInstanceBuffer(mMaxDrawCount);
+
+	/*ライン用パイプラインの作成*/
+	mLinePipelineState = CreateLinePipelineState(mDevice, mLineRootSignature, hr);
+	mLine = std::make_unique<Line>();/*Lineの宣言*/
+	mLine->Initialize(mDevice);
+
 }
 
 void RenderRequests::DrawRequestsSubmission(DrawRequest drawRequest) {
@@ -101,6 +110,12 @@ void RenderRequests::RenderAllRequests(
 	if (!request3D.empty()) {//から出ない場合は実行をする
 		Render3DTarget(request3D, commandList);
 	}
+
+	/*線描画関数の呼び出し*/
+	commandList->SetGraphicsRootSignature(mLineRootSignature.Get());
+	commandList->SetPipelineState(mLinePipelineState.Get());
+	mLine->Draw(commandList.Get(), mViewProjectionMatrix);
+
 	//描画関数の呼び出し
 	if (!request2D.empty()) {//から出ない場合は実行をする
 		Render2DTarget(request2D, commandList, (int)request3D.size());
@@ -113,6 +128,7 @@ void RenderRequests::RenderAllRequests(
 
 	//たまったリストをクリアする
 	mDrawRequests.clear();
+	mLine->Clear();
 }
 
 
@@ -516,4 +532,12 @@ void RenderRequests::EnsureSkinnedCapacity(int count) {
 	}
 
 
+}
+
+void RenderRequests::AddLine(
+	const Vector3& start,
+	const Vector3& end,
+	const Vector4& color
+) {
+	mLine->Add(start, end, color);
 }

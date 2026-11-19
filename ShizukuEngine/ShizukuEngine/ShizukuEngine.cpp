@@ -321,6 +321,18 @@ void ShizukuEngine::DrawSphere
 }
 #pragma endregion
 
+#pragma region 線描画関数
+
+void ShizukuEngine::DrawLine
+(
+	const Vector3& start,
+	Vector3 end,
+	const Vector4 color
+) {
+	mRenderRequests.AddLine(start, end, color);
+}
+#pragma endregion
+
 #pragma region 画像描画関数
 
 void ShizukuEngine::DrawSprite

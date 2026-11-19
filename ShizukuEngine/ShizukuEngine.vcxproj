@@ -82,7 +82,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(ProjectDir)ShizukuEngine;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine;$(ProjectDir)ShizukuEngine\externals\glm</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizuluEngine\externals\Eigen;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(ProjectDir)ShizukuEngine;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine;$(ProjectDir)ShizukuEngine\externals\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,7 +107,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(ProjectDir)ShizukuEngine;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine;$(ProjectDir)ShizukuEngine\externals\glm</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizuluEngine\externals\Eigen;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(ProjectDir)ShizukuEngine;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine;$(ProjectDir)ShizukuEngine\externals\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,7 +133,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(ProjectDir)ShizukuEngine;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine;$(ProjectDir)ShizukuEngine\externals\glm</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)ShizukuEngine\externals\assimp\include;$(ProjectDir)ShizuluEngine\externals\Eigen;$(ProjectDir)ShizukuEngine\externals\ImGui;$(ProjectDir)ShizukuEngine\externals\DirectXTex;$(ProjectDir)ShizukuEngine;%(AdditionalIncludeDirectories);$(ProjectDir)ShizukuEngine\Engine;$(ProjectDir)ShizukuEngine\externals\glm</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
@@ -151,6 +151,11 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ShizukuEngine\Engine\Collision\BoneCollider.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="ShizukuEngine\Engine\Model\Primitive\Line.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\Particle\GPUParticleManager.cpp" />
     <ClCompile Include="ShizukuEngine\Engine\DirectX\ComputePipeline.cpp" />
@@ -197,6 +202,8 @@
     <ClCompile Include="ShizukuEngine\Engine\Model\3DAnimation\SkinnedModel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ShizukuEngine\Engine\Collision\BoneCollider.h" />
+    <ClInclude Include="ShizukuEngine\Engine\Collision\Sapaes.h" />
     <ClInclude Include="ShizukuEngine\Engine\Model\Primitive\Line.h" />
     <ClInclude Include="ShizukuEngine\Engine\Particle\GPUParticleManager.h" />
     <ClInclude Include="ShizukuEngine\Engine\DirectX\ComputePipeline.h" />

@@ -4,6 +4,7 @@
 #include <assimp/postprocess.h>
 #pragma comment(lib,"assimp-vc145-mt")
 #include "AssimpGLMHelpersMath/GlmConvert.h"
+#include "Collision/BoneCollider.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ const aiScene* SkinnedModel::Load(const std::string& filepath, Assimp::Importer&
 		aiProcess_ImproveCacheLocality |
 		aiProcess_SortByPType |
 		aiProcess_LimitBoneWeights |
+		aiProcess_JoinIdenticalVertices |
 		aiProcess_ConvertToLeftHanded);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
@@ -38,6 +40,9 @@ bool SkinnedModel::LoadSkinned(
 	//スキン用の構造体を使用
 
 	ProcessNode(scene->mRootNode, scene);
+
+	mLocalOBB = CreateOBBForBone(*this);
+
 	CreateBuffers(device);
 	if (scene->mNumMeshes > 0) {
 		const unsigned int materialIndex = scene->mMeshes[0]->mMaterialIndex;
