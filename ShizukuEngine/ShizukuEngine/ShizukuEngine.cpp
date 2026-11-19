@@ -177,9 +177,6 @@ void ShizukuEngine::CreateCollision(
 	int modelIndex, int boneSlot,
 	const Vector3& pos, const Vector3& rot, const Vector3& scale) {
 	mAnimator[boneSlot]->GetBoneWorldMatrix(boneSlot,MakeAffineMatrix(scale, rot, pos));
-
-	
-
 }
 
 

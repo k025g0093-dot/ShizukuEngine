@@ -24,7 +24,7 @@ public:
 		return matrix;
 	}
 
-	Matrix4x4 GetBoneWorldMatrix(int boneIndex,const Matrix4x4 worldMatrix);
+	Matrix4x4 GetBoneWorldMatrix(int boneIndex,const Matrix4x4 worldMatrix)const;
 
 private:
 	

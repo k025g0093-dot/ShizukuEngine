@@ -6,6 +6,7 @@ void Animator::Initialize(Animation* animation) {
 
 	mCurrentTime = 0.0f;
 	mCurrentAnimation = animation;
+	mGlobalBoneMatrices.assign(kMaxBones, glm::mat4(1.0f));
 
 	mFinalBoneMatrices.reserve(kMaxBones);
 	for (int i = 0; i < kMaxBones; i++) {
@@ -70,7 +71,7 @@ OBB Animator::UpdateOBBAnimator(
 	result.center = TransformMatrix(obb.center, worldMatrix);
 
 	const float sizes[3] = { obb.size.x,obb.size.y, obb.size.z };
-
+	//軸を向きとして変換
 	float scaled[3]{};
 	for (int i = 0; i < 3; i++) {
 		const Vector3& d = obb.orientations[i];
@@ -87,3 +88,14 @@ OBB Animator::UpdateOBBAnimator(
 	result.size = { scaled[0],scaled[1] ,scaled[2] };
 	return result;
 }
+
+Matrix4x4 Animator::GetBoneWorldMatrix(
+	int boneIndex, const Matrix4x4 worldMatrix)const{
+	if (boneIndex < 0) {
+		return worldMatrix;
+	}
+
+	const Matrix4x4 boneMatrix = GlmConvert::ConvertGLMtoMatrix(mGlobalBoneMatrices[boneIndex]);
+	return Multiply(boneMatrix, worldMatrix);
+}
+
