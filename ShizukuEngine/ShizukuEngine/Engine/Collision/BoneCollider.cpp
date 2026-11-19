@@ -47,40 +47,42 @@ std::vector<OBB>CreateBoneOBBs(
 	const SkinnedModel& skinnedModel
 ) {
 
-	Vector3 positionMin = { FLT_MAX, FLT_MAX, FLT_MAX };
-	Vector3 positionMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
+
 
 	const auto& vertices = skinnedModel.GetVertices();
 
 	size_t count = vertices.size();
 	size_t boneCount = skinnedModel.GetBoneCount();
-	std::vector<OBB> obb;
-	
+	std::vector<OBB> obb(boneCount);
+
 	for (const auto& boneInFoMap : skinnedModel.GetBoneInFoMap()) {
 		
-		if (!boneInFoMap.second.id) continue;
+		Vector3 positionMin = { FLT_MAX, FLT_MAX, FLT_MAX };
+		Vector3 positionMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
 		for (size_t j = 0; j < count; j++) {
+
+			glm::vec4(vertices[j].position, 1.0f)=boneInFoMap.second.offset* glm::vec4(vertices[j].position, 1.0f);
+
 			if (vertices[j].position.x < positionMin.x) {
-				positionMin.x = vertices[j].position.x*boneInFoMap.second.offset.length();
+				positionMin.x = vertices[j].position.x;
 			}
 			if (vertices[j].position.x > positionMax.x) {
-				positionMax.x = vertices[j].position.x * boneInFoMap.second.offset.length();
+				positionMax.x = vertices[j].position.x ;
 			}
 			if (vertices[j].position.y < positionMin.y) {
-				positionMin.y = vertices[j].position.y * boneInFoMap.second.offset.length();
+				positionMin.y = vertices[j].position.y ;
 			}
 			if (vertices[j].position.y > positionMax.y) {
-				positionMax.y = vertices[j].position.y * boneInFoMap.second.offset.length();
+				positionMax.y = vertices[j].position.y;
 			}
 			if (vertices[j].position.z < positionMin.z) {
-				positionMin.z = vertices[j].position.z * boneInFoMap.second.offset.length();
+				positionMin.z = vertices[j].position.z;
 			}
 			if (vertices[j].position.z > positionMax.z) {
-				positionMax.z = vertices[j].position.z * boneInFoMap.second.offset.length();
+				positionMax.z = vertices[j].position.z;
 			}
 		}
-
 		obb[boneInFoMap.second.id].center = (positionMin + positionMax) * 0.5f;
 		obb[boneInFoMap.second.id].size = (positionMax - positionMin) * 0.5f;
 		obb[boneInFoMap.second.id].orientations[0] = { 1.0f,0.0f,0.0f };
