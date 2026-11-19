@@ -76,6 +76,9 @@ public:
 	
 	const std::vector<Vertex> GetVertices()const { return mVertices; }
 
+	//読み込み時に作った、モデル全体を囲むOBB（モデルの空間）
+	const OBB& GetLocalOBB() const { return mLocalOBB; }
+
 private://関数
 
 	void SetVertexBoneDataToDefault(Vertex& vertex);
