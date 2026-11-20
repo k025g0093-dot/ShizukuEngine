@@ -1,5 +1,6 @@
 #include "BoneCollider.h"
 #include "../Model/3DAnimation/SkinnedModel.h"
+#include "../Model/3DAnimation/Animator.h"
 
 
 OBB CreateOBBForBone(
@@ -52,7 +53,7 @@ std::vector<OBB>CreateBoneOBBs(
 	size_t count = vertices.size();
 	size_t boneCount = skinnedModel.GetBoneCount();
 
-	
+
 
 	std::vector<OBB> obb(boneCount);
 
@@ -120,6 +121,78 @@ std::vector<OBB>CreateBoneOBBs(
 
 	return obb;
 }
+
+std::vector<OBB>UpdateBoneOBBs(
+	const SkinnedModel& skinnedModel,
+	const Animator& animator,
+	const Matrix4x4 matrix) {
+
+	size_t boneCount = skinnedModel.GetBoneCount();
+
+	const auto& vertices = skinnedModel.GetVertices();
+	std::vector<OBB> obb(boneCount);
+
+	for (size_t i = 0; i < skinnedModel.GetBoneOBBs().size(); i++) {
+
+
+		Matrix4x4 localWorldMatrix{};
+
+		localWorldMatrix = animator.GetBoneWorldMatrix(static_cast<int>(i), matrix);
+
+		float lengthX = std::sqrt(
+			localWorldMatrix.m[0][0] * localWorldMatrix.m[0][0] +
+			localWorldMatrix.m[0][1] * localWorldMatrix.m[0][1] +
+			localWorldMatrix.m[0][2] * localWorldMatrix.m[0][2]
+		);
+
+		float lengthY = std::sqrt(
+			localWorldMatrix.m[1][0] * localWorldMatrix.m[1][0] +
+			localWorldMatrix.m[1][1] * localWorldMatrix.m[1][1] +
+			localWorldMatrix.m[1][2] * localWorldMatrix.m[1][2]
+		);
+
+		float lengthZ = std::sqrt(
+			localWorldMatrix.m[2][0] * localWorldMatrix.m[2][0] +
+			localWorldMatrix.m[2][1] * localWorldMatrix.m[2][1] +
+			localWorldMatrix.m[2][2] * localWorldMatrix.m[2][2]
+		);
+
+		/*長さが0は向きが決まらないため飛ばす*/
+		if (lengthX <= 0.0f || lengthY <= 0.0f || lengthZ <= 0.0f) {
+			continue;
+		}
+
+		/*中心を位置として変換*/
+		obb[i].center = TransformMatrix(skinnedModel.GetBoneOBBs()[i].center, localWorldMatrix);
+		
+		/*各軸の伸びた分をかけてボーンに合わせる*/
+		obb[i].size.x = skinnedModel.GetBoneOBBs()[i].size.x*lengthX;
+		obb[i].size.y = skinnedModel.GetBoneOBBs()[i].size.y*lengthY;
+		obb[i].size.z = skinnedModel.GetBoneOBBs()[i].size.z*lengthZ;
+
+		
+
+		/*向き：行列の各行を、その長さで割って長さ1にする*/
+		obb[i].orientations[0] = {
+			localWorldMatrix.m[0][0] / lengthX,
+			localWorldMatrix.m[0][1] / lengthX,
+			localWorldMatrix.m[0][2] / lengthX
+		};
+		obb[i].orientations[1] = {
+			localWorldMatrix.m[1][0] / lengthY,
+			localWorldMatrix.m[1][1] / lengthY,
+			localWorldMatrix.m[1][2] / lengthY
+		};
+		obb[i].orientations[2] = {
+			localWorldMatrix.m[2][0] / lengthZ,
+			localWorldMatrix.m[2][1] / lengthZ,
+			localWorldMatrix.m[2][2] / lengthZ
+		};
+
+	}
+	return obb;
+}
+
 
 
 //Capsule BoneCollider::LoadBoneColliderCapsel(

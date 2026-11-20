@@ -28,7 +28,6 @@ public:
 
 private:
 	
-	OBB UpdateOBBAnimator(const OBB& obb,Matrix4x4 worldMatrix);
 
 private:
 	std::vector<Matrix4x4> matrix;

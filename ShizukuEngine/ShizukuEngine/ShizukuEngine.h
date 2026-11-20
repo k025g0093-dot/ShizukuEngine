@@ -109,6 +109,7 @@ public:
 	
 	//--------------------------------------------------------------
 	//アニメーションモデルのコリジョンの作成関数
+	//位置・回転・スケールは DrawSkinnedModel と同じ値を渡す
 	//--------------------------------------------------------------
 	void CreateCollision(int modelIndex, int boneSlot,const Vector3& pos, const Vector3& rot, const Vector3& scale);
 

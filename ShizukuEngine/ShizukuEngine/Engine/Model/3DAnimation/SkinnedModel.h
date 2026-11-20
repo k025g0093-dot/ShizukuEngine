@@ -79,6 +79,9 @@ public:
 	//読み込み時に作った、モデル全体を囲むOBB（モデルの空間）
 	const OBB& GetLocalOBB() const { return mLocalOBB; }
 
+	//読み込み時に作った、ボーンごとのOBB（ボーンの空間・ボーン番号順）
+	const std::vector<OBB>& GetBoneOBBs() const { return mLocaOBBBones; }
+
 private://関数
 
 	void SetVertexBoneDataToDefault(Vertex& vertex);
