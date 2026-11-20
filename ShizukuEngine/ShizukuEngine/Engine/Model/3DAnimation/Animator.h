@@ -24,13 +24,17 @@ public:
 		return matrix;
 	}
 
+	Matrix4x4 GetBoneWorldMatrix(int boneIndex,const Matrix4x4 worldMatrix)const;
+
 private:
-
-
+	
 
 private:
 	std::vector<Matrix4x4> matrix;
+	Matrix4x4 mWorldMatrix;
+
 	std::vector<glm::mat4>mFinalBoneMatrices;
+	std::vector<glm::mat4>mGlobalBoneMatrices;
 	Animation* mCurrentAnimation;
 	float mCurrentTime;
 	float mDeltaTime;

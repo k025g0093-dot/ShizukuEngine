@@ -6,6 +6,7 @@ void Animator::Initialize(Animation* animation) {
 
 	mCurrentTime = 0.0f;
 	mCurrentAnimation = animation;
+	mGlobalBoneMatrices.assign(kMaxBones, glm::mat4(1.0f));
 
 	mFinalBoneMatrices.reserve(kMaxBones);
 	for (int i = 0; i < kMaxBones; i++) {
@@ -50,15 +51,25 @@ void Animator::CalculateBoneTransform(
 
 	glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
-	auto boneInFoMap = mCurrentAnimation->GetBoneIDMap();
+	auto& boneInFoMap = mCurrentAnimation->GetBoneIDMap();
 	if (boneInFoMap.find(nodeName) != boneInFoMap.end()) {
-		int index = boneInFoMap[nodeName].id;
-		glm::mat4 offset = boneInFoMap[nodeName].offset;
+		int index = boneInFoMap.find(nodeName)->second.id;
+		glm::mat4 offset = boneInFoMap.find(nodeName)->second.offset;
 		mFinalBoneMatrices[index] = globalTransformation * offset;
+		mGlobalBoneMatrices[index] = globalTransformation;
 	}
 	for (int i = 0; i < node->childrenCount; i++) {
 		CalculateBoneTransform(&node->children[i], globalTransformation);
 	}
 }
 
+Matrix4x4 Animator::GetBoneWorldMatrix(
+	int boneIndex, const Matrix4x4 worldMatrix)const{
+	if (boneIndex < 0) {
+		return worldMatrix;
+	}
+
+	const Matrix4x4 boneMatrix = GlmConvert::ConvertGLMtoMatrix(mGlobalBoneMatrices[boneIndex]);
+	return Multiply(boneMatrix, worldMatrix);
+}
 

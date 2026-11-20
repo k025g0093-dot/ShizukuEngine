@@ -1,5 +1,6 @@
 #include "BoneCollider.h"
 #include "../Model/3DAnimation/SkinnedModel.h"
+#include "../Model/3DAnimation/Animator.h"
 
 
 OBB CreateOBBForBone(
@@ -42,6 +43,157 @@ OBB CreateOBBForBone(
 	obb.orientations[2] = { 0.0f,0.0f,1.0f };
 	return obb;
 }
+
+std::vector<OBB>CreateBoneOBBs(
+	const SkinnedModel& skinnedModel
+) {
+
+	const auto& vertices = skinnedModel.GetVertices();
+
+	size_t count = vertices.size();
+	size_t boneCount = skinnedModel.GetBoneCount();
+
+
+
+	std::vector<OBB> obb(boneCount);
+
+	for (const auto& boneInFoMap : skinnedModel.GetBoneInFoMap()) {
+		/*OBBの最小値と最大値を入れる変数*/
+		Vector3 positionMin = { FLT_MAX, FLT_MAX, FLT_MAX };
+		Vector3 positionMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
+
+
+		for (size_t j = 0; j < count; j++) {
+
+			/*ボーンの最大で大きかったウェイトとそれを入れるID*/
+			float maxBoneWeights = 0;
+			int maxBoneId = -1;
+
+			/*ボーンのウェイトの一番大きいのを探す*/
+			for (int k = 0; k < kMaxBoneIngluence; k++) {
+				if (maxBoneWeights < vertices[j].mWeights[k]) {
+					maxBoneWeights = vertices[j].mWeights[k];
+					maxBoneId = vertices[j].mBoneIds[k];
+				}
+			}
+
+			/*ボーンのIDがそろっていれば処理を飛ばす*/
+			if (maxBoneId != boneInFoMap.second.id) {
+				continue;
+			}
+
+			/*ベースとなるポジションの定義*/
+			glm::vec4 boneSpacePosition = boneInFoMap.second.offset * glm::vec4(vertices[j].position, 1.0f);
+
+			/*各ベースポジションが該当していれば値を入れ替える*/
+			if (boneSpacePosition.x < positionMin.x) {
+				positionMin.x = boneSpacePosition.x;
+			}
+			if (boneSpacePosition.x > positionMax.x) {
+				positionMax.x = boneSpacePosition.x;
+			}
+			if (boneSpacePosition.y < positionMin.y) {
+				positionMin.y = boneSpacePosition.y;
+			}
+			if (boneSpacePosition.y > positionMax.y) {
+				positionMax.y = boneSpacePosition.y;
+			}
+			if (boneSpacePosition.z < positionMin.z) {
+				positionMin.z = boneSpacePosition.z;
+			}
+			if (boneSpacePosition.z > positionMax.z) {
+				positionMax.z = boneSpacePosition.z;
+			}
+		}
+
+		/*ボーンが存在しない場合は以降の処理を飛ばす*/
+		if (positionMin.x > positionMax.x)continue;
+		if (positionMin.y > positionMax.y)continue;
+		if (positionMin.z > positionMax.z)continue;
+
+		/*各OBB作成に必要な値を格納*/
+		obb[boneInFoMap.second.id].center = (positionMin + positionMax) * 0.5f;
+		obb[boneInFoMap.second.id].size = (positionMax - positionMin) * 0.5f;
+		obb[boneInFoMap.second.id].orientations[0] = { 1.0f,0.0f,0.0f };
+		obb[boneInFoMap.second.id].orientations[1] = { 0.0f,1.0f,0.0f };
+		obb[boneInFoMap.second.id].orientations[2] = { 0.0f,0.0f,1.0f };
+	}
+
+	return obb;
+}
+
+std::vector<OBB>UpdateBoneOBBs(
+	const SkinnedModel& skinnedModel,
+	const Animator& animator,
+	const Matrix4x4 matrix) {
+
+	size_t boneCount = skinnedModel.GetBoneCount();
+
+	const auto& vertices = skinnedModel.GetVertices();
+	std::vector<OBB> obb(boneCount);
+
+	for (size_t i = 0; i < skinnedModel.GetBoneOBBs().size(); i++) {
+
+
+		Matrix4x4 localWorldMatrix{};
+
+		localWorldMatrix = animator.GetBoneWorldMatrix(static_cast<int>(i), matrix);
+
+		float lengthX = std::sqrt(
+			localWorldMatrix.m[0][0] * localWorldMatrix.m[0][0] +
+			localWorldMatrix.m[0][1] * localWorldMatrix.m[0][1] +
+			localWorldMatrix.m[0][2] * localWorldMatrix.m[0][2]
+		);
+
+		float lengthY = std::sqrt(
+			localWorldMatrix.m[1][0] * localWorldMatrix.m[1][0] +
+			localWorldMatrix.m[1][1] * localWorldMatrix.m[1][1] +
+			localWorldMatrix.m[1][2] * localWorldMatrix.m[1][2]
+		);
+
+		float lengthZ = std::sqrt(
+			localWorldMatrix.m[2][0] * localWorldMatrix.m[2][0] +
+			localWorldMatrix.m[2][1] * localWorldMatrix.m[2][1] +
+			localWorldMatrix.m[2][2] * localWorldMatrix.m[2][2]
+		);
+
+		/*長さが0は向きが決まらないため飛ばす*/
+		if (lengthX <= 0.0f || lengthY <= 0.0f || lengthZ <= 0.0f) {
+			continue;
+		}
+
+		/*中心を位置として変換*/
+		obb[i].center = TransformMatrix(skinnedModel.GetBoneOBBs()[i].center, localWorldMatrix);
+		
+		/*各軸の伸びた分をかけてボーンに合わせる*/
+		obb[i].size.x = skinnedModel.GetBoneOBBs()[i].size.x*lengthX;
+		obb[i].size.y = skinnedModel.GetBoneOBBs()[i].size.y*lengthY;
+		obb[i].size.z = skinnedModel.GetBoneOBBs()[i].size.z*lengthZ;
+
+		
+
+		/*向き：行列の各行を、その長さで割って長さ1にする*/
+		obb[i].orientations[0] = {
+			localWorldMatrix.m[0][0] / lengthX,
+			localWorldMatrix.m[0][1] / lengthX,
+			localWorldMatrix.m[0][2] / lengthX
+		};
+		obb[i].orientations[1] = {
+			localWorldMatrix.m[1][0] / lengthY,
+			localWorldMatrix.m[1][1] / lengthY,
+			localWorldMatrix.m[1][2] / lengthY
+		};
+		obb[i].orientations[2] = {
+			localWorldMatrix.m[2][0] / lengthZ,
+			localWorldMatrix.m[2][1] / lengthZ,
+			localWorldMatrix.m[2][2] / lengthZ
+		};
+
+	}
+	return obb;
+}
+
+
 
 //Capsule BoneCollider::LoadBoneColliderCapsel(
 //	const SkinnedModel& skinnedModel

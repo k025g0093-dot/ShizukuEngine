@@ -76,6 +76,12 @@ public:
 	
 	const std::vector<Vertex> GetVertices()const { return mVertices; }
 
+	//読み込み時に作った、モデル全体を囲むOBB（モデルの空間）
+	const OBB& GetLocalOBB() const { return mLocalOBB; }
+
+	//読み込み時に作った、ボーンごとのOBB（ボーンの空間・ボーン番号順）
+	const std::vector<OBB>& GetBoneOBBs() const { return mLocaOBBBones; }
+
 private://関数
 
 	void SetVertexBoneDataToDefault(Vertex& vertex);
@@ -111,7 +117,11 @@ private://メンバ変数
 	//マテリアル
 	ComPtr<ID3D12Resource>   mPMaterialResource;
 
+	/*ローカルのOBB*/
 	OBB mLocalOBB;
+
+	/*ボーンが増やせるように*/
+	std::vector<OBB> mLocaOBBBones;
 
 	int mTextureIndex = -1;
 
