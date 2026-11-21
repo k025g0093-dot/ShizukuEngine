@@ -218,7 +218,7 @@ bool IsOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>&
 			axes[13] = Cross(obb1[i].orientations[2], obb2[j].orientations[1]);
 			axes[14] = Cross(obb1[i].orientations[2], obb2[j].orientations[2]);
 
-			bool isFailed = false;
+			bool isSeparated = false;
 
 			for (int k = 0; k < 15; ++k) {
 
@@ -226,7 +226,7 @@ bool IsOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>&
 					continue;
 				}
 
-				// 💡 軸を正規化（長さを1にする）しておく
+				//軸を正規化（長さを1にする）しておく
 				Vector3 axis = Normalize(axes[k]);
 
 				float L1 =
@@ -254,11 +254,11 @@ bool IsOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>&
 
 
 				if (max1 < min2 || max2 < min1) {
-					isFailed = true;  // 隙間がある
+					isSeparated = true;  // 隙間がある
 					continue;
 				}	
 			}
-			if (!isFailed) {
+			if (!isSeparated) {
 				return true;
 			}
 		}
