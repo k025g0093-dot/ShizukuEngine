@@ -174,9 +174,27 @@ int ShizukuEngine::LoadAnimation(const std::string& animationPath, int skinnedMo
 	return static_cast<int>(mAnimations.size()) - 1;
 }
 
-void ShizukuEngine::CreateCollision(
+std::vector<OBB> ShizukuEngine::CreateCollision(
 	int modelIndex, int boneSlot,
 	const Vector3& pos, const Vector3& rot, const Vector3& scale) {
+
+	/*スキン付きモデルを受け取る*/
+	SkinnedModel* model = mModelManager.GetSkinned(modelIndex);
+
+	//if (!model) {return;}
+	//if (boneSlot < 0) { return; }
+
+	/*ワールドマトリックスの作成*/
+	Matrix4x4 worldMat = MakeAffineMatrix(scale, rot, pos);
+
+	std::vector<OBB>obb{};
+	/*ボーンにつけたOBBを更新する*/
+	obb = UpdateBoneOBBs(*model, *mAnimator[boneSlot], worldMat);
+	return obb;
+}
+
+bool ShizukuEngine::OBBtoOBB(std::vector<OBB> obb1, std::vector<OBB> obb2) {
+	return IsOBBsToOBBsCollision(obb1, obb2);
 }
 
 

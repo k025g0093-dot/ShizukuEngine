@@ -164,13 +164,13 @@ std::vector<OBB>UpdateBoneOBBs(
 
 		/*中心を位置として変換*/
 		obb[i].center = TransformMatrix(skinnedModel.GetBoneOBBs()[i].center, localWorldMatrix);
-		
-		/*各軸の伸びた分をかけてボーンに合わせる*/
-		obb[i].size.x = skinnedModel.GetBoneOBBs()[i].size.x*lengthX;
-		obb[i].size.y = skinnedModel.GetBoneOBBs()[i].size.y*lengthY;
-		obb[i].size.z = skinnedModel.GetBoneOBBs()[i].size.z*lengthZ;
 
-		
+		/*各軸の伸びた分をかけてボーンに合わせる*/
+		obb[i].size.x = skinnedModel.GetBoneOBBs()[i].size.x * lengthX;
+		obb[i].size.y = skinnedModel.GetBoneOBBs()[i].size.y * lengthY;
+		obb[i].size.z = skinnedModel.GetBoneOBBs()[i].size.z * lengthZ;
+
+
 
 		/*向き：行列の各行を、その長さで割って長さ1にする*/
 		obb[i].orientations[0] = {
@@ -193,6 +193,72 @@ std::vector<OBB>UpdateBoneOBBs(
 	return obb;
 }
 
+
+bool IsOBBsToOBBsCollision( std::vector<OBB> obb1, std::vector<OBB> obb2) {
+
+	for (size_t i = 0; i < obb1.size(); i++) {
+		Vector3 axes[15];
+		for (size_t j = 0; j < obb2.size(); j++) {
+
+			axes[0] = obb1[i].orientations[0];
+			axes[1] = obb1[i].orientations[1];
+			axes[2] = obb1[i].orientations[2];
+
+			axes[3] = obb2[j].orientations[0];
+			axes[4] = obb2[j].orientations[1];
+			axes[5] = obb2[j].orientations[2];
+
+			axes[6] = Cross(obb1[i].orientations[0], obb2[j].orientations[0]);
+			axes[7] = Cross(obb1[i].orientations[0], obb2[j].orientations[1]);
+			axes[8] = Cross(obb1[i].orientations[0], obb2[j].orientations[2]);
+			axes[9] = Cross(obb1[i].orientations[1], obb2[j].orientations[0]);
+			axes[10] = Cross(obb1[i].orientations[1], obb2[j].orientations[1]);
+			axes[11] = Cross(obb1[i].orientations[1], obb2[j].orientations[2]);
+			axes[12] = Cross(obb1[i].orientations[2], obb2[j].orientations[0]);
+			axes[13] = Cross(obb1[i].orientations[2], obb2[j].orientations[1]);
+			axes[14] = Cross(obb1[i].orientations[2], obb2[j].orientations[2]);
+
+			for (int k = 0; k < 15; ++k) {
+
+				if (Length(axes[k]) < 0.0001f) {
+					continue;
+				}
+
+				// 💡 軸を正規化（長さを1にする）しておく
+				Vector3 axis = Normalize(axes[k]);
+
+				float L1 =
+					std::abs(Dot(obb1[i].orientations[0], axis)) * (obb1[i].size.x) +
+					std::abs(Dot(obb1[i].orientations[1], axis)) * (obb1[i].size.y) +
+					std::abs(Dot(obb1[i].orientations[2], axis)) * (obb1[i].size.z);
+
+				// OBB B の影の半径 L2
+				float L2 =
+					std::abs(Dot(obb2[j].orientations[0], axis)) * (obb2[j].size.x ) +
+					std::abs(Dot(obb2[j].orientations[1], axis)) * (obb2[j].size.y ) +
+					std::abs(Dot(obb2[j].orientations[2], axis)) * (obb2[j].size.z );
+
+				// 軸の上での、それぞれの箱の中心の位置
+				float centerA = Dot(obb1[i].center, axis);
+				float centerB = Dot(obb2[j].center, axis);
+
+				// 箱Aの影の「左端」と「右端」
+				float min1 = centerA - L1;
+				float max1 = centerA + L1;
+
+				// 箱Bの影の「左端」と「右端」
+				float min2 = centerB - L2;
+				float max2 = centerB + L2;
+
+
+				if (max1 < min2 || max2 < min1) {
+					return false;  // 隙間がある
+				}
+			}
+		}
+	}
+	return true;
+}
 
 
 //Capsule BoneCollider::LoadBoneColliderCapsel(

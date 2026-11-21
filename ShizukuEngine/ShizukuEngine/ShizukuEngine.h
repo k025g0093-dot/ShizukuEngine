@@ -111,9 +111,9 @@ public:
 	//アニメーションモデルのコリジョンの作成関数
 	//位置・回転・スケールは DrawSkinnedModel と同じ値を渡す
 	//--------------------------------------------------------------
-	void CreateCollision(int modelIndex, int boneSlot,const Vector3& pos, const Vector3& rot, const Vector3& scale);
+	std::vector<OBB> CreateCollision(int modelIndex, int boneSlot,const Vector3& pos, const Vector3& rot, const Vector3& scale);
 
-
+	bool OBBtoOBB(std::vector<OBB> obb1, std::vector<OBB> obb2);
 
 	//-----------------------------------描画関数-----------------------------------//
 
@@ -121,12 +121,12 @@ public:
 	//--------------------------------------------------------------
 	//三角形の描画関数（引数は、位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
-	void DrawTriangle(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx);
+	void DrawTriangle(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
 
 	//--------------------------------------------------------------
 	//球体の描画関数（引数は、位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
-	void DrawSphere(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx);
+	void DrawSphere(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
 	
 	//--------------------------------------------------------------
 	//線分の描画関数（引数は、開始位置、最終地点　色）
@@ -136,12 +136,12 @@ public:
 	//--------------------------------------------------------------
 	//スプライトの描画関数（引数は、左上を起点に下位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
-	void DrawSprite(const Vector2& pos, const float& rot, const float& width, const float& height, const Vector4 color, int textureIndx);
+	void DrawSprite(const Vector2& pos, const float& rot, const float& width, const float& height, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
 
 	//--------------------------------------------------------------
 	//モデルの描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）テクスチャは宣言をしなくても平気です
 	//--------------------------------------------------------------
-	void DrawModel(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx = -1);
+	void DrawModel(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
 
 	//--------------------------------------------------------------
 	//モデルの描画関数（引数は、モデル番号、アニメーション値、位置、回転、スケール、色、テクスチャです）テクスチャは宣言をしなくても平気です
@@ -149,13 +149,13 @@ public:
 	void DrawSkinnedModel(
 		int modelIndex, int boneSlot,
 		const Vector3& pos, const Vector3& rot, const Vector3& scale,
-		const Vector4 color, 
+		const Vector4 color = { 1.0f,1.0f,1.0f,1.0f },
 		int textureIndx = -1);
 
 	//--------------------------------------------------------------
 	//モデルパーティクルの描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）テクスチャは宣言をしなくても平気です
 	//--------------------------------------------------------------
-	void DrawModelParticle(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color, int textureIndx = -1);
+	void DrawModelParticle(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
 
 	Camera& GetCamera() { return mCamera; }
 

@@ -23,6 +23,23 @@ float GetProcessMemoryMB() {
 	return static_cast<float>(counters.PrivateUsage) / (1024.0f * 1024.0f);
 }
 
+struct Player {
+	Vector3 pos;
+	Vector3 rot;
+	Vector3 scal;
+};
+struct Enemy {
+	Vector3 pos;
+	Vector3 rot;
+	Vector3 scal;
+};
+
+void DebugPrintHit(bool isHit) {
+	if (isHit) {
+		OutputDebugStringA("[Collision] Hit!\n");
+	}
+}
+
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	ShizukuEngine* engine = new ShizukuEngine(kClineWidth, kClineHeight, L"LE2B_29_ヤマト_ユウヤ");
@@ -60,6 +77,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	field.area.max = { 2.0f, 2.0f,  2.0f };
 	engine->CreateAccelerationField(field, file);
 
+	std::vector<OBB>playerObb{};
+	std::vector<OBB>enemyObb{};
+	Player player;
+	Enemy enemy;
+
+	player.scal={ 1,1,1 };
+	enemy.scal={ 1,1,1 };
+
+	const float kMoveSpeed = 0.05f;
+
 	Vector3 pos{ 0,0,0 };
 
 	//モデルを回して立体感を確認する用
@@ -79,6 +106,23 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			Input input = engine->GetInput();
 			if (input.GetKeyDown('1')) { currentAnime = animeFlair; }
 			if (input.GetKeyDown('2')) { currentAnime = animeBreak; }
+
+			playerObb = engine->CreateCollision(
+				skinnedModel, currentAnime,
+				player.pos, player.rot, player.scal
+			);
+			enemyObb = engine->CreateCollision(
+				skinnedModel2, anime2,
+				enemy.pos, enemy.rot, enemy.scal
+			);
+
+			DebugPrintHit(engine->OBBtoOBB(playerObb, enemyObb));
+
+
+			if (input.GetKey('W')) { player.pos.z += kMoveSpeed; }
+			if (input.GetKey('S')) { player.pos.z -= kMoveSpeed; }
+			if (input.GetKey('A')) { player.pos.x -= kMoveSpeed; }
+			if (input.GetKey('D')) { player.pos.x += kMoveSpeed; }
 
 			modelRotateY += 0.0f;
 
@@ -104,19 +148,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			engine->DrawSkinnedModel(
 				skinnedModel,
 				currentAnime,//フラグで選んだアニメの姿勢で描く
-				{ 0.0f, 0.0f, 0.0f },
-				{ 0.0f, modelRotateY, 0.0f },
-				{ 1.0f, 1.0f, 1.0f },
+				player.pos, player.rot, player.scal,
 				{ 1.0f, 1.0f, 1.0f, 1.0f }
 			);
 
 			engine->DrawSkinnedModel(
 				skinnedModel2,
 				anime2,
-				{ -2.0f, -0.5f, 1.0f },
-				{ 0.0f, modelRotateY, 0.0f },
-				{ 1.0f, 1.0f, 1.0f },
+				enemy.pos, enemy.rot, enemy.scal,
 				{ 1.0f, 1.0f, 1.0f, 1.0f }
+
 			);
 
 			engine->PostDraw();
