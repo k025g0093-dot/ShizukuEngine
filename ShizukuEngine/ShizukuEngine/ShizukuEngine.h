@@ -113,7 +113,7 @@ public:
 	//--------------------------------------------------------------
 	std::vector<OBB> CreateCollision(int modelIndex, int boneSlot,const Vector3& pos, const Vector3& rot, const Vector3& scale);
 
-	bool OBBtoOBB(std::vector<OBB> obb1, std::vector<OBB> obb2);
+	bool OBBtoOBB(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
 
 	//-----------------------------------描画関数-----------------------------------//
 

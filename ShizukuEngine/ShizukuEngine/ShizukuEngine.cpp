@@ -193,7 +193,7 @@ std::vector<OBB> ShizukuEngine::CreateCollision(
 	return obb;
 }
 
-bool ShizukuEngine::OBBtoOBB(std::vector<OBB> obb1, std::vector<OBB> obb2) {
+bool ShizukuEngine::OBBtoOBB(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2) {
 	return IsOBBsToOBBsCollision(obb1, obb2);
 }
 

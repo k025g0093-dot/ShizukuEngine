@@ -16,7 +16,7 @@ class Animator;
  std::vector<OBB>UpdateBoneOBBs(const SkinnedModel& skinnedModel, const Animator& animator, const Matrix4x4 matrix);
  /*判定計算用*/
  /* std::vector<OBB>によるボーンのついたアニメーションモデル用の当たり判定*/
- bool IsOBBsToOBBsCollision(std::vector<OBB> obb1, std::vector<OBB> obb2);
+ bool IsOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
 
 /*ボーンを読み込みカプセルの作成を行う*/
 //Capsule LoadBoneColliderCapsel(const SkinnedModel& skinnedModel);
