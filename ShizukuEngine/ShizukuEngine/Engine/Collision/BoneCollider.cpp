@@ -198,7 +198,7 @@ bool IsOBBsToOBBsCollision( std::vector<OBB> obb1, std::vector<OBB> obb2) {
 
 	for (size_t i = 0; i < obb1.size(); i++) {
 		Vector3 axes[15];
-		for (size_t j = 0; j < obb1.size(); j++) {
+		for (size_t j = 0; j < obb2.size(); j++) {
 
 			axes[0] = obb1[i].orientations[0];
 			axes[1] = obb1[i].orientations[1];
@@ -228,19 +228,19 @@ bool IsOBBsToOBBsCollision( std::vector<OBB> obb1, std::vector<OBB> obb2) {
 				Vector3 axis = Normalize(axes[k]);
 
 				float L1 =
-					std::abs(Dot(obb1[k].orientations[0], axis)) * (obb1[k].size.x / 2.0f) +
-					std::abs(Dot(obb1[k].orientations[1], axis)) * (obb1[k].size.y / 2.0f) +
-					std::abs(Dot(obb1[k].orientations[2], axis)) * (obb1[k].size.z / 2.0f);
+					std::abs(Dot(obb1[i].orientations[0], axis)) * (obb1[i].size.x) +
+					std::abs(Dot(obb1[i].orientations[1], axis)) * (obb1[i].size.y) +
+					std::abs(Dot(obb1[i].orientations[2], axis)) * (obb1[i].size.z);
 
 				// OBB B の影の半径 L2
 				float L2 =
-					std::abs(Dot(obb2[k].orientations[0], axis)) * (obb2[k].size.x / 2.0f) +
-					std::abs(Dot(obb2[k].orientations[1], axis)) * (obb2[k].size.y / 2.0f) +
-					std::abs(Dot(obb2[k].orientations[2], axis)) * (obb2[k].size.z / 2.0f);
+					std::abs(Dot(obb2[j].orientations[0], axis)) * (obb2[j].size.x ) +
+					std::abs(Dot(obb2[j].orientations[1], axis)) * (obb2[j].size.y ) +
+					std::abs(Dot(obb2[j].orientations[2], axis)) * (obb2[j].size.z );
 
 				// 軸の上での、それぞれの箱の中心の位置
-				float centerA = Dot(obb1[k].center, axis);
-				float centerB = Dot(obb2[k].center, axis);
+				float centerA = Dot(obb1[i].center, axis);
+				float centerB = Dot(obb2[j].center, axis);
 
 				// 箱Aの影の「左端」と「右端」
 				float min1 = centerA - L1;
