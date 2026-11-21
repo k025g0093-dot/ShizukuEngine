@@ -174,23 +174,27 @@ int ShizukuEngine::LoadAnimation(const std::string& animationPath, int skinnedMo
 	return static_cast<int>(mAnimations.size()) - 1;
 }
 
-void ShizukuEngine::CreateCollision(
+std::vector<OBB> ShizukuEngine::CreateCollision(
 	int modelIndex, int boneSlot,
 	const Vector3& pos, const Vector3& rot, const Vector3& scale) {
 
-	//番号からモデルとアニメーターを借りる（範囲外なら何もしない）
+	/*スキン付きモデルを受け取る*/
 	SkinnedModel* model = mModelManager.GetSkinned(modelIndex);
-	if (!model) { return; }
-	if (boneSlot < 0 || boneSlot >= static_cast<int>(mAnimator.size())) { return; }
 
-	//ワールド行列はここで1回だけ作る
-	const Matrix4x4 worldMatrix = MakeAffineMatrix(scale, rot, pos);
+	//if (!model) {return;}
+	//if (boneSlot < 0) { return; }
 
-	//ボーンごとのOBBを今の姿勢とワールド行列で動かす（計算は BoneCollider 側）
-	const std::vector<OBB> obbs = UpdateBoneOBBs(*model, *mAnimator[boneSlot], worldMatrix);
+	/*ワールドマトリックスの作成*/
+	Matrix4x4 worldMat = MakeAffineMatrix(scale, rot, pos);
 
-	//TODO: ここで obbs を Collision 側に渡す（今は計算するだけ）
-	(void)obbs;
+	std::vector<OBB>obb{};
+	/*ボーンにつけたOBBを更新する*/
+	obb = UpdateBoneOBBs(*model, *mAnimator[boneSlot], worldMat);
+	return obb;
+}
+
+bool ShizukuEngine::OBBtoOBB(std::vector<OBB> obb1, std::vector<OBB> obb2) {
+	return IsOBBsToOBBsCollision(obb1, obb2);
 }
 
 
