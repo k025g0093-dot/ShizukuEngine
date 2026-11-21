@@ -15,7 +15,13 @@ struct TransformData {
     Vector3 rotate;
     Vector3 translate;
 };
+
+Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
+Matrix4x4 Subtract(const Matrix4x4& m1, const Matrix4x4& m2);
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
+Matrix4x4 Transpose(const Matrix4x4& m);
+Matrix4x4 Inverse(const Matrix4x4& m);
+Matrix4x4 MakeIdentity4x4();
 
 //平行移動
 Matrix4x4 MakeTranslateMatrix(const Vector3& Vector);
@@ -29,9 +35,6 @@ Matrix4x4 MakeRotateYMatrix(float radian);
 Matrix4x4 MakeRotateZMatrix(float radian);
 
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
-Matrix4x4 MakeIdentity4x4();
-
-Matrix4x4 Inverse(const Matrix4x4& m);
 
 Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspect, float nearClip, float farClip);
 
@@ -40,3 +43,14 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
 Matrix4x4 MakeLookAtMatrix(const Vector3& eye, const Vector3& target, const Vector3& up);
+
+Vector3 Cross(const Vector3& v1, const Vector3& v2);
+Vector3 SubtractVector3(const Vector3& v1, const Vector3& v2);
+float Dot(const Vector3& v1, const Vector3& v2);
+Vector3 AddVector3(const Vector3& v1, const Vector3& v2);
+float Length(const Vector3& v1);
+Vector3 MultiplyVector3(const float v1, const Vector3& v2);
+Vector3 MultiplyVector3ToVector3(const Vector3& v1, const Vector3& v2);
+Vector3 Normalize(Vector3 normal);
+
+Vector3 Reflect(const Vector3& input, const Vector3& normal);
