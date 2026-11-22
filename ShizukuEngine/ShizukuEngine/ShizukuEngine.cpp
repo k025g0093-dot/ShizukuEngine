@@ -63,6 +63,8 @@ void ShizukuEngine::Initialize(int width, int Height) {
 		&mLightManager,
 		&mDX12Context,
 		&mRenderTexture);
+	
+	//mInput.SetWindou(mWinApp.GetHwnd());
 
 
 	//ImGuiの初期化
@@ -174,28 +176,6 @@ int ShizukuEngine::LoadAnimation(const std::string& animationPath, int skinnedMo
 	return static_cast<int>(mAnimations.size()) - 1;
 }
 
-std::vector<OBB> ShizukuEngine::CreateCollision(
-	int modelIndex, int boneSlot,
-	const Vector3& pos, const Vector3& rot, const Vector3& scale) {
-
-	/*スキン付きモデルを受け取る*/
-	SkinnedModel* model = mModelManager.GetSkinned(modelIndex);
-
-	//if (!model) {return;}
-	//if (boneSlot < 0) { return; }
-
-	/*ワールドマトリックスの作成*/
-	Matrix4x4 worldMat = MakeAffineMatrix(scale, rot, pos);
-
-	std::vector<OBB>obb{};
-	/*ボーンにつけたOBBを更新する*/
-	obb = UpdateBoneOBBs(*model, *mAnimator[boneSlot], worldMat);
-	return obb;
-}
-
-bool ShizukuEngine::OBBtoOBB(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2) {
-	return IsOBBsToOBBsCollision(obb1, obb2);
-}
 
 
 void ShizukuEngine::Update() {
@@ -505,3 +485,39 @@ void ShizukuEngine::DrawEmitter()
 	}
 }
 #pragma endregion
+
+
+#pragma region 当たり判定作成用関数
+
+std::vector<OBB> ShizukuEngine::CreateAnimationModelOBBsCollision(
+	int modelIndex, int boneSlot,
+	const Vector3& pos, const Vector3& rot, const Vector3& scale) {
+
+	/*スキン付きモデルを受け取る*/
+	SkinnedModel* model = mModelManager.GetSkinned(modelIndex);
+
+	//if (!model) {return;}
+	//if (boneSlot < 0) { return; }
+
+	/*ワールドマトリックスの作成*/
+	Matrix4x4 worldMat = MakeAffineMatrix(scale, rot, pos);
+
+	std::vector<OBB>obb{};
+	/*ボーンにつけたOBBを更新する*/
+	obb = UpdateAnimationBoneOBBs(*model, *mAnimator[boneSlot], worldMat);
+	return obb;
+}
+
+#pragma endregion 
+
+#pragma region 当たり判定関数
+
+bool ShizukuEngine::IsAnimationOBBsToAnimationOBBs(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2) {
+	return IsAnimationOBBsToOBBsCollision(obb1, obb2);
+}
+
+bool ShizukuEngine::IsAnimationOBBToOBB(const std::vector<OBB>& obb1, const OBB& obb2) {
+	return IsAnimationOBBsToOBBCollision(obb1, obb2);
+}
+
+#pragma endregion 

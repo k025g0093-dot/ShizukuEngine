@@ -99,21 +99,15 @@ public:
 	//エミッターの作成関数（引数はエミッターの情報とモデルの番号）
 	// 色の固定ができますデフォルトはランダムが指定されています
 	//--------------------------------------------------------------
-	int CreateEmitter(const Emitter& emitter, int modelIndex,Vector4 color ={1.0f,1.0f,1.0f,1.0f}, bool isFixedColor = false);
+	int CreateEmitter(const Emitter& emitter, int modelIndex, Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, bool isFixedColor = false);
 
 	//--------------------------------------------------------------
 	//エミッターの作成関数（引数はエミッターの情報とモデルの番号）
 	// 色の固定ができますデフォルトはランダムが指定されています
 	//--------------------------------------------------------------
-	int CreateGPUEmitter(const Emitter& emitter, int modelIndex,Vector4 color ={1.0f,1.0f,1.0f,1.0f}, bool isFixedColor = false);
-	
-	//--------------------------------------------------------------
-	//アニメーションモデルのコリジョンの作成関数
-	//位置・回転・スケールは DrawSkinnedModel と同じ値を渡す
-	//--------------------------------------------------------------
-	std::vector<OBB> CreateCollision(int modelIndex, int boneSlot,const Vector3& pos, const Vector3& rot, const Vector3& scale);
+	int CreateGPUEmitter(const Emitter& emitter, int modelIndex, Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, bool isFixedColor = false);
 
-	bool OBBtoOBB(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
+	Camera& GetCamera() { return mCamera; }
 
 	//-----------------------------------描画関数-----------------------------------//
 
@@ -127,11 +121,11 @@ public:
 	//球体の描画関数（引数は、位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
 	void DrawSphere(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
-	
+
 	//--------------------------------------------------------------
 	//線分の描画関数（引数は、開始位置、最終地点　色）
 	//--------------------------------------------------------------
-	void DrawLine(const Vector3& start,const Vector3 end, const Vector4 color);
+	void DrawLine(const Vector3& start, const Vector3 end, const Vector4 color);
 
 	//--------------------------------------------------------------
 	//スプライトの描画関数（引数は、左上を起点に下位置、回転、スケール、色、テクスチャです）
@@ -157,7 +151,28 @@ public:
 	//--------------------------------------------------------------
 	void DrawModelParticle(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
 
-	Camera& GetCamera() { return mCamera; }
+
+
+
+	//-----------------------------------当たり判定関数-----------------------------------//
+
+	//--------------------------------------------------------------
+	//アニメーションモデルのコリジョンの作成関数
+	//位置・回転・スケールは DrawSkinnedModel と同じ値を渡す
+	//--------------------------------------------------------------
+	std::vector<OBB> CreateAnimationModelOBBsCollision(int modelIndex, int boneSlot, const Vector3& pos, const Vector3& rot, const Vector3& scale);
+
+	//--------------------------------------------------------------
+	//アニメーションモデルどうしのOBB判定関数
+	//--------------------------------------------------------------
+	bool IsAnimationOBBsToAnimationOBBs(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
+
+	//--------------------------------------------------------------
+	//アニメーションモデルOBBと通常のOBB判定関数
+	//--------------------------------------------------------------
+	bool IsAnimationOBBToOBB(const std::vector<OBB>& obb1, const OBB& obb2);
+
+
 
 private://ヘルパー関数など内部関数がメイン
 
