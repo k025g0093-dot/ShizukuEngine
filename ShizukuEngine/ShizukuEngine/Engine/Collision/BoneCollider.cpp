@@ -128,17 +128,15 @@ std::vector<OBB>UpdateAnimationBoneOBBs(
 	const Matrix4x4 matrix) {
 
 	size_t boneCount = skinnedModel.GetBoneCount();
-
 	const auto& vertices = skinnedModel.GetVertices();
 	std::vector<OBB> obb(boneCount);
-
 	for (size_t i = 0; i < skinnedModel.GetBoneOBBs().size(); i++) {
-
-
 		Matrix4x4 localWorldMatrix{};
 
+		/*ローカルワールド座標を各ボーンに応じて作成していく*/
 		localWorldMatrix = animator.GetBoneWorldMatrix(static_cast<int>(i), matrix);
 
+		/*各軸のレングスを計算*/
 		float lengthX = std::sqrt(
 			localWorldMatrix.m[0][0] * localWorldMatrix.m[0][0] +
 			localWorldMatrix.m[0][1] * localWorldMatrix.m[0][1] +
@@ -169,8 +167,6 @@ std::vector<OBB>UpdateAnimationBoneOBBs(
 		obb[i].size.x = skinnedModel.GetBoneOBBs()[i].size.x * lengthX;
 		obb[i].size.y = skinnedModel.GetBoneOBBs()[i].size.y * lengthY;
 		obb[i].size.z = skinnedModel.GetBoneOBBs()[i].size.z * lengthZ;
-
-
 
 		/*向き：行列の各行を、その長さで割って長さ1にする*/
 		obb[i].orientations[0] = {
@@ -256,7 +252,7 @@ bool IsAnimationOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vec
 				if (max1 < min2 || max2 < min1) {
 					isSeparated = true;  // 隙間がある
 					continue;
-				}	
+				}
 			}
 			if (!isSeparated) {
 				return true;
@@ -265,6 +261,80 @@ bool IsAnimationOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vec
 	}
 	return false;
 }
+
+bool IsAnimationOBBsToOBBCollision(
+	const std::vector<OBB>& obb1,
+	const OBB& obb2
+) {
+
+	for (size_t i = 0; i < obb1.size(); i++) {
+		Vector3 axes[15];
+
+		axes[0] = obb1[i].orientations[0];
+		axes[1] = obb1[i].orientations[1];
+		axes[2] = obb1[i].orientations[2];
+
+		axes[3] = obb2.orientations[0];
+		axes[4] = obb2.orientations[1];
+		axes[5] = obb2.orientations[2];
+
+		axes[6] = Cross(obb1[i].orientations[0], obb2.orientations[0]);
+		axes[7] = Cross(obb1[i].orientations[0], obb2.orientations[1]);
+		axes[8] = Cross(obb1[i].orientations[0], obb2.orientations[2]);
+		axes[9] = Cross(obb1[i].orientations[1], obb2.orientations[0]);
+		axes[10] = Cross(obb1[i].orientations[1], obb2.orientations[1]);
+		axes[11] = Cross(obb1[i].orientations[1], obb2.orientations[2]);
+		axes[12] = Cross(obb1[i].orientations[2], obb2.orientations[0]);
+		axes[13] = Cross(obb1[i].orientations[2], obb2.orientations[1]);
+		axes[14] = Cross(obb1[i].orientations[2], obb2.orientations[2]);
+
+		bool isSeparated = false;
+
+		for (int k = 0; k < 15; ++k) {
+
+			if (Length(axes[k]) < 0.0001f) {
+				continue;
+			}
+
+			//軸を正規化（長さを1にする）しておく
+			Vector3 axis = Normalize(axes[k]);
+
+			float L1 =
+				std::abs(Dot(obb1[i].orientations[0], axis)) * (obb1[i].size.x) +
+				std::abs(Dot(obb1[i].orientations[1], axis)) * (obb1[i].size.y) +
+				std::abs(Dot(obb1[i].orientations[2], axis)) * (obb1[i].size.z);
+
+			// OBB B の影の半径 L2
+			float L2 =
+				std::abs(Dot(obb2.orientations[0], axis)) * (obb2.size.x) +
+				std::abs(Dot(obb2.orientations[1], axis)) * (obb2.size.y) +
+				std::abs(Dot(obb2.orientations[2], axis)) * (obb2.size.z);
+
+			// 軸の上での、それぞれの箱の中心の位置
+			float centerA = Dot(obb1[i].center, axis);
+			float centerB = Dot(obb2.center, axis);
+
+			// 箱Aの影の「左端」と「右端」
+			float min1 = centerA - L1;
+			float max1 = centerA + L1;
+
+			// 箱Bの影の「左端」と「右端」
+			float min2 = centerB - L2;
+			float max2 = centerB + L2;
+
+
+			if (max1 < min2 || max2 < min1) {
+				isSeparated = true;  // 隙間がある
+				continue;
+			}
+		}
+		if (!isSeparated) {
+			return true;
+		}
+	}
+	return false;
+}
+
 
 
 //Capsule BoneCollider::LoadBoneColliderCapsel(

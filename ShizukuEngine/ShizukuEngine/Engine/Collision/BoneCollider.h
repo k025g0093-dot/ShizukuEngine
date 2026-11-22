@@ -18,6 +18,8 @@ class Animator;
  /* std::vector<OBB>によるボーンのついたアニメーションモデル用の当たり判定*/
  bool IsAnimationOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
 
+ bool IsAnimationOBBsToOBBCollision(const std::vector<OBB>& obb1, const OBB& obb2);
+
 /*ボーンを読み込みカプセルの作成を行う*/
 //Capsule LoadBoneColliderCapsel(const SkinnedModel& skinnedModel);
 
