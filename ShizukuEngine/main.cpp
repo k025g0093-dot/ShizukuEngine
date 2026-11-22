@@ -107,16 +107,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			if (input.GetKeyDown('1')) { currentAnime = animeFlair; }
 			if (input.GetKeyDown('2')) { currentAnime = animeBreak; }
 
-			playerObb = engine->CreateCollision(
+			playerObb = engine->CreateAnimationModelOBBsCollision(
 				skinnedModel, currentAnime,
 				player.pos, player.rot, player.scal
 			);
-			enemyObb = engine->CreateCollision(
+			enemyObb = engine->CreateAnimationModelOBBsCollision(
 				skinnedModel2, anime2,
 				enemy.pos, enemy.rot, enemy.scal
 			);
 
-			DebugPrintHit(engine->OBBtoOBB(playerObb, enemyObb));
+			DebugPrintHit(engine->IsAnimationOBBsToAnimationOBBs(playerObb, enemyObb));
 
 
 			if (input.GetKey('W')) { player.pos.z += kMoveSpeed; }

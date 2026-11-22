@@ -111,9 +111,9 @@ public:
 	//アニメーションモデルのコリジョンの作成関数
 	//位置・回転・スケールは DrawSkinnedModel と同じ値を渡す
 	//--------------------------------------------------------------
-	std::vector<OBB> CreateCollision(int modelIndex, int boneSlot,const Vector3& pos, const Vector3& rot, const Vector3& scale);
+	std::vector<OBB> CreateAnimationModelOBBsCollision(int modelIndex, int boneSlot,const Vector3& pos, const Vector3& rot, const Vector3& scale);
 
-	bool OBBtoOBB(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
+	bool IsAnimationOBBsToAnimationOBBs(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
 
 	//-----------------------------------描画関数-----------------------------------//
 

@@ -51,7 +51,7 @@ bool SkinnedModel::LoadSkinned(
 		}
 	}
 
-	mLocaOBBBones = CreateBoneOBBs(*this);
+	mLocaOBBBones = CreateAnimationBoneOBBs(*this);
 
 	mPMaterialResource = CreateBufferResource(device, Align256(sizeof(Material)));
 	UpdateMaterial();

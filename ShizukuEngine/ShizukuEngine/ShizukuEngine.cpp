@@ -174,7 +174,7 @@ int ShizukuEngine::LoadAnimation(const std::string& animationPath, int skinnedMo
 	return static_cast<int>(mAnimations.size()) - 1;
 }
 
-std::vector<OBB> ShizukuEngine::CreateCollision(
+std::vector<OBB> ShizukuEngine::CreateAnimationModelOBBsCollision(
 	int modelIndex, int boneSlot,
 	const Vector3& pos, const Vector3& rot, const Vector3& scale) {
 
@@ -189,12 +189,12 @@ std::vector<OBB> ShizukuEngine::CreateCollision(
 
 	std::vector<OBB>obb{};
 	/*ボーンにつけたOBBを更新する*/
-	obb = UpdateBoneOBBs(*model, *mAnimator[boneSlot], worldMat);
+	obb = UpdateAnimationBoneOBBs(*model, *mAnimator[boneSlot], worldMat);
 	return obb;
 }
 
-bool ShizukuEngine::OBBtoOBB(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2) {
-	return IsOBBsToOBBsCollision(obb1, obb2);
+bool ShizukuEngine::IsAnimationOBBsToAnimationOBBs(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2) {
+	return IsAnimationOBBsToOBBsCollision(obb1, obb2);
 }
 
 

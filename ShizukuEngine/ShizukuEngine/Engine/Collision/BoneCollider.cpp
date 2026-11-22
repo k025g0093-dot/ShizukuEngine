@@ -44,7 +44,7 @@ OBB CreateOBBForBone(
 	return obb;
 }
 
-std::vector<OBB>CreateBoneOBBs(
+std::vector<OBB>CreateAnimationBoneOBBs(
 	const SkinnedModel& skinnedModel
 ) {
 
@@ -122,7 +122,7 @@ std::vector<OBB>CreateBoneOBBs(
 	return obb;
 }
 
-std::vector<OBB>UpdateBoneOBBs(
+std::vector<OBB>UpdateAnimationBoneOBBs(
 	const SkinnedModel& skinnedModel,
 	const Animator& animator,
 	const Matrix4x4 matrix) {
@@ -194,7 +194,7 @@ std::vector<OBB>UpdateBoneOBBs(
 }
 
 
-bool IsOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2) {
+bool IsAnimationOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2) {
 
 	for (size_t i = 0; i < obb1.size(); i++) {
 		for (size_t j = 0; j < obb2.size(); j++) {
