@@ -175,17 +175,25 @@ int ShizukuEngine::LoadAnimation(const std::string& animationPath, int skinnedMo
 	auto animationModel = std::make_unique<Animation>();
 	animationModel->Initialize(animationPath, model);
 	mAnimations.push_back(std::move(animationModel));
-
-	auto animator = std::make_unique<Animator>();
-	animator->Initialize(mAnimations.back().get());
-	mAnimator.push_back(std::move(animator));
-
-	mRenderRequests.EnsureSkinnedCapacity(static_cast<int>(mAnimator.size()));
-
 	return static_cast<int>(mAnimations.size()) - 1;
 }
 
 
+int ShizukuEngine::CreateAnimator(int animation) {
+	if (animation < 0) { return -1; }
+	auto animator = std::make_unique<Animator>();
+	animator->Initialize(mAnimations[animation].get());
+	mAnimator.push_back(std::move(animator));
+
+	mRenderRequests.EnsureSkinnedCapacity(static_cast<int>(mAnimator.size()));
+	return static_cast<int>(mAnimator.size()) - 1;
+}
+
+void ShizukuEngine::ChangeAnimation(int animators,int animation, bool isRooped) {
+	
+	if (animators < 0 || animators >= (int)mAnimator.size()) {return ;}
+	mAnimator[animators]->PlayAnimation(mAnimations[animation].get(), isRooped);
+}
 
 void ShizukuEngine::Update() {
 
@@ -505,8 +513,8 @@ std::vector<OBB> ShizukuEngine::CreateAnimationModelOBBsCollision(
 	/*スキン付きモデルを受け取る*/
 	SkinnedModel* model = mModelManager.GetSkinned(modelIndex);
 
-	//if (!model) {return;}
-	//if (boneSlot < 0) { return; }
+	if (!model) {std::vector<OBB>;}
+	if (boneSlot < 0) {std::vector<OBB>; }
 
 	/*ワールドマトリックスの作成*/
 	Matrix4x4 worldMat = MakeAffineMatrix(scale, rot, pos);

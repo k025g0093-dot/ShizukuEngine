@@ -12,7 +12,7 @@ public:
 
 	void UpdateAnimation(float dt);
 
-	void PlayAnimation(Animation* pAnimation);
+	void PlayAnimation(Animation* pAnimation,bool loopFlag);
 
 	void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
 
@@ -38,6 +38,8 @@ private:
 	Animation* mCurrentAnimation;
 	float mCurrentTime;
 	float mDeltaTime;
+	bool mIsLooped = true;
+	bool mIsFinished = false;
 
 };
 
