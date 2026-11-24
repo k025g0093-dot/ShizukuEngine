@@ -63,7 +63,7 @@ void ShizukuEngine::Initialize(int width, int Height) {
 		&mLightManager,
 		&mDX12Context,
 		&mRenderTexture);
-	
+
 	//mInput.SetWindou(mWinApp.GetHwnd());
 
 
@@ -81,6 +81,7 @@ void ShizukuEngine::Initialize(int width, int Height) {
 	);
 #endif // USE_IMGUI
 
+	mSound = new Sound;
 
 #ifdef _DEBUG
 	mDebugLayer.SetupInfoQueue(mDX12Context.GetDevice());
@@ -101,6 +102,14 @@ int ShizukuEngine::LoadModel(const std::string& filePath) {
 int ShizukuEngine::LoadSkinnedModel(const std::string& filePath) {
 	//スキン読み込み
 	return mModelManager.LoadSkinnedModel(filePath);
+}
+
+SoundData ShizukuEngine::LoadSound(const char* filePath) {
+	return mSound->SoundLoad(filePath);
+}
+
+void ShizukuEngine::SoundPlay(SoundData soundData) {
+	mSound->SoundPlayer(soundData);
 }
 
 void ShizukuEngine::OnFileDropped(const std::wstring& path) {

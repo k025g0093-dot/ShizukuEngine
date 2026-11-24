@@ -92,6 +92,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//モデルを回して立体感を確認する用
 	float modelRotateY = 0.0f;
 
+	SoundData soundData = engine
+		->LoadSound("resources/fanfare.wav");
+
+
 	MSG msg{};
 	while (msg.message != WM_QUIT) {
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -161,6 +165,10 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			);
 
 			engine->PostDraw();
+
+			if(input.GetKeyDown(VK_SPACE)){
+				engine->SoundPlay(soundData);
+			}
 
 			if (input.GetKeyDown(VK_ESCAPE)) {
 				break;
