@@ -44,6 +44,7 @@ void Animator::PlayAnimation(Animation* pAnimation, bool loopFlag)
 		mCurrentAnimation = pAnimation;
 		mCurrentTime = 0.0f;
 		mIsLooped = loopFlag;
+		mIsFinished = false;
 	}
 }
 
