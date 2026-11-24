@@ -116,16 +116,16 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			if (input.GetKeyDown('1')) { engine->ChangeAnimation(playerAnimator, animeFlair,false); }
 			if (input.GetKeyDown('2')) { engine->ChangeAnimation(playerAnimator, animeBreak); }
 
-			//playerObb = engine->CreateAnimationModelOBBsCollision(
-			//	skinnedModel, playerAnimator,
-			//	player.pos, player.rot, player.scal
-			//);
-			//enemyObb = engine->CreateAnimationModelOBBsCollision(
-			//	skinnedModel2, enemyAnimator,
-			//	enemy.pos, enemy.rot, enemy.scal
-			//);
+			playerObb = engine->CreateAnimationModelOBBsCollision(
+				skinnedModel, playerAnimator,
+				player.pos, player.rot, player.scal
+			);
+			enemyObb = engine->CreateAnimationModelOBBsCollision(
+				skinnedModel2, enemyAnimator,
+				enemy.pos, enemy.rot, enemy.scal
+			);
 
-			//DebugPrintHit(engine->IsAnimationOBBsToAnimationOBBs(playerObb, enemyObb));
+			DebugPrintHit(engine->IsAnimationOBBsToAnimationOBBs(playerObb, enemyObb));
 
 
 			if (input.GetKey('W')) { player.pos.z += kMoveSpeed; }

@@ -39,9 +39,12 @@ void Animator::UpdateAnimation(float dt)
 
 void Animator::PlayAnimation(Animation* pAnimation, bool loopFlag)
 {
-	mCurrentAnimation = pAnimation;
-	mCurrentTime = 0.0f;
-	mIsLooped = loopFlag;
+	//アニメーションが同じではないかつアニメーションが終わっているときに変更する
+	if (mCurrentAnimation != pAnimation||mIsFinished) {
+		mCurrentAnimation = pAnimation;
+		mCurrentTime = 0.0f;
+		mIsLooped = loopFlag;
+	}
 }
 
 void Animator::CalculateBoneTransform(
