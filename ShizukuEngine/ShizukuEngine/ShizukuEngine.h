@@ -36,12 +36,15 @@
 #include "Model/3DAnimation/Animation.h"
 #include "Model/3DAnimation/Animator.h"
 
+#include "Sound/Sound.h"
+
 
 using Microsoft::WRL::ComPtr;
 using namespace std;
 
 struct VertexData;//ベクトルがたのデータが入ってる構造体
 struct Material;//マテリアルの基本構造体
+struct SoundData;
 
 struct DrawRequest;
 
@@ -80,6 +83,16 @@ public:
 	int LoadModel(const std::string& filePath);
 
 	//--------------------------------------------------------------
+	//音楽ファイル読み込み関数（対応してるのはWAV、MP3）
+	//--------------------------------------------------------------
+	SoundData LoadSound(const char *filePath);
+
+	//--------------------------------------------------------------
+	//音楽再生関数（対応してるのはWAV、MP3）
+	//--------------------------------------------------------------
+	void SoundPlay(SoundData soundData);
+
+	//--------------------------------------------------------------
 	//アニメーションスキン付きmodel読み込み関数
 	//--------------------------------------------------------------
 	int LoadSkinnedModel(const std::string& filePath);
@@ -99,21 +112,18 @@ public:
 	//エミッターの作成関数（引数はエミッターの情報とモデルの番号）
 	// 色の固定ができますデフォルトはランダムが指定されています
 	//--------------------------------------------------------------
-	int CreateEmitter(const Emitter& emitter, int modelIndex,Vector4 color ={1.0f,1.0f,1.0f,1.0f}, bool isFixedColor = false);
+	int CreateEmitter(const Emitter& emitter, int modelIndex, Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, bool isFixedColor = false);
 
 	//--------------------------------------------------------------
 	//エミッターの作成関数（引数はエミッターの情報とモデルの番号）
 	// 色の固定ができますデフォルトはランダムが指定されています
 	//--------------------------------------------------------------
-	int CreateGPUEmitter(const Emitter& emitter, int modelIndex,Vector4 color ={1.0f,1.0f,1.0f,1.0f}, bool isFixedColor = false);
-	
-	//--------------------------------------------------------------
-	//アニメーションモデルのコリジョンの作成関数
-	//位置・回転・スケールは DrawSkinnedModel と同じ値を渡す
-	//--------------------------------------------------------------
-	std::vector<OBB> CreateCollision(int modelIndex, int boneSlot,const Vector3& pos, const Vector3& rot, const Vector3& scale);
+	int CreateGPUEmitter(const Emitter& emitter, int modelIndex, Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, bool isFixedColor = false);
 
-	bool OBBtoOBB(std::vector<OBB> obb1, std::vector<OBB> obb2);
+	
+	
+
+	Camera& GetCamera() { return mCamera; }
 
 	//-----------------------------------描画関数-----------------------------------//
 
@@ -127,11 +137,11 @@ public:
 	//球体の描画関数（引数は、位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
 	void DrawSphere(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
-	
+
 	//--------------------------------------------------------------
 	//線分の描画関数（引数は、開始位置、最終地点　色）
 	//--------------------------------------------------------------
-	void DrawLine(const Vector3& start,const Vector3 end, const Vector4 color);
+	void DrawLine(const Vector3& start, const Vector3 end, const Vector4 color);
 
 	//--------------------------------------------------------------
 	//スプライトの描画関数（引数は、左上を起点に下位置、回転、スケール、色、テクスチャです）
@@ -157,7 +167,33 @@ public:
 	//--------------------------------------------------------------
 	void DrawModelParticle(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
 
-	Camera& GetCamera() { return mCamera; }
+
+
+
+	//-----------------------------------当たり判定関数-----------------------------------//
+
+	//--------------------------------------------------------------
+	//アニメーションモデルのコリジョンの作成関数
+	//位置・回転・スケールは DrawSkinnedModel と同じ値を渡す
+	//--------------------------------------------------------------
+	std::vector<OBB> CreateAnimationModelOBBsCollision(int modelIndex, int boneSlot, const Vector3& pos, const Vector3& rot, const Vector3& scale);
+
+	//--------------------------------------------------------------
+	//アニメーションモデルどうしのOBB判定関数
+	//--------------------------------------------------------------
+	bool IsAnimationOBBsToAnimationOBBs(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
+
+	//--------------------------------------------------------------
+	//アニメーションモデルOBBと通常のOBB判定関数
+	//--------------------------------------------------------------
+	bool IsAnimationOBBToOBB(const std::vector<OBB>& obb1, const OBB& obb2);
+
+
+
+	//-----------------------------------getter、セッター関数-----------------------------------//
+
+
+
 
 private://ヘルパー関数など内部関数がメイン
 
@@ -181,6 +217,7 @@ private://各種変数などの初期化
 	TextureManager mTextureManager{};
 	LightManager mLightManager;
 	Input mInput{};
+	Sound* mSound{};
 
 	std::vector<std::unique_ptr<Animation>> mAnimations;
 	Animation mAnimation{};
