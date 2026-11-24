@@ -21,7 +21,15 @@ void Animator::UpdateAnimation(float dt)
 	if (mCurrentAnimation)
 	{
 		mCurrentTime += mCurrentAnimation->GetTicksPerSecond() * dt;
-		mCurrentTime = fmod(mCurrentTime, mCurrentAnimation->GetDuration());
+		if (mIsLooped) {
+			mCurrentTime = fmod(mCurrentTime, mCurrentAnimation->GetDuration());
+		}
+		else {
+			if (mCurrentTime >= std::nextafter(mCurrentAnimation->GetDuration(), 0.0f)) {
+				mCurrentTime = std::nextafter(mCurrentAnimation->GetDuration(), 0.0f);
+				mIsFinished = true;
+			}
+		}
 		CalculateBoneTransform(&mCurrentAnimation->GetRootNode(), glm::mat4(1.0f));
 		for (int i = 0; i < kMaxBones; i++) {
 			matrix[i] = GlmConvert::ConvertGLMtoMatrix(mFinalBoneMatrices[i]);
@@ -29,10 +37,11 @@ void Animator::UpdateAnimation(float dt)
 	}
 }
 
-void Animator::PlayAnimation(Animation* pAnimation)
+void Animator::PlayAnimation(Animation* pAnimation, bool loopFlag)
 {
 	mCurrentAnimation = pAnimation;
 	mCurrentTime = 0.0f;
+	mIsLooped = loopFlag;
 }
 
 void Animator::CalculateBoneTransform(
@@ -64,7 +73,7 @@ void Animator::CalculateBoneTransform(
 }
 
 Matrix4x4 Animator::GetBoneWorldMatrix(
-	int boneIndex, const Matrix4x4 worldMatrix)const{
+	int boneIndex, const Matrix4x4 worldMatrix)const {
 	if (boneIndex < 0) {
 		return worldMatrix;
 	}

@@ -49,13 +49,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	int model = engine->LoadModel("resources/fbx/Dragon 2.5_fbx.fbx");//失敗したら-1（DrawModelは何もしない）
 	int skinnedModel = engine->LoadSkinnedModel("resources/Flair/Flair.dae");
 
-	//1体目用のアニメを2つ読み込む（どちらも毎フレーム進む）
+	//1体目用のアニメのデータを2つ読み込む（データだけなので、ここでは進まない）
 	int animeFlair = engine->LoadAnimation("resources/Flair/Flair.dae", skinnedModel);
 	int animeBreak = engine->LoadAnimation("resources/new/Breakdance 1990.dae", skinnedModel);
-	int currentAnime = animeFlair;//今描いているアニメ（切り替えフラグ）
+
+	//1体目の再生役（キャラ1体につき1つ）。最初は Flair で始める
+	int playerAnimator = engine->CreateAnimator(animeFlair);
 
 	int skinnedModel2 = engine->LoadSkinnedModel("resources/new/Breakdance 1990.dae");
 	int anime2 = engine->LoadAnimation("resources/new/Breakdance 1990.dae", skinnedModel2);
+
+	//2体目の再生役
+	int enemyAnimator = engine->CreateAnimator(anime2);
 
 	assert(skinnedModel != -1 && "スキンモデルの読み込みに失敗");
 	int terrain = engine->LoadModel("resources/terrain/terrain.obj");
@@ -82,8 +87,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	Player player;
 	Enemy enemy;
 
-	player.scal={ 1,1,1 };
-	enemy.scal={ 1,1,1 };
+	player.scal = { 1,1,1 };
+	enemy.scal = { 1,1,1 };
 
 	const float kMoveSpeed = 0.05f;
 
@@ -106,21 +111,21 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 			engine->Update();
 
-			//1キーと2キーで描くアニメを切り替える
+			//1キーと2キーで、1体目の再生役の中身を差し替える（頭から再生される）
 			Input input = engine->GetInput();
-			if (input.GetKeyDown('1')) { currentAnime = animeFlair; }
-			if (input.GetKeyDown('2')) { currentAnime = animeBreak; }
+			if (input.GetKeyDown('1')) { engine->ChangeAnimation(playerAnimator, animeFlair,false); }
+			if (input.GetKeyDown('2')) { engine->ChangeAnimation(playerAnimator, animeBreak); }
 
-			playerObb = engine->CreateAnimationModelOBBsCollision(
-				skinnedModel, currentAnime,
-				player.pos, player.rot, player.scal
-			);
-			enemyObb = engine->CreateAnimationModelOBBsCollision(
-				skinnedModel2, anime2,
-				enemy.pos, enemy.rot, enemy.scal
-			);
+			//playerObb = engine->CreateAnimationModelOBBsCollision(
+			//	skinnedModel, playerAnimator,
+			//	player.pos, player.rot, player.scal
+			//);
+			//enemyObb = engine->CreateAnimationModelOBBsCollision(
+			//	skinnedModel2, enemyAnimator,
+			//	enemy.pos, enemy.rot, enemy.scal
+			//);
 
-			DebugPrintHit(engine->IsAnimationOBBsToAnimationOBBs(playerObb, enemyObb));
+			//DebugPrintHit(engine->IsAnimationOBBsToAnimationOBBs(playerObb, enemyObb));
 
 
 			if (input.GetKey('W')) { player.pos.z += kMoveSpeed; }
@@ -151,22 +156,21 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 			engine->DrawSkinnedModel(
 				skinnedModel,
-				currentAnime,//フラグで選んだアニメの姿勢で描く
+				playerAnimator,//1体目の再生役の今の姿勢で描く
 				player.pos, player.rot, player.scal,
 				{ 1.0f, 1.0f, 1.0f, 1.0f }
 			);
 
 			engine->DrawSkinnedModel(
 				skinnedModel2,
-				anime2,
+				enemyAnimator,
 				enemy.pos, enemy.rot, enemy.scal,
 				{ 1.0f, 1.0f, 1.0f, 1.0f }
-
 			);
 
 			engine->PostDraw();
 
-			if(input.GetKeyDown(VK_SPACE)){
+			if (input.GetKeyDown(VK_SPACE)) {
 				engine->SoundPlay(soundData);
 			}
 
