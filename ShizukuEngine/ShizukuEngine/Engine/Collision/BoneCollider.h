@@ -20,7 +20,7 @@ class Animator;
 
  bool IsAnimationOBBsToOBBCollision(const std::vector<OBB>& obb1, const OBB& obb2);
 
- bool IsOBBToOBBCollision(const OBB& obb1,const OBB&obb2)
+ bool IsOBBToOBBCollision(const OBB& obb1, const OBB& obb2);
 
 /*ボーンを読み込みカプセルの作成を行う*/
 //Capsule LoadBoneColliderCapsel(const SkinnedModel& skinnedModel);

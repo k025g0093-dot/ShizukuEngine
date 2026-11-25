@@ -44,10 +44,14 @@ void ShizukuEngine::Initialize(int width, int Height) {
 	);
 
 	mTextureManager.LoadTexture("resources/white1x1.png");
-
+	/*ライトマネージャーの初期化*/
 	mLightManager.Initialize(mDX12Context.GetDevice());
+	/*モデルマネージャーの初期化*/
 	mModelManager.Initialize(mDX12Context.GetDevice(), &mTextureManager);
+	/*ランダムエンジンの初期化*/
+	mRandomEngine = new RandomEngine();
 
+	/*テクスチャのRTVの作成*/
 	mRenderTexture.CreateSceneRtv(
 		mDX12Context.GetDevice(),
 		&mTextureManager,
@@ -64,6 +68,8 @@ void ShizukuEngine::Initialize(int width, int Height) {
 		&mDX12Context,
 		&mRenderTexture);
 
+
+	/*マウス固定機能*/
 	//mInput.SetWindou(mWinApp.GetHwnd());
 
 
@@ -105,10 +111,12 @@ int ShizukuEngine::LoadSkinnedModel(const std::string& filePath) {
 }
 
 SoundData ShizukuEngine::LoadSound(const char* filePath) {
+	/*サウンドのロード関数*/
 	return mSound->SoundLoad(filePath);
 }
 
 void ShizukuEngine::SoundPlay(SoundData soundData) {
+	/*音楽再生*/
 	mSound->SoundPlayer(soundData);
 }
 
@@ -189,23 +197,28 @@ int ShizukuEngine::CreateAnimator(int animation) {
 	return static_cast<int>(mAnimator.size()) - 1;
 }
 
-void ShizukuEngine::ChangeAnimation(int animators,int animation, bool isRooped) {
-	
-	if (animators < 0 || animators >= (int)mAnimator.size()) {return ;}
+void ShizukuEngine::ChangeAnimation(int animators, int animation, bool isRooped) {
+	/*アニメーション切り替え時に変える先にアニメーションが存在するかの確認*/
+	/*無ければ早期return*/
+	if (animators < 0 || animators >= (int)mAnimator.size()) { return; }
 	mAnimator[animators]->PlayAnimation(mAnimations[animation].get(), isRooped);
 }
 
 void ShizukuEngine::Update() {
 
+	/*デルタタイマーの更新*/
 	mClock.Update();
 	const float deltaTime = mClock.GetDeltaTime();
 
+	/*入力処理の更新*/
 	mInput.Update();
 
+	/*エミッターの更新*/
 	for (EmitterSlot& slot : mEmitters) {
 		slot.emitter->Update(deltaTime);
 	}
 
+	/*アニメーションの更新*/
 	for (auto& animator : mAnimator) {
 		animator->UpdateAnimation(deltaTime);
 	}
@@ -228,11 +241,11 @@ void ShizukuEngine::PreDraw()
 
 void ShizukuEngine::PostDraw()
 {
-
+	/*エミッターの描画を持ってくる*/
 	DrawEmitter();
 #ifdef USE_IMGUI
 
-	//ライトのGUI（ImGuiのフレーム中に呼ぶ）
+	//各GUIwindowの更新
 	mLightWindow.update(&mLightManager);
 	mCameraWindow.update(&mCamera);
 	mModelWindow.update(&mModelManager);
@@ -252,17 +265,19 @@ void ShizukuEngine::PostDraw()
 	stats.lightCount = mLightManager.GetActiveLightCount();
 	mDebugWindow.Update(stats);
 #endif // USE_IMGUI
-
+	/*マトリックスの作成*/
 	Matrix4x4 view = mCamera.GetViewMatrix();
 	Matrix4x4 proj = mCamera.GetProjectionMatrix((float)mWidth, (float)mHeight);
 	mViewProjectionMatrix = Multiply(view, proj);
 	Vector3 cameraTranslate = mCamera.transform.translate;
 	Matrix4x4 billBoard = mCamera.GetBillboardMatrix();
 
+	/*アニメーションのボーンのマトリックスをアニメータの数だけ詰める*/
 	for (int it = 0; it < mAnimator.size(); it++) {
 		mRenderRequests.SetBoneMatrices(mAnimator[it]->GetAnimationMatrix(), it);
 	}
 
+	/*レンダーリクエストを集める*/
 	mRenderRequests.RenderAllRequests(
 		mDX12Context.GetCommandList(),
 		mViewProjectionMatrix,
@@ -283,6 +298,7 @@ void ShizukuEngine::PostDraw()
 	mImGuiManager.RenderPlatformWindows();
 #endif // USE_IMGUI
 
+	/*FPSの固定*/
 	mClock.UpdateFixFPS();
 
 }
@@ -513,8 +529,8 @@ std::vector<OBB> ShizukuEngine::CreateAnimationModelOBBsCollision(
 	/*スキン付きモデルを受け取る*/
 	SkinnedModel* model = mModelManager.GetSkinned(modelIndex);
 
-	if (!model) {std::vector<OBB>;}
-	if (boneSlot < 0) {std::vector<OBB>; }
+	if (!model) { std::vector<OBB>; }
+	if (boneSlot < 0) { std::vector<OBB>; }
 
 	/*ワールドマトリックスの作成*/
 	Matrix4x4 worldMat = MakeAffineMatrix(scale, rot, pos);
@@ -539,6 +555,15 @@ bool ShizukuEngine::IsAnimationOBBToOBB(const std::vector<OBB>& obb1, const OBB&
 
 bool ShizukuEngine::IsOBBToOBB(const OBB& obb1, const OBB& obb2) {
 	return IsOBBToOBBCollision(obb1, obb2);
+}
+
+#pragma endregion
+
+#pragma region ランダムエンジンの関数
+
+float ShizukuEngine::RandomFloat(float min, float max)
+{
+	return mRandomEngine->GetRandomFloat(min, max);
 }
 
 #pragma endregion 
