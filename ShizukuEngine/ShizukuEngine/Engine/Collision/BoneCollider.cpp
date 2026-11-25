@@ -335,6 +335,66 @@ bool IsAnimationOBBsToOBBCollision(
 	return false;
 }
 
+bool IsOBBToOBBCollision(const OBB& obb1, const OBB& obb2) {
+	Vector3 axes[15];
+
+	axes[0] = obb1.orientations[0];
+	axes[1] = obb1.orientations[1];
+	axes[2] = obb1.orientations[2];
+
+	axes[3] = obb2.orientations[0];
+	axes[4] = obb2.orientations[1];
+	axes[5] = obb2.orientations[2];
+
+	axes[6] = Cross(obb1.orientations[0], obb2.orientations[0]);
+	axes[7] = Cross(obb1.orientations[0], obb2.orientations[1]);
+	axes[8] = Cross(obb1.orientations[0], obb2.orientations[2]);
+	axes[9] = Cross(obb1.orientations[1], obb2.orientations[0]);
+	axes[10] = Cross(obb1.orientations[1], obb2.orientations[1]);
+	axes[11] = Cross(obb1.orientations[1], obb2.orientations[2]);
+	axes[12] = Cross(obb1.orientations[2], obb2.orientations[0]);
+	axes[13] = Cross(obb1.orientations[2], obb2.orientations[1]);
+	axes[14] = Cross(obb1.orientations[2], obb2.orientations[2]);
+
+	for (int i = 0; i < 15; ++i) {
+
+		if (Length(axes[i]) < 0.0001f) {
+			continue;
+		}
+
+		// 💡 軸を正規化（長さを1にする）しておく
+		Vector3 axis = Normalize(axes[i]);
+
+		float L1 =
+			std::abs(Dot(obb1.orientations[0], axis)) * (obb1.size.x / 2.0f) +
+			std::abs(Dot(obb1.orientations[1], axis)) * (obb1.size.y / 2.0f) +
+			std::abs(Dot(obb1.orientations[2], axis)) * (obb1.size.z / 2.0f);
+
+		// OBB B の影の半径 L2
+		float L2 =
+			std::abs(Dot(obb2.orientations[0], axis)) * (obb2.size.x / 2.0f) +
+			std::abs(Dot(obb2.orientations[1], axis)) * (obb2.size.y / 2.0f) +
+			std::abs(Dot(obb2.orientations[2], axis)) * (obb2.size.z / 2.0f);
+
+		// 軸の上での、それぞれの箱の中心の位置
+		float centerA = Dot(obb1.center, axis);
+		float centerB = Dot(obb2.center, axis);
+
+		// 箱Aの影の「左端」と「右端」
+		float min1 = centerA - L1;
+		float max1 = centerA + L1;
+
+		// 箱Bの影の「左端」と「右端」
+		float min2 = centerB - L2;
+		float max2 = centerB + L2;
+
+		if (max1 < min2 || max2 < min1) {
+			return false;  // 隙間がある
+		}
+	}
+	return true;
+}
+
 
 
 //Capsule BoneCollider::LoadBoneColliderCapsel(
