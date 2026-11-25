@@ -537,4 +537,8 @@ bool ShizukuEngine::IsAnimationOBBToOBB(const std::vector<OBB>& obb1, const OBB&
 	return IsAnimationOBBsToOBBCollision(obb1, obb2);
 }
 
+bool ShizukuEngine::IsOBBToOBB(const OBB& obb1, const OBB& obb2) {
+	return IsOBBToOBBCollision(obb1, obb2);
+}
+
 #pragma endregion 
