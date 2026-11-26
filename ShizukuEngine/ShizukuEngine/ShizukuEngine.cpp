@@ -488,7 +488,7 @@ void ShizukuEngine::DrawModel
 	const Vector3& rot,
 	const Vector3& scale,
 	const Vector4 color,
-	int textureIndx
+	int textureIndex
 ) {
 	//番号からモデルを借りる（読み込み失敗の-1や範囲外ならnullptrが返る）
 	MeshModel* model = mModelManager.Get(modelIndex);
@@ -500,11 +500,39 @@ void ShizukuEngine::DrawModel
 	req.rot = rot;//回転度を渡す
 	req.scale = scale;//スケールを渡す
 	req.color = color;//色を渡す
-	if (textureIndx == -1) {
+	if (textureIndex == -1) {
 		req.textureIndex = model->GetTextureIndex();
 	}
 	else {
-		req.textureIndex = textureIndx;//テクスチャのインデックスを渡す
+		req.textureIndex = textureIndex;//テクスチャのインデックスを渡す
+	}
+	mRenderRequests.DrawRequestsSubmission(req);
+}
+#pragma endregion
+
+#pragma region ソケットで使うモデル描画関数
+
+void ShizukuEngine::DrawSocketModel
+(
+	int modelIndex,
+	const Matrix4x4& worldMatrix,
+	const Vector4 color,
+	int textureIndex
+) {
+	//番号からモデルを借りる（読み込み失敗の-1や範囲外ならnullptrが返る）
+	MeshModel* model = mModelManager.Get(modelIndex);
+	if (!model) { return; }
+
+	DrawRequest req;
+	req.model = model;
+	req.color = color;//色を渡す
+	req.useWorldMatrix = true;
+	req.worldMatrix = worldMatrix;
+	if (textureIndex == -1) {
+		req.textureIndex = model->GetTextureIndex();
+	}
+	else {
+		req.textureIndex = textureIndex;//テクスチャのインデックスを渡す
 	}
 	mRenderRequests.DrawRequestsSubmission(req);
 }
@@ -519,7 +547,7 @@ void ShizukuEngine::DrawModelParticle
 	const Vector3& rot,
 	const Vector3& scale,
 	const Vector4 color,
-	int textureIndx
+	int textureIndex
 ) {
 	//番号からモデルを借りる（読み込み失敗の-1や範囲外ならnullptrが返る）
 	MeshModel* model = mModelManager.Get(modelIndex);
@@ -532,11 +560,11 @@ void ShizukuEngine::DrawModelParticle
 	req.scale = scale;//スケールを渡す
 	req.color = color;//色を渡す
 	req.isParticle = true;
-	if (textureIndx == -1) {
+	if (textureIndex == -1) {
 		req.textureIndex = model->GetTextureIndex();
 	}
 	else {
-		req.textureIndex = textureIndx;//テクスチャのインデックスを渡す
+		req.textureIndex = textureIndex;//テクスチャのインデックスを渡す
 	}
 	mRenderRequests.DrawRequestsSubmission(req);
 }
@@ -552,7 +580,7 @@ void ShizukuEngine::DrawSkinnedModel
 	const Vector3& rot,
 	const Vector3& scale,
 	const Vector4 color,
-	int textureIndx
+	int textureIndex
 ) {
 	//番号からモデルを借りる（読み込み失敗の-1や範囲外ならnullptrが返る）
 	SkinnedModel* model = mModelManager.GetSkinned(modelIndex);
@@ -567,11 +595,11 @@ void ShizukuEngine::DrawSkinnedModel
 	req.scale = scale;//スケールを渡す
 	req.color = color;//色を渡す
 	req.isSkinnedModel = true;
-	if (textureIndx == -1) {
+	if (textureIndex == -1) {
 		req.textureIndex = model->GetTextureIndex();
 	}
 	else {
-		req.textureIndex = textureIndx;//テクスチャのインデックスを渡す
+		req.textureIndex = textureIndex;//テクスチャのインデックスを渡す
 	}
 	mRenderRequests.DrawRequestsSubmission(req);
 }

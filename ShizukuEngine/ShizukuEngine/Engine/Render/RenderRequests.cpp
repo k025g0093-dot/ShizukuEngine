@@ -197,6 +197,9 @@ void RenderRequests::Render3DTarget(
 		if (request.isParticle) {
 			mInstanceData[i].World = Multiply(Multiply(MakeScaleMatrix(safeScale), mBillBoard), MakeTranslateMatrix(safePos));
 		}
+		else if (request.useWorldMatrix) {
+			mInstanceData[i].World = request.worldMatrix;
+		}
 		else {
 			mInstanceData[i].World = MakeAffineMatrix(safeScale, safeRot, safePos);
 		}

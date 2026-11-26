@@ -128,8 +128,8 @@ public:
 	//--------------------------------------------------------------
 	Matrix4x4 GetSocketMatrix(
 		int boneIndex, int boneSlot,
-		const Vector3& pos,const Vector3& rot,const Vector3& scale,
-		const Vector3& actorPos,const Vector3& actorRot,const Vector3& actorScale
+		const Vector3& pos, const Vector3& rot, const Vector3& scale,
+		const Vector3& actorPos, const Vector3& actorRot, const Vector3& actorScale
 	);
 
 	//--------------------------------------------------------------
@@ -152,7 +152,6 @@ public:
 
 
 
-	Camera& GetCamera() { return mCamera; }
 
 	//-----------------------------------描画関数-----------------------------------//
 
@@ -160,12 +159,12 @@ public:
 	//--------------------------------------------------------------
 	//三角形の描画関数（引数は、位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
-	void DrawTriangle(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
+	void DrawTriangle(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndex = -1);
 
 	//--------------------------------------------------------------
 	//球体の描画関数（引数は、位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
-	void DrawSphere(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
+	void DrawSphere(const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndex = -1);
 
 	//--------------------------------------------------------------
 	//線分の描画関数（引数は、開始位置、最終地点　色）
@@ -175,26 +174,36 @@ public:
 	//--------------------------------------------------------------
 	//スプライトの描画関数（引数は、左上を起点に下位置、回転、スケール、色、テクスチャです）
 	//--------------------------------------------------------------
-	void DrawSprite(const Vector2& pos, const float& rot, const float& width, const float& height, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
+	void DrawSprite(const Vector2& pos, const float& rot, const float& width, const float& height, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndex = -1);
 
 	//--------------------------------------------------------------
-	//モデルの描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）テクスチャは宣言をしなくても平気です
+	//モデルの描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）テクスチャ、色は宣言をしなくても平気です
 	//--------------------------------------------------------------
-	void DrawModel(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
+	void DrawModel(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndex = -1);
 
 	//--------------------------------------------------------------
-	//モデルの描画関数（引数は、モデル番号、アニメーション値、位置、回転、スケール、色、テクスチャです）テクスチャは宣言をしなくても平気です
+	//ソケット式モデル描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）テクスチャ、色は宣言をしなくても平気です
+	//--------------------------------------------------------------
+	void DrawSocketModel(
+		int modelIndex,
+		const Matrix4x4& worldMatrix,
+		const Vector4 color,
+		int textureIndx
+	);
+
+	//--------------------------------------------------------------
+	//モデルの描画関数（引数は、モデル番号、アニメーション値、位置、回転、スケール、色、テクスチャです）テクスチャ、色は宣言をしなくても平気です
 	//--------------------------------------------------------------
 	void DrawSkinnedModel(
 		int modelIndex, int boneSlot,
 		const Vector3& pos, const Vector3& rot, const Vector3& scale,
 		const Vector4 color = { 1.0f,1.0f,1.0f,1.0f },
-		int textureIndx = -1);
+		int textureIndex = -1);
 
 	//--------------------------------------------------------------
 	//モデルパーティクルの描画関数（引数は、モデル番号、位置、回転、スケール、色、テクスチャです）テクスチャは宣言をしなくても平気です
 	//--------------------------------------------------------------
-	void DrawModelParticle(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndx = -1);
+	void DrawModelParticle(int modelIndex, const Vector3& pos, const Vector3& rot, const Vector3& scale, const Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, int textureIndex = -1);
 
 
 
@@ -212,7 +221,7 @@ public:
 	//モデルのコリジョンの作成関数
 	//位置・回転・スケールは DrawModel と同じ値を渡す
 	//--------------------------------------------------------------
-	OBB CreatModelOBBCollision(const int modelIndex,const Matrix4x4 mat);
+	OBB CreatModelOBBCollision(const int modelIndex, const Matrix4x4 mat);
 
 	//--------------------------------------------------------------
 	//アニメーションモデルどうしのOBB判定関数
@@ -230,6 +239,8 @@ public:
 	bool IsOBBToOBB(const OBB& obb1, const OBB& obb2);
 
 	//-----------------------------------getter、セッター関数-----------------------------------//
+
+	Camera& GetCamera() { return mCamera; }
 
 
 	//-----------------------------------ランダム関数などの便利関数-----------------------------------//

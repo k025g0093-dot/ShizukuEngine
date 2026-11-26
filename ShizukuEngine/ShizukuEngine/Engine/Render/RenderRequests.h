@@ -26,6 +26,10 @@ struct DrawRequest {
 	int lightId = -1;//ライトを付与する際のID
 	int renderOrder = 1;//レンダーのオーダー
 	int boneSlot = 0;
+	/*マトリックスをそのまま使う（武器や帽子など）*/
+	bool useWorldMatrix = false;/*trueの場合そのワールドマトリックスを使う(武器ど)*/
+	Matrix4x4 worldMatrix{};
+
 };
 //前方宣言
 class TextureManager;
