@@ -129,7 +129,7 @@ public:
 	Matrix4x4 GetSocketMatrix(
 		int boneIndex, int boneSlot,
 		const Vector3& pos,const Vector3& rot,const Vector3& scale,
-		const Vector3& ActorPos,const Vector3& ActorRot,const Vector3& ActorScale
+		const Vector3& actorPos,const Vector3& actorRot,const Vector3& actorScale
 	);
 
 	//--------------------------------------------------------------

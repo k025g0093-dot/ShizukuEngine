@@ -1,5 +1,4 @@
 #include "MeshModel.h"
-#include "Collision/BoneCollider.h"
 #pragma comment(lib,"assimp-vc145-mt")
 
 
@@ -41,7 +40,7 @@ bool MeshModel::LoadFromModel(
 	ProcessNode(scene->mRootNode, scene, vertices, indices); // 再帰トラバース
 	CreateBuffers(device, vertices,indices);
 
-	mLocalOBB = CreateOBBForModel(vertices);
+	mLocalOBBModel = CreateOBBForModel(vertices);
 
 	if (scene->mNumMeshes > 0) {
 		const unsigned int materialIndex=scene->mMeshes[0]->mMaterialIndex;;
@@ -193,7 +192,6 @@ OBB MeshModel::CreateOBBForModel(
 	Vector3 positionMin = { FLT_MAX, FLT_MAX, FLT_MAX };
 	Vector3 positionMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
-	const auto& vertices = vertices;
 	size_t count = vertices.size();
 
 	for (size_t j = 0; j < count; j++) {

@@ -1,5 +1,6 @@
 #pragma once
 #include "Model/Model.h"
+#include "Collision/BoneCollider.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -49,7 +50,7 @@ public://パブリック
     bool GetEnableLighting() const { return mEnableLighting; }
 
     //読み込み時に作った、モデル全体を囲むOBB（モデルの空間）
-    const OBB& GetLocalOBB() const { return mLocalOBB; }
+    const OBB& GetLocalOBB() const { return mLocalOBBModel; }
 
 
 
@@ -95,7 +96,7 @@ private://メンバ変数
     Vector4 mColor = { 1.0f, 1.0f, 1.0f, 1.0f };
     bool mEnableLighting = true;
 
-    OBB mLocalOBB;
+    OBB mLocalOBBModel;
 
     uint32_t Align256(uint32_t size)
     {

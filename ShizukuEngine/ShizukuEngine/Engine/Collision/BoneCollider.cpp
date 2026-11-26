@@ -1,54 +1,46 @@
 #include "BoneCollider.h"
 #include "../Model/3DAnimation/SkinnedModel.h"
 #include "../Model/3DAnimation/Animator.h"
-#include "../Model/Model.h"
 
-
-
-
-OBB CreateOBBForModel(
-	const Model& model
+OBB CreateOBBForBone(
+	const SkinnedModel& skinnedModel
 ) {
 
 	Vector3 positionMin = { FLT_MAX, FLT_MAX, FLT_MAX };
 	Vector3 positionMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
-	const VertexData* verts = model.GetVertexData();
-	UINT count = model.GetVertexCount();
+	const auto& vertices = skinnedModel.GetVertices();
+	size_t count = vertices.size();
 
 	for (size_t j = 0; j < count; j++) {
-		if (verts[j].position.x < positionMin.x) {
-			positionMin.x = verts[j].position.x;
+
+		if (vertices[j].position.x < positionMin.x) {
+			positionMin.x = vertices[j].position.x;
 		}
-		if (verts[j].position.x > positionMax.x) {
-			positionMax.x = verts[j].position.x;
+		if (vertices[j].position.x > positionMax.x) {
+			positionMax.x = vertices[j].position.x;
 		}
-		if (verts[j].position.y < positionMin.y) {
-			positionMin.y = verts[j].position.y;
+		if (vertices[j].position.y < positionMin.y) {
+			positionMin.y = vertices[j].position.y;
 		}
-		if (verts[j].position.y > positionMax.y) {
-			positionMax.y = verts[j].position.y;
+		if (vertices[j].position.y > positionMax.y) {
+			positionMax.y = vertices[j].position.y;
 		}
-		if (verts[j].position.z < positionMin.z) {
-			positionMin.z = verts[j].position.z;
+		if (vertices[j].position.z < positionMin.z) {
+			positionMin.z = vertices[j].position.z;
 		}
-		if (verts[j].position.z > positionMax.z) {
-			positionMax.z = verts[j].position.z;
+		if (vertices[j].position.z > positionMax.z) {
+			positionMax.z = vertices[j].position.z;
 		}
 	}
 
 	OBB obb;
 	obb.center = (positionMin + positionMax) * 0.5f;
 	obb.size = (positionMax - positionMin) * 0.5f;
-
-	//ワールドから回転行列を持ってくる
-	Matrix4x4 worldMatrix = model.GetWorldMatrix();
-	obb.orientations[0] = Vector3(worldMatrix.m[0][0], worldMatrix.m[0][1], worldMatrix.m[0][2]).Normalized();  // X軸
-	obb.orientations[1] = Vector3(worldMatrix.m[1][0], worldMatrix.m[1][1], worldMatrix.m[1][2]).Normalized();  // Y軸
-	obb.orientations[2] = Vector3(worldMatrix.m[2][0], worldMatrix.m[2][1], worldMatrix.m[2][2]).Normalized();  // Z軸
-
+	obb.orientations[0] = { 1.0f,0.0f,0.0f };
+	obb.orientations[1] = { 0.0f,1.0f,0.0f };
+	obb.orientations[2] = { 0.0f,0.0f,1.0f };
 	return obb;
-
 }
 
 

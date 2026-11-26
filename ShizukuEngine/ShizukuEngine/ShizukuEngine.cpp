@@ -223,20 +223,21 @@ int ShizukuEngine::GetBoneIndex(int skinnedModel, const std::string& boneName) {
 Matrix4x4 ShizukuEngine::GetSocketMatrix(
 	int boneIndex, int boneSlot,
 	const Vector3& pos, const Vector3& rot, const Vector3& scale,
-	const Vector3& ActorPos, const Vector3& ActorRot, const Vector3& ActorScale
+	const Vector3& actorPos, const Vector3& actorRot, const Vector3& actorScale
 ) {
 
-
-	if (boneSlot<0 || boneSlot>mAnimators.size() ||
-		boneIndex<0 || boneIndex>kMaxBones) {
-		return;
-	}
-
+	Matrix4x4 actorWorldMatrix = MakeAffineMatrix(actorScale, actorRot, actorPos);
 	/*武器などの持ち物の行列*/
 	Matrix4x4 worldMat = MakeAffineMatrix(scale, rot, pos);
 
 	/*対象になるボーンの行列*/
 	Matrix4x4 boneWorldMatrix = mAnimators[boneSlot]->GetBoneWorldMatrix(boneIndex, MakeIdentity4x4());
+
+	if (boneSlot<0 || boneSlot>mAnimators.size() ||
+		boneIndex<0 || boneIndex>kMaxBones) {
+		return Multiply(worldMat,actorWorldMatrix);
+	}
+
 
 	/*各軸のレングスを計算*/
 	float lengthX = std::sqrt(
@@ -277,9 +278,8 @@ Matrix4x4 ShizukuEngine::GetSocketMatrix(
 	boneWorldMatrix.m[2][2] = boneWorldMatrix.m[2][2] / lengthZ;
 
 	/*キャラクターの行列*/
-	Matrix4x4 ActorWorldMatrix = MakeAffineMatrix(ActorScale, ActorRot, ActorPos);
 
-	return Multiply(worldMat, Multiply(boneWorldMatrix, ActorWorldMatrix));
+	return Multiply(worldMat, Multiply(boneWorldMatrix, actorWorldMatrix));
 }
 
 
