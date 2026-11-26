@@ -1,4 +1,5 @@
 #include "MeshModel.h"
+#include "Collision/BoneCollider.h"
 #pragma comment(lib,"assimp-vc145-mt")
 
 
@@ -39,6 +40,8 @@ bool MeshModel::LoadFromModel(
 
 	ProcessNode(scene->mRootNode, scene, vertices, indices); // 再帰トラバース
 	CreateBuffers(device, vertices,indices);
+
+	mLocalOBB = CreateOBBForModel(vertices);
 
 	if (scene->mNumMeshes > 0) {
 		const unsigned int materialIndex=scene->mMeshes[0]->mMaterialIndex;;
@@ -181,3 +184,46 @@ void MeshModel::UpdateMaterial() {
 	materialData->uvTransform = MakeIdentity4x4();
 	mPMaterialResource->Unmap(0, nullptr);
 }
+
+
+OBB MeshModel::CreateOBBForModel(
+	const std::vector<VertexData>vertices
+) {
+
+	Vector3 positionMin = { FLT_MAX, FLT_MAX, FLT_MAX };
+	Vector3 positionMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
+
+	const auto& vertices = vertices;
+	size_t count = vertices.size();
+
+	for (size_t j = 0; j < count; j++) {
+
+		if (vertices[j].position.x < positionMin.x) {
+			positionMin.x = vertices[j].position.x;
+		}
+		if (vertices[j].position.x > positionMax.x) {
+			positionMax.x = vertices[j].position.x;
+		}
+		if (vertices[j].position.y < positionMin.y) {
+			positionMin.y = vertices[j].position.y;
+		}
+		if (vertices[j].position.y > positionMax.y) {
+			positionMax.y = vertices[j].position.y;
+		}
+		if (vertices[j].position.z < positionMin.z) {
+			positionMin.z = vertices[j].position.z;
+		}
+		if (vertices[j].position.z > positionMax.z) {
+			positionMax.z = vertices[j].position.z;
+		}
+	}
+
+	OBB obb;
+	obb.center = (positionMin + positionMax) * 0.5f;
+	obb.size = (positionMax - positionMin) * 0.5f;
+	obb.orientations[0] = { 1.0f,0.0f,0.0f };
+	obb.orientations[1] = { 0.0f,1.0f,0.0f };
+	obb.orientations[2] = { 0.0f,0.0f,1.0f };
+	return obb;
+}
+
