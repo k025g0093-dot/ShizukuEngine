@@ -191,18 +191,98 @@ int ShizukuEngine::CreateAnimator(int animation) {
 	if (animation < 0) { return -1; }
 	auto animator = std::make_unique<Animator>();
 	animator->Initialize(mAnimations[animation].get());
-	mAnimator.push_back(std::move(animator));
+	mAnimators.push_back(std::move(animator));
 
-	mRenderRequests.EnsureSkinnedCapacity(static_cast<int>(mAnimator.size()));
-	return static_cast<int>(mAnimator.size()) - 1;
+	mRenderRequests.EnsureSkinnedCapacity(static_cast<int>(mAnimators.size()));
+	return static_cast<int>(mAnimators.size()) - 1;
 }
 
 void ShizukuEngine::ChangeAnimation(int animators, int animation, bool isRooped) {
 	/*アニメーション切り替え時に変える先にアニメーションが存在するかの確認*/
 	/*無ければ早期return*/
-	if (animators < 0 || animators >= (int)mAnimator.size()) { return; }
-	mAnimator[animators]->PlayAnimation(mAnimations[animation].get(), isRooped);
+	if (animators < 0 || animators >= (int)mAnimators.size()) { return; }
+	mAnimators[animators]->PlayAnimation(mAnimations[animation].get(), isRooped);
 }
+
+int ShizukuEngine::GetBoneIndex(int skinnedModel, const std::string& boneName) {
+
+	SkinnedModel* skineed{};
+	skineed = mModelManager.GetSkinned(skinnedModel);
+
+	if (skineed == nullptr) { return -1; }
+	const std::map<std::string, BoneInFo>& boneInFo = skineed->GetBoneInFoMap();
+
+	auto it = boneInFo.find(boneName);
+	if (it != boneInFo.end()) {
+		return it->second.id;
+	}
+	return -1;
+}
+
+
+Matrix4x4 ShizukuEngine::GetSocketMatrix(
+	int boneIndex, int boneSlot,
+	const Vector3& pos, const Vector3& rot, const Vector3& scale,
+	const Vector3& ActorPos, const Vector3& ActorRot, const Vector3& ActorScale
+) {
+
+
+	if (boneSlot<0 || boneSlot>mAnimators.size() ||
+		boneIndex<0 || boneIndex>kMaxBones) {
+		return;
+	}
+
+	/*武器などの持ち物の行列*/
+	Matrix4x4 worldMat = MakeAffineMatrix(scale, rot, pos);
+
+	/*対象になるボーンの行列*/
+	Matrix4x4 boneWorldMatrix = mAnimators[boneSlot]->GetBoneWorldMatrix(boneIndex, MakeIdentity4x4());
+
+	/*各軸のレングスを計算*/
+	float lengthX = std::sqrt(
+		boneWorldMatrix.m[0][0] * boneWorldMatrix.m[0][0] +
+		boneWorldMatrix.m[0][1] * boneWorldMatrix.m[0][1] +
+		boneWorldMatrix.m[0][2] * boneWorldMatrix.m[0][2]
+	);
+
+	float lengthY = std::sqrt(
+		boneWorldMatrix.m[1][0] * boneWorldMatrix.m[1][0] +
+		boneWorldMatrix.m[1][1] * boneWorldMatrix.m[1][1] +
+		boneWorldMatrix.m[1][2] * boneWorldMatrix.m[1][2]
+	);
+
+	float lengthZ = std::sqrt(
+		boneWorldMatrix.m[2][0] * boneWorldMatrix.m[2][0] +
+		boneWorldMatrix.m[2][1] * boneWorldMatrix.m[2][1] +
+		boneWorldMatrix.m[2][2] * boneWorldMatrix.m[2][2]
+	);
+
+	if (lengthX <= 0.0f || lengthY <= 0.0f || lengthZ <= 0.0f) {
+		return Multiply(worldMat, boneWorldMatrix);
+	}
+
+	/*Xのレングスと1行目と割る*/
+	boneWorldMatrix.m[0][0] = boneWorldMatrix.m[0][0] / lengthX;
+	boneWorldMatrix.m[0][1] = boneWorldMatrix.m[0][1] / lengthX;
+	boneWorldMatrix.m[0][2] = boneWorldMatrix.m[0][2] / lengthX;
+
+	/*Yのレングスと2行目と割る*/
+	boneWorldMatrix.m[1][0] = boneWorldMatrix.m[1][0] / lengthY;
+	boneWorldMatrix.m[1][1] = boneWorldMatrix.m[1][1] / lengthY;
+	boneWorldMatrix.m[1][2] = boneWorldMatrix.m[1][2] / lengthY;
+
+	/*Zのレングスと3行目と割る*/
+	boneWorldMatrix.m[2][0] = boneWorldMatrix.m[2][0] / lengthZ;
+	boneWorldMatrix.m[2][1] = boneWorldMatrix.m[2][1] / lengthZ;
+	boneWorldMatrix.m[2][2] = boneWorldMatrix.m[2][2] / lengthZ;
+
+	/*キャラクターの行列*/
+	Matrix4x4 ActorWorldMatrix = MakeAffineMatrix(ActorScale, ActorRot, ActorPos);
+
+	return Multiply(worldMat, Multiply(boneWorldMatrix, ActorWorldMatrix));
+}
+
+
 
 void ShizukuEngine::Update() {
 
@@ -219,7 +299,7 @@ void ShizukuEngine::Update() {
 	}
 
 	/*アニメーションの更新*/
-	for (auto& animator : mAnimator) {
+	for (auto& animator : mAnimators) {
 		animator->UpdateAnimation(deltaTime);
 	}
 }
@@ -273,8 +353,8 @@ void ShizukuEngine::PostDraw()
 	Matrix4x4 billBoard = mCamera.GetBillboardMatrix();
 
 	/*アニメーションのボーンのマトリックスをアニメータの数だけ詰める*/
-	for (int it = 0; it < mAnimator.size(); it++) {
-		mRenderRequests.SetBoneMatrices(mAnimator[it]->GetAnimationMatrix(), it);
+	for (int it = 0; it < mAnimators.size(); it++) {
+		mRenderRequests.SetBoneMatrices(mAnimators[it]->GetAnimationMatrix(), it);
 	}
 
 	/*レンダーリクエストを集める*/
@@ -537,7 +617,18 @@ std::vector<OBB> ShizukuEngine::CreateAnimationModelOBBsCollision(
 
 	std::vector<OBB>obb{};
 	/*ボーンにつけたOBBを更新する*/
-	obb = UpdateAnimationBoneOBBs(*model, *mAnimator[boneSlot], worldMat);
+	obb = UpdateAnimationBoneOBBs(*model, *mAnimators[boneSlot], worldMat);
+	return obb;
+}
+
+
+OBB ShizukuEngine::CreatModelOBBCollision(
+	const int modelIndex,
+	const Matrix4x4 mat
+) {
+	
+	OBB obb{};
+	obb = UpdateMoelOBB(mat, mModelManager.Get(modelIndex)->GetLocalOBB());
 	return obb;
 }
 

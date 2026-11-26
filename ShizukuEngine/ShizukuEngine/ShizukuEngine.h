@@ -85,7 +85,7 @@ public:
 	//--------------------------------------------------------------
 	//音楽ファイル読み込み関数（対応してるのはWAV、MP3）
 	//--------------------------------------------------------------
-	SoundData LoadSound(const char *filePath);
+	SoundData LoadSound(const char* filePath);
 
 	//--------------------------------------------------------------
 	//音楽再生関数（対応してるのはWAV、MP3）
@@ -101,7 +101,7 @@ public:
 	//アニメーションスキン付きmodel読み込み関数
 	//--------------------------------------------------------------
 	int LoadAnimation(const std::string& animationPath, int skinnedModel);
-	
+
 	//--------------------------------------------------------------
 	//アニメーションの作成関数
 	//--------------------------------------------------------------
@@ -111,6 +111,26 @@ public:
 	//アニメーション変更作成関数
 	//--------------------------------------------------------------
 	void ChangeAnimation(int animators, int animation, bool isRooped = true);
+
+	//--------------------------------------------------------------
+	//アニメーションのボーンを指定してそれを返す関数
+	// 引数はスキンモデルの番号とほしいボーンの名前です
+	//--------------------------------------------------------------
+	int GetBoneIndex(int skinnedModel, const std::string& boneName);
+
+	//--------------------------------------------------------------
+	//ソケット式のobjectを対象にしたとこに合うようにする行列を作成する関数
+	//引数（
+	// ボーンのインデックス、スロット、
+	// 武器や帽子などの各トランスフォーム、
+	// 対象になるキャラクターのトランスフォーム
+	// ）
+	//--------------------------------------------------------------
+	Matrix4x4 GetSocketMatrix(
+		int boneIndex, int boneSlot,
+		const Vector3& pos,const Vector3& rot,const Vector3& scale,
+		const Vector3& ActorPos,const Vector3& ActorRot,const Vector3& ActorScale
+	);
 
 	//--------------------------------------------------------------
 	//パーティクルのフィールド作成関数
@@ -129,8 +149,8 @@ public:
 	//--------------------------------------------------------------
 	int CreateGPUEmitter(const Emitter& emitter, int modelIndex, Vector4 color = { 1.0f,1.0f,1.0f,1.0f }, bool isFixedColor = false);
 
-	
-	
+
+
 
 	Camera& GetCamera() { return mCamera; }
 
@@ -187,6 +207,13 @@ public:
 	//--------------------------------------------------------------
 	std::vector<OBB> CreateAnimationModelOBBsCollision(int modelIndex, int boneSlot, const Vector3& pos, const Vector3& rot, const Vector3& scale);
 
+
+	//--------------------------------------------------------------
+	//モデルのコリジョンの作成関数
+	//位置・回転・スケールは DrawModel と同じ値を渡す
+	//--------------------------------------------------------------
+	OBB CreatModelOBBCollision(const int modelIndex,const Matrix4x4 mat);
+
 	//--------------------------------------------------------------
 	//アニメーションモデルどうしのOBB判定関数
 	//--------------------------------------------------------------
@@ -232,9 +259,10 @@ private://各種変数などの初期化
 	Input mInput{};
 	Sound* mSound{};
 
-	std::vector<std::unique_ptr<Animation>> mAnimations;
 	Animation mAnimation{};
-	std::vector < std::unique_ptr< Animator>> mAnimator{};
+	Animator mAnimator{};
+	std::vector<std::unique_ptr<Animation>> mAnimations;
+	std::vector < std::unique_ptr< Animator>> mAnimators{};
 
 	ModelManager mModelManager{};
 

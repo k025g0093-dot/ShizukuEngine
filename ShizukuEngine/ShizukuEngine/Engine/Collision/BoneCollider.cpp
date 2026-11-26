@@ -1,48 +1,58 @@
 #include "BoneCollider.h"
 #include "../Model/3DAnimation/SkinnedModel.h"
 #include "../Model/3DAnimation/Animator.h"
+#include "../Model/Model.h"
 
 
-OBB CreateOBBForBone(
-	const SkinnedModel& skinnedModel
+
+
+OBB CreateOBBForModel(
+	const Model& model
 ) {
 
 	Vector3 positionMin = { FLT_MAX, FLT_MAX, FLT_MAX };
 	Vector3 positionMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
-	const auto& vertices = skinnedModel.GetVertices();
-	size_t count = vertices.size();
+	const VertexData* verts = model.GetVertexData();
+	UINT count = model.GetVertexCount();
 
 	for (size_t j = 0; j < count; j++) {
-
-		if (vertices[j].position.x < positionMin.x) {
-			positionMin.x = vertices[j].position.x;
+		if (verts[j].position.x < positionMin.x) {
+			positionMin.x = verts[j].position.x;
 		}
-		if (vertices[j].position.x > positionMax.x) {
-			positionMax.x = vertices[j].position.x;
+		if (verts[j].position.x > positionMax.x) {
+			positionMax.x = verts[j].position.x;
 		}
-		if (vertices[j].position.y < positionMin.y) {
-			positionMin.y = vertices[j].position.y;
+		if (verts[j].position.y < positionMin.y) {
+			positionMin.y = verts[j].position.y;
 		}
-		if (vertices[j].position.y > positionMax.y) {
-			positionMax.y = vertices[j].position.y;
+		if (verts[j].position.y > positionMax.y) {
+			positionMax.y = verts[j].position.y;
 		}
-		if (vertices[j].position.z < positionMin.z) {
-			positionMin.z = vertices[j].position.z;
+		if (verts[j].position.z < positionMin.z) {
+			positionMin.z = verts[j].position.z;
 		}
-		if (vertices[j].position.z > positionMax.z) {
-			positionMax.z = vertices[j].position.z;
+		if (verts[j].position.z > positionMax.z) {
+			positionMax.z = verts[j].position.z;
 		}
 	}
 
 	OBB obb;
 	obb.center = (positionMin + positionMax) * 0.5f;
 	obb.size = (positionMax - positionMin) * 0.5f;
-	obb.orientations[0] = { 1.0f,0.0f,0.0f };
-	obb.orientations[1] = { 0.0f,1.0f,0.0f };
-	obb.orientations[2] = { 0.0f,0.0f,1.0f };
+
+	//ワールドから回転行列を持ってくる
+	Matrix4x4 worldMatrix = model.GetWorldMatrix();
+	obb.orientations[0] = Vector3(worldMatrix.m[0][0], worldMatrix.m[0][1], worldMatrix.m[0][2]).Normalized();  // X軸
+	obb.orientations[1] = Vector3(worldMatrix.m[1][0], worldMatrix.m[1][1], worldMatrix.m[1][2]).Normalized();  // Y軸
+	obb.orientations[2] = Vector3(worldMatrix.m[2][0], worldMatrix.m[2][1], worldMatrix.m[2][2]).Normalized();  // Z軸
+
 	return obb;
+
 }
+
+
+
 
 std::vector<OBB>CreateAnimationBoneOBBs(
 	const SkinnedModel& skinnedModel
@@ -128,7 +138,6 @@ std::vector<OBB>UpdateAnimationBoneOBBs(
 	const Matrix4x4 matrix) {
 
 	size_t boneCount = skinnedModel.GetBoneCount();
-	const auto& vertices = skinnedModel.GetVertices();
 	std::vector<OBB> obb(boneCount);
 	for (size_t i = 0; i < skinnedModel.GetBoneOBBs().size(); i++) {
 		Matrix4x4 localWorldMatrix{};
@@ -188,6 +197,69 @@ std::vector<OBB>UpdateAnimationBoneOBBs(
 	}
 	return obb;
 }
+
+
+OBB UpdateMoelOBB(const Matrix4x4 matrix, const OBB localOBB) {
+
+	OBB obb{};
+	Matrix4x4 localWorldMatrix{};
+
+	localWorldMatrix = matrix;
+
+	/*各軸のレングスを計算*/
+	float lengthX = std::sqrt(
+		localWorldMatrix.m[0][0] * localWorldMatrix.m[0][0] +
+		localWorldMatrix.m[0][1] * localWorldMatrix.m[0][1] +
+		localWorldMatrix.m[0][2] * localWorldMatrix.m[0][2]
+	);
+
+	float lengthY = std::sqrt(
+		localWorldMatrix.m[1][0] * localWorldMatrix.m[1][0] +
+		localWorldMatrix.m[1][1] * localWorldMatrix.m[1][1] +
+		localWorldMatrix.m[1][2] * localWorldMatrix.m[1][2]
+	);
+
+	float lengthZ = std::sqrt(
+		localWorldMatrix.m[2][0] * localWorldMatrix.m[2][0] +
+		localWorldMatrix.m[2][1] * localWorldMatrix.m[2][1] +
+		localWorldMatrix.m[2][2] * localWorldMatrix.m[2][2]
+	);
+
+	/*長さが0は向きが決まらないため飛ばす*/
+	if (lengthX <= 0.0f || lengthY <= 0.0f || lengthZ <= 0.0f) {
+		return obb ;
+	}
+
+	/*中心を位置として変換*/
+	obb.center = TransformMatrix(localOBB.center, localWorldMatrix);
+
+	/*各軸の伸びた分をかけてボーンに合わせる*/
+	obb.size.x = localOBB.size.x * lengthX;
+	obb.size.y = localOBB.size.y * lengthY;
+	obb.size.z = localOBB.size.z * lengthZ;
+
+	/*向き：行列の各行を、その長さで割って長さ1にする*/
+	obb.orientations[0] = {
+		localWorldMatrix.m[0][0] / lengthX,
+		localWorldMatrix.m[0][1] / lengthX,
+		localWorldMatrix.m[0][2] / lengthX
+	};
+	obb.orientations[1] = {
+		localWorldMatrix.m[1][0] / lengthY,
+		localWorldMatrix.m[1][1] / lengthY,
+		localWorldMatrix.m[1][2] / lengthY
+	};
+	obb.orientations[2] = {
+		localWorldMatrix.m[2][0] / lengthZ,
+		localWorldMatrix.m[2][1] / lengthZ,
+		localWorldMatrix.m[2][2] / lengthZ
+	};
+
+	return obb;
+
+}
+
+
 
 
 bool IsAnimationOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2) {

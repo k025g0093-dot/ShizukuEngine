@@ -7,20 +7,30 @@
 #include <numeric>
 #include <stdexcept>
 class SkinnedModel;
+class Model;
 class Animator;
 
 /*OBB作成関数*/
- OBB CreateOBBForBone(const SkinnedModel& skinnedModel);
- std::vector<OBB>CreateAnimationBoneOBBs(const SkinnedModel& skinnedModel);
- /*ボーンの動きに応じて更新されるOBB*/
- std::vector<OBB>UpdateAnimationBoneOBBs(const SkinnedModel& skinnedModel, const Animator& animator, const Matrix4x4 matrix);
- /*判定計算用*/
- /* std::vector<OBB>によるボーンのついたアニメーションモデル用の当たり判定*/
- bool IsAnimationOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
+OBB CreateOBBForBone(const SkinnedModel& skinnedModel);
 
- bool IsAnimationOBBsToOBBCollision(const std::vector<OBB>& obb1, const OBB& obb2);
+std::vector<OBB>CreateAnimationBoneOBBs(const SkinnedModel& skinnedModel);
 
- bool IsOBBToOBBCollision(const OBB& obb1, const OBB& obb2);
+/*ボーンの動きに応じて更新されるOBB*/
+std::vector<OBB>UpdateAnimationBoneOBBs(const SkinnedModel& skinnedModel, const Animator& animator, const Matrix4x4 matrix);
+/*モデルのOBB更新関数*/
+OBB UpdateMoelOBB(const Matrix4x4 matrix, const OBB localOBB);
+
+OBB UpdateSocketOBBs(const int boneIndex, const Animator& animator,const Matrix4x4 matrix);
+
+/*判定計算用*/
+/* std::vector<OBB>によるボーンのついたアニメーションモデル用の当たり判定*/
+bool IsAnimationOBBsToOBBsCollision(const std::vector<OBB>& obb1, const std::vector<OBB>& obb2);
+
+bool IsAnimationOBBsToOBBCollision(const std::vector<OBB>& obb1, const OBB& obb2);
+
+bool IsOBBToOBBCollision(const OBB& obb1, const OBB& obb2);
+
+
 
 /*ボーンを読み込みカプセルの作成を行う*/
 //Capsule LoadBoneColliderCapsel(const SkinnedModel& skinnedModel);
