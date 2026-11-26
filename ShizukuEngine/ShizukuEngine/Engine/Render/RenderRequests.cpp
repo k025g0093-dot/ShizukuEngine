@@ -193,7 +193,8 @@ void RenderRequests::Render3DTarget(
 		if (std::abs(safeScale.x) < minScale) safeScale.x = (safeScale.x >= 0.0f) ? minScale : -minScale;
 		if (std::abs(safeScale.y) < minScale) safeScale.y = (safeScale.y >= 0.0f) ? minScale : -minScale;
 		if (std::abs(safeScale.z) < minScale) safeScale.z = (safeScale.z >= 0.0f) ? minScale : -minScale;
-
+		
+		/*リクエストごとに使うワールド行列を変える*/
 		if (request.isParticle) {
 			mInstanceData[i].World = Multiply(Multiply(MakeScaleMatrix(safeScale), mBillBoard), MakeTranslateMatrix(safePos));
 		}
